@@ -19,9 +19,6 @@ Praxisbeispiele, Übungen und Abschlussprojekte aus verschiedenen Udemy-Kursen z
 ### [Zertifikate](Zertifikate/)
 Dieser Ordner enthält meine erworbenen Zertifikate und Nachweise über abgeschlossene IT-Kurse und Weiterbildungen.
 
-### [testo](testo/)
-Ein Spielplatz für schnelle Code-Tests und das Ausprobieren neuer Ideen.
-
 ## 💻 Tech Stack
 
 In meinen Projekten verwende ich unter anderem:
