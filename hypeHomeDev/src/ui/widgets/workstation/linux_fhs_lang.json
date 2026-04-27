@@ -1,0 +1,686 @@
+[
+  {
+    "path": "/",
+    "en": "Root of the single directory tree. Other disks/partitions are mounted under here (e.g. /home on its own partition). No separate “drive letter” like on Windows.",
+    "de": "Wurzel des einzelnen Verzeichnisbaums. Andere Festplatten/Partitionen werden hier gemountet (z. B. /home auf einer eigenen Partition). Kein separater „Laufwerksbuchstabe“ wie unter Windows.",
+    "ar": "جذر شجرة الدليل الواحد. يتم تثبيت الأقراص/الأقسام الأخرى هنا (على سبيل المثال /home على القسم الخاص به). لا يوجد \"حرف محرك أقراص\" منفصل كما هو الحال في نظام التشغيل Windows."
+  },
+  {
+    "path": "/bin",
+    "en": "Essential user-facing binaries needed for rescue/single-user boot. Examples: sh, bash, ls, cp, mv, cat, echo. On many distros this is a symlink to /usr/bin (merged /usr).",
+    "de": "Wesentliche benutzerorientierte Binärdateien, die für den Rettungs-/Einzelbenutzer-Start benötigt werden. Beispiele: sh, bash, ls, cp, mv, cat, echo. In vielen Distributionen ist dies ein symbolischer Link zu /usr/bin (zusammengeführtes /usr).",
+    "ar": "الثنائيات الأساسية التي تواجه المستخدم اللازمة للإنقاذ/تمهيد المستخدم الفردي. أمثلة: sh، bash، ls، cp، mv، cat، echo. في العديد من التوزيعات، يكون هذا رابطًا رمزيًا لـ /usr/bin (مدمج /usr)."
+  },
+  {
+    "path": "(examples)",
+    "en": "Typical names you will see: coreutils, util-linux pieces; must stay usable if /usr fails to mount.",
+    "de": "Typische Namen, die Sie sehen werden: Coreutils, Util-Linux-Teile; muss nutzbar bleiben, wenn /usr nicht gemountet werden kann.",
+    "ar": "الأسماء النموذجية التي ستراها: coreutils، util-linux parts؛ يجب أن يظل قابلاً للاستخدام في حالة فشل تحميل /usr."
+  },
+  {
+    "path": "/sbin",
+    "en": "Essential admin binaries for early boot and recovery. Examples: mount, umount, fsck, ip, switch_root, init. Often symlinked to /usr/sbin.",
+    "de": "Wichtige Admin-Binärdateien für frühes Booten und Wiederherstellen. Beispiele: mount, umount, fsck, ip, switch_root, init. Oft mit /usr/sbin verknüpft.",
+    "ar": "ثنائيات الإدارة الأساسية للتشغيل المبكر والاسترداد. أمثلة: mount، umount، fsck، ip، Switch_root، init. غالبًا ما يرتبط بـ /usr/sbin."
+  },
+  {
+    "path": "(examples)",
+    "en": "Think: anything needed before full multi-user networking is up.",
+    "de": "Bedenken Sie: Alles, was benötigt wird, bevor eine vollständige Mehrbenutzer-Vernetzung möglich ist.",
+    "ar": "فكر: أي شيء مطلوب قبل إنشاء شبكة كاملة متعددة المستخدمين."
+  },
+  {
+    "path": "/boot",
+    "en": "Kernel images (vmlinuz-<version>), initramfs archives, boot loader config (GRUB, systemd-boot), sometimes EFI partition mount at /boot/efi.",
+    "de": "Kernel-Images (vmlinuz-<version>), initramfs-Archive, Bootloader-Konfiguration (GRUB, systemd-boot), manchmal EFI-Partitionsmount unter /boot/efi.",
+    "ar": "صور Kernel (vmlinuz-<version>)، وأرشيفات initramfs، وتكوين أداة تحميل التمهيد (GRUB، systemd-boot)، وأحيانًا يتم تثبيت قسم EFI على /boot/efi."
+  },
+  {
+    "path": "/boot/efi",
+    "en": "EFI System Partition mount point on UEFI machines (FAT32); holds grubx64.efi, shimx64.efi, fallback.efi.",
+    "de": "Mountpunkt der EFI-Systempartition auf UEFI-Maschinen (FAT32); enthält grubx64.efi, shimx64.efi, fallback.efi.",
+    "ar": "نقطة تثبيت قسم نظام EFI على أجهزة UEFI (FAT32)؛ يحمل grubx64.efi وshimx64.efi وfallback.efi."
+  },
+  {
+    "path": "/boot/grub2",
+    "en": "Common on Fedora/RHEL: grub.cfg, themes, fonts (Debian/Ubuntu often use /boot/grub).",
+    "de": "Häufig unter Fedora/RHEL: grub.cfg, Themes, Schriftarten (Debian/Ubuntu verwenden oft /boot/grub).",
+    "ar": "شائع في Fedora/RHEL: grub.cfg، والموضوعات، والخطوط (غالبًا ما يستخدم Debian/Ubuntu /boot/grub)."
+  },
+  {
+    "path": "/boot/initramfs-*.img",
+    "en": "Compressed cpio image loaded with the kernel; contains drivers needed to mount real root (LVM, LUKS, NVMe).",
+    "de": "Komprimiertes cpio-Image, das mit dem Kernel geladen wird; enthält Treiber, die zum Mounten von echtem Root (LVM, LUKS, NVMe) erforderlich sind.",
+    "ar": "صورة cpio مضغوطة محملة بالنواة؛ يحتوي على برامج التشغيل اللازمة لتثبيت الجذر الحقيقي (LVM، LUKS، NVMe)."
+  },
+  {
+    "path": "/boot/vmlinuz-*",
+    "en": "Compressed Linux kernel image selected by the boot loader.",
+    "de": "Vom Bootloader ausgewähltes komprimiertes Linux-Kernel-Image.",
+    "ar": "صورة نواة Linux المضغوطة المحددة بواسطة أداة تحميل التشغيل."
+  },
+  {
+    "path": "/dev",
+    "en": "Character and block device nodes; size “0” in file managers is normal. Populated by devtmpfs + udev rules.",
+    "de": "Zeichen- und Blockgeräteknoten; Größe „0“ in Dateimanagern ist normal. Wird durch devtmpfs + udev-Regeln gefüllt.",
+    "ar": "عقد جهاز الحرف والكتلة؛ الحجم \"0\" في مديري الملفات أمر طبيعي. يتم ملؤها بواسطة قواعد devtmpfs + udev."
+  },
+  {
+    "path": "/dev/sd*",
+    "en": "SCSI/SATA/SAS/USB disks (sda, sdb, …) and partitions (sda1). NVMe uses /dev/nvme0n1p2 style names.",
+    "de": "SCSI/SATA/SAS/USB-Festplatten (sda, sdb, …) und Partitionen (sda1). NVMe verwendet /dev/nvme0n1p2-Stilnamen.",
+    "ar": "أقراص SCSI/SATA/SAS/USB (sda، sdb، ...) والأقسام (sda1). يستخدم NVMe أسماء الأنماط /dev/nvme0n1p2."
+  },
+  {
+    "path": "/dev/tty*",
+    "en": "Virtual and serial consoles (tty1–tty63, ttyS0). Alt+Ctrl+F3 switches to tty3 on many setups.",
+    "de": "Virtuelle und serielle Konsolen (tty1–tty63, ttyS0). Alt+Strg+F3 wechselt bei vielen Setups zu tty3.",
+    "ar": "وحدات التحكم الافتراضية والتسلسلية (tty1–tty63، ttyS0). يقوم Alt+Ctrl+F3 بالتبديل إلى tty3 في العديد من الإعدادات."
+  },
+  {
+    "path": "/dev/pts/",
+    "en": "Pseudo-terminal slaves for terminal emulators (each xterm/kitty tab gets a pts/N).",
+    "de": "Pseudo-Terminal-Slaves für Terminal-Emulatoren (jede xterm/kitty-Registerkarte erhält einen Punkt/N).",
+    "ar": "العبيد الطرفيون الزائفون لمحاكيات المحطة الطرفية (تحصل كل علامة تبويب xterm/kitty على نقطة/N)."
+  },
+  {
+    "path": "/dev/null",
+    "en": "Discards all writes; reads return EOF. Used in shell redirections: command >/dev/null.",
+    "de": "Verwirft alle Schreibvorgänge; liest Rückgabe-EOF. Wird in Shell-Umleitungen verwendet: Befehl >/dev/null.",
+    "ar": "يتجاهل كافة عمليات الكتابة; يقرأ العودة EOF. يُستخدم في عمليات إعادة توجيه الصدفة: الأمر >/dev/null."
+  },
+  {
+    "path": "/dev/zero",
+    "en": "Reads return infinite zeros; used for blanking disks or tests.",
+    "de": "Lesevorgänge geben unendlich viele Nullen zurück; Wird zum Löschen von Datenträgern oder für Tests verwendet.",
+    "ar": "القراءات ترجع أصفارًا لا نهائية؛ تستخدم لتقطيع الأقراص أو الاختبارات."
+  },
+  {
+    "path": "/dev/urandom",
+    "en": "Non-blocking random bytes; used for keys/tokens (crypto apps may prefer getrandom()).",
+    "de": "Nicht blockierende Zufallsbytes; Wird für Schlüssel/Tokens verwendet (Krypto-Apps bevorzugen möglicherweise getrandom()).",
+    "ar": "عدم حظر البايتات العشوائية؛ يُستخدم للمفاتيح/الرموز المميزة (قد تفضل تطبيقات التشفير getrandom())."
+  },
+  {
+    "path": "/dev/random",
+    "en": "Blocking pool; historically important; many apps now use urandom or getrandom().",
+    "de": "Sperrpool; historisch wichtig; Viele Apps verwenden mittlerweile urandom oder getrandom().",
+    "ar": "حظر التجمع؛ أهمية تاريخية؛ تستخدم العديد من التطبيقات الآن urandom أو getrandom()."
+  },
+  {
+    "path": "/etc",
+    "en": "Machine-wide text config (not per-user). Editing here affects all users after service restart or immediate for many files.",
+    "de": "Maschinenweite Textkonfiguration (nicht pro Benutzer). Die Bearbeitung hier betrifft alle Benutzer nach dem Neustart des Dienstes oder bei vielen Dateien sofort.",
+    "ar": "تكوين النص على مستوى الجهاز (وليس لكل مستخدم). يؤثر التحرير هنا على جميع المستخدمين بعد إعادة تشغيل الخدمة أو فورًا للعديد من الملفات."
+  },
+  {
+    "path": "/etc/fstab",
+    "en": "Table of filesystems to mount at boot (UUID=…, LABEL=…, mount options like noatime, errors=remount-ro).",
+    "de": "Tabelle der Dateisysteme, die beim Booten gemountet werden sollen (UUID=…, LABEL=…, Mount-Optionen wie noatime,errors=remount-ro).",
+    "ar": "جدول أنظمة الملفات المطلوب تحميلها عند التمهيد (UUID=…، LABEL=…، خيارات التثبيت مثل noatime، Errors=remount-ro)."
+  },
+  {
+    "path": "/etc/hosts",
+    "en": "Static hostname → IP map before DNS; line: 127.0.0.1 localhost.",
+    "de": "Statischer Hostname → IP-Karte vor DNS; Zeile: 127.0.0.1 localhost.",
+    "ar": "اسم المضيف الثابت → خريطة IP قبل DNS؛ السطر: 127.0.0.1 المضيف المحلي."
+  },
+  {
+    "path": "/etc/os-release",
+    "en": "Key=value facts: NAME=, VERSION_ID=, ID=fedora — parsed by scripts and desktops.",
+    "de": "Schlüssel=Wert-Fakten: NAME=, VERSION_ID=, ID=Fedora – analysiert von Skripten und Desktops.",
+    "ar": "المفتاح=حقائق القيمة: NAME=، VERSION_ID=، ID=fedora — تم تحليله بواسطة البرامج النصية وأجهزة سطح المكتب."
+  },
+  {
+    "path": "/etc/passwd",
+    "en": "User accounts (login shell, UID, GID, home). Password hash usually in /etc/shadow.",
+    "de": "Benutzerkonten (Login-Shell, UID, GID, Home). Passwort-Hash normalerweise in /etc/shadow.",
+    "ar": "حسابات المستخدمين (قشرة تسجيل الدخول، UID، GID، المنزل). عادةً ما تكون تجزئة كلمة المرور في /etc/shadow."
+  },
+  {
+    "path": "/etc/shadow",
+    "en": "Hashed passwords and password aging; root-only read.",
+    "de": "Gehashte Passwörter und Passwortalterung; Nur Root-Lesung.",
+    "ar": "كلمات المرور المجزأة وتقادم كلمة المرور؛ قراءة الجذر فقط."
+  },
+  {
+    "path": "/etc/group",
+    "en": "Group definitions; supplementary groups for users.",
+    "de": "Gruppendefinitionen; Zusatzgruppen für Benutzer.",
+    "ar": "تعريفات المجموعة؛ مجموعات تكميلية للمستخدمين."
+  },
+  {
+    "path": "/etc/sudoers + /etc/sudoers.d/",
+    "en": "Who may run which commands as root; use visudo to edit safely.",
+    "de": "Wer darf welche Befehle als Root ausführen? Verwenden Sie Visudo, um sicher zu bearbeiten.",
+    "ar": "من يمكنه تشغيل الأوامر كجذر؛ استخدم visudo للتحرير بأمان."
+  },
+  {
+    "path": "/etc/ssh/",
+    "en": "sshd_config, ssh_host_*_key — SSH server identity and policy (Port, PermitRootLogin, …).",
+    "de": "sshd_config, ssh_host_*_key – SSH-Serveridentität und -Richtlinie (Port, PermitRootLogin, …).",
+    "ar": "sshd_config, ssh_host_*_key — هوية وسياسة خادم SSH (المنفذ، PermitRootLogin، …)."
+  },
+  {
+    "path": "/etc/ssl/certs/",
+    "en": "System CA bundle (ca-certificates.crt) used by curl, browsers, Python requests.",
+    "de": "System-CA-Bundle (ca-certificates.crt), das von Curl, Browsern und Python-Anfragen verwendet wird.",
+    "ar": "حزمة CA الخاصة بالنظام (ca-certificates.crt) المستخدمة بواسطة حليقة والمتصفحات وطلبات Python."
+  },
+  {
+    "path": "/etc/systemd/system/",
+    "en": "Administrator unit overrides (*.service.d/*.conf), enabled units, custom targets.",
+    "de": "Überschreibungen von Administratoreinheiten (*.service.d/*.conf), aktivierte Einheiten, benutzerdefinierte Ziele.",
+    "ar": "تجاوزات وحدة المسؤول (*.service.d/*.conf)، والوحدات الممكّنة، والأهداف المخصصة."
+  },
+  {
+    "path": "/etc/systemd/user/",
+    "en": "Per-user systemd units when logind lingering or user session is active.",
+    "de": "Systemd-Einheiten pro Benutzer, wenn die Anmeldung andauert oder die Benutzersitzung aktiv ist.",
+    "ar": "وحدات النظام لكل مستخدم عندما يكون تسجيل الدخول طويلًا أو تكون جلسة المستخدم نشطة."
+  },
+  {
+    "path": "/etc/default/",
+    "en": "Service defaults (e.g. grub, keyboard); sourced by init scripts or units.",
+    "de": "Dienststandards (z. B. Grub, Tastatur); Von Init-Skripten oder -Einheiten bezogen.",
+    "ar": "الإعدادات الافتراضية للخدمة (مثل اليرقة ولوحة المفاتيح)؛ مصدرها البرامج النصية أو الوحدات."
+  },
+  {
+    "path": "/etc/yum.repos.d/",
+    "en": "DNF/YUM .repo files on Fedora/RHEL (baseurl, metalink, gpgcheck=1).",
+    "de": "DNF/YUM .repo-Dateien auf Fedora/RHEL (baseurl, metalink, gpgcheck=1).",
+    "ar": "ملفات DNF/YUM .repo على Fedora/RHEL (baseurl، metalink، gpgcheck=1)."
+  },
+  {
+    "path": "/etc/apt/",
+    "en": "APT sources on Debian/Ubuntu (sources.list, sources.list.d/, trusted.gpg.d/).",
+    "de": "APT-Quellen auf Debian/Ubuntu (sources.list, resources.list.d/, Trusted.gpg.d/).",
+    "ar": "مصادر APT على Debian/Ubuntu (sources.list,sources.list.d/,trust.gpg.d/)."
+  },
+  {
+    "path": "/etc/pam.d/",
+    "en": "Pluggable Authentication Modules — how login, sudo, ssh authenticate.",
+    "de": "Steckbare Authentifizierungsmodule – wie sich Login, Sudo und SSH authentifizieren.",
+    "ar": "وحدات المصادقة القابلة للتوصيل - كيفية مصادقة تسجيل الدخول، وsudo، وssh."
+  },
+  {
+    "path": "/etc/environment",
+    "en": "Simple KEY=value lines applied to all sessions (global PATH tweaks).",
+    "de": "Einfache KEY=Wert-Zeilen, die auf alle Sitzungen angewendet werden (globale PATH-Optimierungen).",
+    "ar": "مفتاح بسيط = خطوط القيمة مطبقة على جميع الجلسات (تعديلات PATH العامة)."
+  },
+  {
+    "path": "/home",
+    "en": "Personal directories /home/alice, /home/bob — quotas and backups are often scoped here.",
+    "de": "Persönliche Verzeichnisse /home/alice, /home/bob – Kontingente und Backups werden hier häufig festgelegt.",
+    "ar": "الدلائل الشخصية /home/alice، /home/bob - غالبًا ما يتم تحديد الحصص والنسخ الاحتياطية هنا."
+  },
+  {
+    "path": "/home/<user>/",
+    "en": "Replace <user> with account name; ownership should be that user, not root.",
+    "de": "Ersetzen Sie <Benutzer> durch den Kontonamen. Der Eigentümer sollte dieser Benutzer sein, nicht Root.",
+    "ar": "استبدل <user> باسم الحساب؛ يجب أن تكون الملكية لهذا المستخدم، وليس الجذر."
+  },
+  {
+    "path": "/home/<user>/.config/",
+    "en": "XDG config: nvim/, systemd/user/, gtk-3.0/, app-specific YAML/JSON.",
+    "de": "XDG-Konfiguration: nvim/, systemd/user/, gtk-3.0/, app-spezifisches YAML/JSON.",
+    "ar": "تكوين XDG: nvim/، systemd/user/، gtk-3.0/، YAML/JSON الخاص بالتطبيق."
+  },
+  {
+    "path": "/home/<user>/.local/share/",
+    "en": "XDG data: applications/, flatpak/, icons/, mail — survives reinstalls of the app binary.",
+    "de": "XDG-Daten: Anwendungen/, Flatpak/, Symbole/, Mail – überlebt Neuinstallationen der App-Binärdatei.",
+    "ar": "بيانات XDG: apps/، flatpak/، Icons/، mail — تستمر في عمليات إعادة تثبيت التطبيق الثنائي."
+  },
+  {
+    "path": "/home/<user>/.cache/",
+    "en": "XDG cache: thumbnails, pip/http, compiler intermediates — safe to delete if apps closed.",
+    "de": "XDG-Cache: Miniaturansichten, Pip/http, Compiler-Zwischenprodukte – sicheres Löschen, wenn Apps geschlossen werden.",
+    "ar": "ذاكرة التخزين المؤقت XDG: الصور المصغرة، النقطة/http، المترجم الوسيط - آمنة للحذف في حالة إغلاق التطبيقات."
+  },
+  {
+    "path": "/home/<user>/Desktop …",
+    "en": "XDG user dirs: Desktop, Documents, Downloads, Pictures, etc. — names depend on locale and xdg-user-dirs.",
+    "de": "XDG-Benutzerverzeichnisse: Desktop, Dokumente, Downloads, Bilder usw. – Namen hängen vom Gebietsschema und den xdg-Benutzerverzeichnissen ab.",
+    "ar": "أدلة مستخدم XDG: سطح المكتب، المستندات، التنزيلات، الصور، وما إلى ذلك - تعتمد الأسماء على اللغة وxdg-user-dirs."
+  },
+  {
+    "path": "/lib",
+    "en": "Shared libraries (.so) for programs in /bin and /sbin; also kernel modules under /lib/modules/<kernel-version>/.",
+    "de": "Gemeinsam genutzte Bibliotheken (.so) für Programme in /bin und /sbin; auch Kernel-Module unter /lib/modules/<kernel-version>/.",
+    "ar": "المكتبات المشتركة (.so) للبرامج الموجودة في /bin و/sbin؛ أيضًا وحدات kernel ضمن /lib/modules/<kernel-version>/."
+  },
+  {
+    "path": "/lib/modules/$(uname -r)/",
+    "en": "kernel, drivers/, updates/ — must match installed kernel package; dracut/initramfs reads from here.",
+    "de": "kernel, drivers/, Updates/ – müssen mit dem installierten Kernel-Paket übereinstimmen; dracut/initramfs liest von hier aus.",
+    "ar": "kernel، drivers/، Updates/ - يجب أن يتطابق مع حزمة kernel المثبتة؛ dracut/initramfs يقرأ من هنا."
+  },
+  {
+    "path": "/lib/systemd/",
+    "en": "systemd’s own helpers and unit generators shipped with the OS package.",
+    "de": "systemds eigene Helfer und Unit-Generatoren, die mit dem Betriebssystempaket geliefert werden.",
+    "ar": "يتم شحن المساعدين ومولدات الوحدات الخاصة بـ systemd مع حزمة نظام التشغيل."
+  },
+  {
+    "path": "/lib64",
+    "en": "64-bit shared libraries on x86_64; often symlink to /usr/lib64 or merged into /usr/lib on some distros.",
+    "de": "Gemeinsam genutzte 64-Bit-Bibliotheken auf x86_64; wird oft mit /usr/lib64 verknüpft oder in einigen Distributionen mit /usr/lib zusammengeführt.",
+    "ar": "المكتبات المشتركة 64 بت على x86_64؛ غالبًا ما يرتبط بـ /usr/lib64 أو يتم دمجه في /usr/lib في بعض التوزيعات."
+  },
+  {
+    "path": "/lost+found",
+    "en": "ext2/3/4 directory where fsck places recovered file fragments after a crash check (do not delete casually).",
+    "de": "ext2/3/4-Verzeichnis, in dem fsck wiederhergestellte Dateifragmente nach einer Absturzprüfung ablegt (nicht versehentlich löschen).",
+    "ar": "دليل ext2/3/4 حيث يقوم fsck بوضع أجزاء الملف المستردة بعد فحص الأعطال (لا تحذفها بشكل عرضي)."
+  },
+  {
+    "path": "/media",
+    "en": "Where desktop stacks (udisks) auto-mount USB sticks and DVDs, e.g. /media/username/DISK_LABEL.",
+    "de": "Wo Desktop-Stacks (Udisks) USB-Sticks und DVDs automatisch mounten, z.B. /media/username/DISK_LABEL.",
+    "ar": "حيث تقوم مكدسات سطح المكتب (الأقراص الصلبة) بتركيب أقراص USB وأقراص DVD تلقائيًا، على سبيل المثال. /media/username/DISK_LABEL."
+  },
+  {
+    "path": "/mnt",
+    "en": "Convention for admin manual mounts: sudo mount /dev/sdb1 /mnt/backup — keep empty when unused.",
+    "de": "Konvention für manuelle Mounts durch Administratoren: sudo mount /dev/sdb1 /mnt/backup – leer lassen, wenn es nicht verwendet wird.",
+    "ar": "اتفاقية التثبيت اليدوي للمشرف: sudo mount /dev/sdb1 /mnt/backup — يُحفظ فارغًا عند عدم استخدامه."
+  },
+  {
+    "path": "/opt",
+    "en": "Large third-party trees that do not split across bin/lib/share, e.g. /opt/google/chrome/, /opt/containerd/.",
+    "de": "Große Bäume von Drittanbietern, die nicht über bin/lib/share aufgeteilt sind, z. B. /opt/google/chrome/, /opt/containerd/.",
+    "ar": "أشجار كبيرة تابعة لجهات خارجية لا تنقسم عبر bin/lib/share، على سبيل المثال. /opt/google/chrome/, /opt/containerd/."
+  },
+  {
+    "path": "/opt/<vendor>/<app>/",
+    "en": "Often contains bin/, lib/, share/ inside one product directory; outside package manager unless repackaged.",
+    "de": "Enthält oft bin/, lib/, share/ in einem Produktverzeichnis; außerhalb des Paketmanagers, sofern nicht neu verpackt.",
+    "ar": "غالبًا ما يحتوي على bin/، lib/، share/ داخل دليل منتج واحد؛ مدير الحزم الخارجي ما لم تتم إعادة تعبئته."
+  },
+  {
+    "path": "/proc",
+    "en": "Virtual files: process list, kernel tunables, hardware summary. Lives in RAM; du shows tiny usage.",
+    "de": "Virtuelle Dateien: Prozessliste, Kernel-Tuables, Hardware-Zusammenfassung. Lebt im RAM; du zeigt minimalen Verbrauch.",
+    "ar": "الملفات الافتراضية: قائمة العمليات، وضبط النواة، وملخص الأجهزة. يعيش في ذاكرة الوصول العشوائي. يظهر du استخدامًا صغيرًا."
+  },
+  {
+    "path": "/proc/cpuinfo",
+    "en": "Model name, cores, flags (sse, avx) — quick hardware sanity check.",
+    "de": "Modellname, Kerne, Flags (sse, avx) – schnelle Überprüfung der Hardware-Sicherheit.",
+    "ar": "اسم الطراز، والنوى، والأعلام (sse، avx) - فحص سريع لسلامة الأجهزة."
+  },
+  {
+    "path": "/proc/meminfo",
+    "en": "MemTotal, MemAvailable, SwapTotal — used by free and monitoring tools.",
+    "de": "MemTotal, MemAvailable, SwapTotal – wird von kostenlosen Tools und Überwachungstools verwendet.",
+    "ar": "MemTotal، وMemAvailable، وSwapTotal — تُستخدم بواسطة الأدوات المجانية وأدوات المراقبة."
+  },
+  {
+    "path": "/proc/version",
+    "en": "Kernel version string and compiler used to build it.",
+    "de": "Kernel-Versionszeichenfolge und Compiler, mit denen es erstellt wurde.",
+    "ar": "سلسلة إصدار Kernel والمترجم المستخدم في إنشائها."
+  },
+  {
+    "path": "/proc/uptime",
+    "en": "Seconds since boot, idle jiffies — trivial uptime scripts read this.",
+    "de": "Sekunden seit dem Booten, Leerlauf im Handumdrehen – triviale Uptime-Skripte lesen dies.",
+    "ar": "ثواني منذ التمهيد، لمحات سريعة خاملة - تقرأ هذه النصوص التافهة لوقت التشغيل."
+  },
+  {
+    "path": "/proc/self",
+    "en": "Symlink to the PID directory of the process reading it (handy in /proc/self/exe).",
+    "de": "Symlink zum PID-Verzeichnis des Prozesses, der es liest (praktisch in /proc/self/exe).",
+    "ar": "رابط رمزي إلى دليل PID الخاص بعملية قراءته (مفيد في /proc/self/exe)."
+  },
+  {
+    "path": "/proc/sys/",
+    "en": "sysctl knobs mirrored here; echo 1 > /proc/sys/net/ipv4/ip_forward (prefer sysctl.conf for persistence).",
+    "de": "hier gespiegelte Sysctl-Regler; echo 1 > /proc/sys/net/ipv4/ip_forward (bevorzugen Sie sysctl.conf für Persistenz).",
+    "ar": "مقابض sysctl تنعكس هنا؛ echo 1 > /proc/sys/net/ipv4/ip_forward (يفضل sysctl.conf للاستمرارية)."
+  },
+  {
+    "path": "/proc/<pid>/",
+    "en": "Per-process: cmdline, cwd, fd/, maps, environ — debugging and ps internals.",
+    "de": "Pro Prozess: cmdline, cwd, fd/, Maps, Environ – Debugging und PS-Interna.",
+    "ar": "لكل عملية: cmdline، وcwd، وfd/، والخرائط، والبيئة - تصحيح الأخطاء، وps Internals."
+  },
+  {
+    "path": "/root",
+    "en": "Superuser’s home: .bashrc, .ssh/authorized_keys for root logins (often disabled); not the filesystem root.",
+    "de": "Superuser-Home: .bashrc, .ssh/authorized_keys für Root-Anmeldungen (oft deaktiviert); nicht das Dateisystem-Root.",
+    "ar": "منزل المستخدم المتميز: .bashrc، .ssh/authorized_keys لتسجيلات الدخول إلى الجذر (غالبًا ما يتم تعطيله)؛ وليس جذر نظام الملفات."
+  },
+  {
+    "path": "/run",
+    "en": "tmpfs cleared each boot: PID files, dbus sockets, systemd runtime, NetworkManager state.",
+    "de": "tmpfs hat bei jedem Start gelöscht: PID-Dateien, Dbus-Sockets, Systemd-Laufzeit, NetworkManager-Status.",
+    "ar": "قام tmpfs بمسح كل تمهيد: ملفات PID، ومآخذ dbus، ووقت تشغيل systemd، وحالة NetworkManager."
+  },
+  {
+    "path": "/run/systemd/",
+    "en": "systemd’s private runtime: units state, ask-password sockets, journal forwarding.",
+    "de": "Private Laufzeit von systemd: Einheitenstatus, Ask-Password-Sockets, Journalweiterleitung.",
+    "ar": "وقت التشغيل الخاص لـ systemd: حالة الوحدات، ومآخذ توصيل كلمة المرور، وإعادة توجيه دفتر اليومية."
+  },
+  {
+    "path": "/run/user/<uid>/",
+    "en": "Per-user XDG_RUNTIME_DIR: wayland-0, bus (session D-Bus), pulse/pipewire sockets.",
+    "de": "XDG_RUNTIME_DIR pro Benutzer: wayland-0, Bus (Sitzungs-D-Bus), Pulse/Pipewire-Sockets.",
+    "ar": "XDG_RUNTIME_DIR لكل مستخدم: wayland-0، الحافلة (جلسة D-Bus)، مآخذ النبض/أسلاك الأنابيب."
+  },
+  {
+    "path": "/run/lock/",
+    "en": "Legacy-compatible lock files for dpkg, apt, cron (often symlink from /var/lock).",
+    "de": "Legacy-kompatible Sperrdateien für dpkg, apt, cron (häufig Symlink von /var/lock).",
+    "ar": "ملفات القفل المتوافقة مع الإصدارات القديمة لـ dpkg وapt وcron (غالبًا ما يكون الارتباط الرمزي من /var/lock)."
+  },
+  {
+    "path": "/srv",
+    "en": "Site-specific service data (FTP roots, game servers). Some distros still put web roots under /var/www instead.",
+    "de": "Standortspezifische Dienstdaten (FTP-Roots, Gameserver). Einige Distributionen legen stattdessen immer noch Web-Roots unter /var/www ab.",
+    "ar": "بيانات الخدمة الخاصة بالموقع (جذور FTP، خوادم الألعاب). لا تزال بعض التوزيعات تضع جذور الويب ضمن /var/www بدلاً من ذلك."
+  },
+  {
+    "path": "/srv/www/",
+    "en": "Example layout for static sites when admin chooses FHS “srv” over /var/www/html.",
+    "de": "Beispiellayout für statische Websites, wenn der Administrator FHS „srv“ anstelle von /var/www/html wählt.",
+    "ar": "مثال للتخطيط للمواقع الثابتة عندما يختار المسؤول FHS \"srv\" بدلاً من /var/www/html."
+  },
+  {
+    "path": "/sys",
+    "en": "sysfs: device, bus, class, power, firmware — kernel objects as files; used by udev and power management.",
+    "de": "sysfs: Gerät, Bus, Klasse, Leistung, Firmware – Kernel-Objekte als Dateien; Wird von udev und Energieverwaltung verwendet.",
+    "ar": "sysfs: الجهاز، الناقل، الفئة، الطاقة، البرامج الثابتة - كائنات kernel كملفات؛ المستخدمة من قبل udev وإدارة الطاقة."
+  },
+  {
+    "path": "/sys/class/",
+    "en": "Symbolic links grouped by class: net/, block/, thermal/, leds/ — easy discovery.",
+    "de": "Symbolische Links, gruppiert nach Klasse: Netz/, Block/, Thermal/, LEDs/ – einfache Entdeckung.",
+    "ar": "الروابط الرمزية مجمعة حسب الفئة: net/، block/، Thermal/، leds/ — اكتشاف سهل."
+  },
+  {
+    "path": "/sys/block/",
+    "en": "Per-disk queues, alignment, removable flag, partitions/ subdirectory.",
+    "de": "Warteschlangen pro Festplatte, Ausrichtung, entfernbares Flag, Partitionen/Unterverzeichnis.",
+    "ar": "قوائم الانتظار لكل قرص، والمحاذاة، والعلامة القابلة للإزالة، والأقسام/الدليل الفرعي."
+  },
+  {
+    "path": "/sys/devices/",
+    "en": "Physical PCI/USB device tree matching lspci/lsusb.",
+    "de": "Physischer PCI/USB-Gerätebaum, der mit lspci/lsusb übereinstimmt.",
+    "ar": "شجرة جهاز PCI/USB الفعلية مطابقة لـ lspci/lsusb."
+  },
+  {
+    "path": "/tmp",
+    "en": "World-writable sticky bit; installers and browsers use it; may be tmpfs (RAM) or disk; often wiped on reboot.",
+    "de": "Von der Welt beschreibbares klebriges Bit; Installateure und Browser verwenden es; kann tmpfs (RAM) oder Festplatte sein; Wird beim Neustart oft gelöscht.",
+    "ar": "قطعة لزجة قابلة للكتابة عالميًا؛ يستخدمه المثبتون والمتصفحات؛ قد يكون tmpfs (RAM) أو قرصًا؛ تمحى في كثير من الأحيان عند إعادة التشغيل."
+  },
+  {
+    "path": "/tmp/systemd-private-*/",
+    "en": "Per-service private /tmp namespaces for hardened units (pattern varies).",
+    "de": "Private /tmp-Namespaces pro Dienst für gehärtete Einheiten (Muster variiert).",
+    "ar": "مساحات الأسماء الخاصة /tmp لكل خدمة للوحدات المقواة (يختلف النمط)."
+  },
+  {
+    "path": "/usr",
+    "en": "Read-only hierarchy on many images: bulk of programs, docs, libraries. “usr” = Unix System Resources, not “users”.",
+    "de": "Schreibgeschützte Hierarchie für viele Bilder: Großteil der Programme, Dokumente, Bibliotheken. „usr“ = Unix-Systemressourcen, nicht „Benutzer“.",
+    "ar": "التسلسل الهرمي للقراءة فقط على العديد من الصور: الجزء الأكبر من البرامج والمستندات والمكتبات. \"usr\" = موارد نظام Unix، وليس \"المستخدمين\"."
+  },
+  {
+    "path": "/usr/bin",
+    "en": "User commands from packages: git, python3, nvim, firefox, flatpak. PATH usually includes /usr/local/bin before this.",
+    "de": "Benutzerbefehle aus Paketen: Git, Python3, NVIM, Firefox, Flatpak. PATH enthält normalerweise davor /usr/local/bin.",
+    "ar": "أوامر المستخدم من الحزم: git، python3، nvim، Firefox، flatpak. يتضمن PATH عادةً /usr/local/bin قبل ذلك."
+  },
+  {
+    "path": "(examples)",
+    "en": "grep, sed, awk, tar, gzip, journalctl, systemctl --user, dbus-send — thousands of files, many are symlinks.",
+    "de": "grep, sed, awk, tar, gzip, journalctl, systemctl --user, dbus-send – Tausende von Dateien, viele davon sind Symlinks.",
+    "ar": "grep، sed، awk، tar، gzip، Journalctl، systemctl --user، dbus-send - آلاف الملفات، العديد منها عبارة عن روابط رمزية."
+  },
+  {
+    "path": "/usr/sbin",
+    "en": "Admin commands: useradd, visudo, tcpdump, ip, firewall-cmd, grub2-mkconfig — often require root or capabilities.",
+    "de": "Admin-Befehle: useradd, visudo, tcpdump, ip, firewall-cmd, grub2-mkconfig – erfordern häufig Root oder Berechtigungen.",
+    "ar": "أوامر المسؤول: useradd، visudo، tcpdump، ip، firewall-cmd، grub2-mkconfig - غالبًا ما تتطلب الجذر أو القدرات."
+  },
+  {
+    "path": "(examples)",
+    "en": "sshd, NetworkManager, apachectl — long-running daemons sometimes live here or in /usr/libexec.",
+    "de": "sshd, NetworkManager, apachectl – Daemons mit langer Laufzeit leben manchmal hier oder in /usr/libexec.",
+    "ar": "sshd، NetworkManager، apachectl — توجد أحيانًا برامج خفية طويلة الأمد هنا أو في /usr/libexec."
+  },
+  {
+    "path": "/usr/lib",
+    "en": "ELF .so libraries, pkgconfig/, systemd/system/ shipped units, gcc/, python3.12/, firmware blobs referenced by drivers.",
+    "de": "ELF .so-Bibliotheken, pkgconfig/, systemd/system/ ausgelieferte Einheiten, gcc/, python3.12/, Firmware-Blobs, auf die von Treibern verwiesen wird.",
+    "ar": "مكتبات ELF .so، pkgconfig/، وحدات systemd/system/ المشحونة، gcc/، python3.12/، نقاط البرامج الثابتة المشار إليها بواسطة برامج التشغيل."
+  },
+  {
+    "path": "/usr/lib/systemd/system/",
+    "en": "Vendor unit files (sshd.service); admin overrides go in /etc/systemd/system/.",
+    "de": "Hersteller-Einheitsdateien (sshd.service); Admin-Überschreibungen gehen in /etc/systemd/system/.",
+    "ar": "ملفات وحدة البائع (sshd.service)؛ تذهب تجاوزات المسؤول إلى /etc/systemd/system/."
+  },
+  {
+    "path": "/usr/libexec/",
+    "en": "Binaries not meant for PATH directly (helper daemons, GTK modules).",
+    "de": "Binärdateien, die nicht direkt für PATH gedacht sind (Helfer-Daemons, GTK-Module).",
+    "ar": "الثنائيات غير مخصصة لـ PATH مباشرة (الشياطين المساعدة، وحدات GTK)."
+  },
+  {
+    "path": "/usr/lib64/",
+    "en": "64-bit libs on multilib systems (RHEL/Fedora pattern).",
+    "de": "64-Bit-Bibliotheken auf Multilib-Systemen (RHEL/Fedora-Muster).",
+    "ar": "libs 64 بت على أنظمة multilib (نمط RHEL/Fedora)."
+  },
+  {
+    "path": "/usr/include",
+    "en": "C/C++ headers (.h) for development: stdio.h lives here when you install gcc and glibc-headers.",
+    "de": "C/C++-Header (.h) für die Entwicklung: stdio.h befindet sich hier, wenn Sie gcc- und glibc-Header installieren.",
+    "ar": "رؤوس C/C++ (.h) للتطوير: يوجد stdio.h هنا عند تثبيت رؤوس gcc وglibc."
+  },
+  {
+    "path": "/usr/local",
+    "en": "Locally compiled or manually installed software outside the distro package graph; often precedes /usr/bin in PATH.",
+    "de": "Lokal kompilierte oder manuell installierte Software außerhalb des Distributionspaketdiagramms; steht im PATH oft vor /usr/bin.",
+    "ar": "البرامج المجمعة محليًا أو المثبتة يدويًا خارج الرسم البياني لحزمة التوزيع؛ غالبًا ما يسبق /usr/bin في PATH."
+  },
+  {
+    "path": "/usr/local/bin",
+    "en": "Your make install targets, custom scripts, third-party tarballs unpacked with their own bin/.",
+    "de": "Ihre Make-Installationsziele, benutzerdefinierten Skripte und Tarballs von Drittanbietern, die mit ihrem eigenen bin/ entpackt wurden.",
+    "ar": "أهداف التثبيت الخاصة بك، والنصوص البرمجية المخصصة، وكرات القطران التابعة لجهات خارجية والتي تم تفكيكها في سلة المهملات/."
+  },
+  {
+    "path": "/usr/local/etc",
+    "en": "Config for locally built daemons when they follow GNU layout.",
+    "de": "Konfiguration für lokal erstellte Daemons, wenn sie dem GNU-Layout folgen.",
+    "ar": "تكوين للبرامج الشيطانية المبنية محليًا عندما تتبع تخطيط GNU."
+  },
+  {
+    "path": "/usr/share",
+    "en": "Architecture-independent: documentation, icons, man pages, desktop entries, MIME, gettext locales.",
+    "de": "Architekturunabhängig: Dokumentation, Symbole, Manpages, Desktop-Einträge, MIME, Gettext-Gebietsschemas.",
+    "ar": "مستقلة عن البنية: الوثائق، والأيقونات، وصفحات الدليل، وإدخالات سطح المكتب، وMIME، ولغات gettext."
+  },
+  {
+    "path": "/usr/share/man",
+    "en": "Manual sections man1–man8; man ls reads gzip’d pages from man1/ls.1.gz.",
+    "de": "Handbuchabschnitte man1–man8; man ls liest gzip-Seiten von man1/ls.1.gz.",
+    "ar": "الأقسام اليدوية man1 – man8؛ يقرأ الرجل صفحات gzip'd من man1/ls.1.gz."
+  },
+  {
+    "path": "/usr/share/doc",
+    "en": "Package README, copyright, examples — low-risk place to read upstream notes.",
+    "de": "Paket README, Copyright, Beispiele – risikoarmer Ort zum Lesen von Upstream-Notizen.",
+    "ar": "حزمة README وحقوق الطبع والنشر والأمثلة - مكان منخفض المخاطر لقراءة الملاحظات الأولية."
+  },
+  {
+    "path": "/usr/share/applications",
+    "en": "*.desktop files — define app name, Exec= line, MIME associations (xdg-open).",
+    "de": "*.desktop-Dateien – Definieren Sie den App-Namen, die Exec=-Zeile und MIME-Zuordnungen (xdg-open).",
+    "ar": "* ملفات سطح المكتب - تحديد اسم التطبيق، Exec = السطر، اقترانات MIME (xdg-open)."
+  },
+  {
+    "path": "/usr/share/icons",
+    "en": "hicolor, Adwaita, breeze — icon theme lookup (GTK/Qt).",
+    "de": "hicolor, Adwaita, Breeze – Icon-Theme-Suche (GTK/Qt).",
+    "ar": "hicolor، Adwaita، breeze — البحث عن سمات الأيقونات (GTK/Qt)."
+  },
+  {
+    "path": "/usr/share/locale",
+    "en": "Compiled gettext .mo files for translated strings.",
+    "de": "Kompilierte gettext .mo-Dateien für übersetzte Zeichenfolgen.",
+    "ar": "تجميع ملفات gettext .mo للسلاسل المترجمة."
+  },
+  {
+    "path": "/usr/share/mime",
+    "en": "Shared MIME database — maps extensions and magic bytes to types.",
+    "de": "Gemeinsam genutzte MIME-Datenbank – ordnet Erweiterungen und Magic Bytes Typen zu.",
+    "ar": "قاعدة بيانات MIME المشتركة — تقوم بتعيين الامتدادات والبايتات السحرية للأنواع."
+  },
+  {
+    "path": "/usr/share/fonts",
+    "en": "TTF/OTF shipped by packages; fc-cache indexes them for fontconfig.",
+    "de": "TTF/OTF-Versand in Paketen; fc-cache indiziert sie für Fontconfig.",
+    "ar": "TTF/OTF يتم شحنها عن طريق الطرود؛ يقوم fc-cache بفهرستها لتكوين الخطوط."
+  },
+  {
+    "path": "/usr/src",
+    "en": "Optional kernel source trees (linux-<ver>/), out-of-tree module builds; may be empty unless kernel-devel installed.",
+    "de": "Optionale Kernel-Quellbäume (linux-<ver>/), Out-of-Tree-Modul-Builds; kann leer sein, es sei denn, kernel-devel ist installiert.",
+    "ar": "أشجار مصدر نواة اختيارية (linux-<ver>/)، إنشاءات وحدة خارج الشجرة؛ قد يكون فارغًا ما لم يتم تثبيت kernel-devel."
+  },
+  {
+    "path": "/var",
+    "en": "Data that grows and changes: logs, caches, databases, mail queues. Often on its own partition to protect /.",
+    "de": "Daten, die wachsen und sich ändern: Protokolle, Caches, Datenbanken, E-Mail-Warteschlangen. Oft auf einer eigenen Partition zum Schutz /.",
+    "ar": "البيانات التي تنمو وتتغير: السجلات، وذاكرات التخزين المؤقت، وقواعد البيانات، وقوائم انتظار البريد. في كثير من الأحيان على القسم الخاص به لحماية /."
+  },
+  {
+    "path": "/var/log",
+    "en": "Persistent logs unless using volatile-only logging; rotation via logrotate or journald.",
+    "de": "Permanente Protokolle, es sei denn, es wird nur flüchtige Protokollierung verwendet. Rotation über Logrotate oder Journald.",
+    "ar": "السجلات المستمرة ما لم يتم استخدام التسجيل المتقلب فقط؛ التناوب عبر logrotate أو Journald."
+  },
+  {
+    "path": "/var/log/messages or syslog",
+    "en": "Traditional syslog text file on some distros; Fedora often uses journalctl only.",
+    "de": "Herkömmliche Syslog-Textdatei in einigen Distributionen; Fedora verwendet oft nur Journalctl.",
+    "ar": "ملف نصي لسجل النظام التقليدي في بعض التوزيعات؛ غالبًا ما يستخدم Fedora Journalctl فقط."
+  },
+  {
+    "path": "/var/log/journal/",
+    "en": "Persistent binary journal if Storage=persistent; contains boot + service logs (journalctl -b).",
+    "de": "Persistentes Binärjournal, wenn Storage=persistent; enthält Boot- und Serviceprotokolle (journalctl -b).",
+    "ar": "مجلة ثنائية مستمرة إذا كان التخزين = مستمر؛ يحتوي على سجلات الخدمة + التمهيد (journalctl -b)."
+  },
+  {
+    "path": "/var/log/audit/audit.log",
+    "en": "SELinux audit events when auditd is enabled.",
+    "de": "SELinux-Überwachungsereignisse, wenn auditd aktiviert ist.",
+    "ar": "أحداث تدقيق SELinux عند تمكين Auditd."
+  },
+  {
+    "path": "/var/log/dnf.rpm.log",
+    "en": "Fedora package transactions; Debian analogue /var/log/apt/history.log.",
+    "de": "Fedora-Pakettransaktionen; Debian-Analogon /var/log/apt/history.log.",
+    "ar": "معاملات حزمة فيدورا؛ تناظرية دبيان /var/log/apt/history.log."
+  },
+  {
+    "path": "/var/cache",
+    "en": "Rebuildable data: downloaded packages, fontconfig cache, man-db index, thumbnails.",
+    "de": "Wiederherstellbare Daten: heruntergeladene Pakete, Fontconfig-Cache, Man-DB-Index, Miniaturansichten.",
+    "ar": "البيانات القابلة لإعادة البناء: الحزم التي تم تنزيلها، وذاكرة التخزين المؤقت لتكوين الخطوط، وفهرس man-db، والصور المصغرة."
+  },
+  {
+    "path": "/var/cache/dnf",
+    "en": "RPM metadata and downloaded .rpm files (dnf clean packages).",
+    "de": "RPM-Metadaten und heruntergeladene RPM-Dateien (DNF-Clean-Pakete).",
+    "ar": "بيانات تعريف RPM وملفات .rpm التي تم تنزيلها (حزم dnf النظيفة)."
+  },
+  {
+    "path": "/var/cache/apt/archives",
+    "en": "Downloaded .deb files until apt autoclean.",
+    "de": "Heruntergeladene .deb-Dateien bis zur automatischen Bereinigung.",
+    "ar": "تم تنزيل ملفات .deb حتى يتم التنظيف التلقائي المناسب."
+  },
+  {
+    "path": "/var/cache/flatpak",
+    "en": "OCI layers and refs for Flatpak runtimes and apps.",
+    "de": "OCI-Layer und Refs für Flatpak-Laufzeiten und -Apps.",
+    "ar": "طبقات ومراجع OCI لأوقات تشغيل وتطبيقات Flatpak."
+  },
+  {
+    "path": "/var/lib",
+    "en": "Authoritative state: package databases, container storage, VM disks, machine-id, databases.",
+    "de": "Autorisierender Status: Paketdatenbanken, Containerspeicher, VM-Festplatten, Maschinen-ID, Datenbanken.",
+    "ar": "الحالة الرسمية: قواعد بيانات الحزم، تخزين الحاويات، أقراص VM، معرف الجهاز، قواعد البيانات."
+  },
+  {
+    "path": "/var/lib/rpm",
+    "en": "RPM SQLite Berkeley DB on Fedora — rpm -qa reads here; backup before experimental edits.",
+    "de": "RPM SQLite Berkeley DB auf Fedora – rpm -qa liest hier; Sicherung vor experimentellen Bearbeitungen.",
+    "ar": "RPM SQLite Berkeley DB على Fedora — rpm -qa يقرأ هنا؛ النسخ الاحتياطي قبل التعديلات التجريبية."
+  },
+  {
+    "path": "/var/lib/dpkg",
+    "en": "Debian package status and alternatives system.",
+    "de": "Debian-Paketstatus und Alternativensystem.",
+    "ar": "حالة حزمة دبيان ونظام البدائل."
+  },
+  {
+    "path": "/var/lib/systemd",
+    "en": "Random seed, catalog database, lingering state, coredump storage.",
+    "de": "Zufälliger Startwert, Katalogdatenbank, verbleibender Status, Coredump-Speicher.",
+    "ar": "بذور عشوائية، قاعدة بيانات كتالوج، حالة باقية، تخزين التفريغ الأساسي."
+  },
+  {
+    "path": "/var/lib/docker or /var/lib/containers",
+    "en": "Default rootful container image store (overlay2, storage metadata).",
+    "de": "Standardmäßiger Root-Container-Image-Speicher (Overlay2, Speichermetadaten).",
+    "ar": "مخزن صور الحاوية الجذري الافتراضي (تراكب 2، بيانات تعريف التخزين)."
+  },
+  {
+    "path": "/var/lib/postgresql",
+    "en": "Database cluster data directory when PostgreSQL is installed.",
+    "de": "Datenverzeichnis des Datenbankclusters, wenn PostgreSQL installiert ist.",
+    "ar": "دليل بيانات مجموعة قاعدة البيانات عند تثبيت PostgreSQL."
+  },
+  {
+    "path": "/var/lib/libvirt",
+    "en": "VM images and libvirt XML unless overridden to another path.",
+    "de": "VM-Images und libvirt-XML, sofern nicht auf einen anderen Pfad überschrieben.",
+    "ar": "صور VM و libvirt XML ما لم يتم تجاوزها إلى مسار آخر."
+  },
+  {
+    "path": "/var/spool",
+    "en": "Active queues: mail (sendmail/postfix), cron/at jobs, print (cups), uucp legacy.",
+    "de": "Aktive Warteschlangen: Mail (Sendmail/Postfix), Cron/AT-Jobs, Drucken (Cups), UUCP-Legacy.",
+    "ar": "قوائم الانتظار النشطة: البريد (sendmail/postfix)، cron/at jobs، print (cups)، uucp Legacy."
+  },
+  {
+    "path": "/var/spool/cron",
+    "en": "User crontabs installed with crontab -e (location varies: cronie uses /var/spool/cron/<user>).",
+    "de": "Benutzer-Crontabs werden mit crontab -e installiert (Speicherort variiert: Cronie verwendet /var/spool/cron/<Benutzer>).",
+    "ar": "تم تثبيت crontabs للمستخدم باستخدام crontab -e (يختلف الموقع: يستخدم cronie /var/spool/cron/<user>)."
+  },
+  {
+    "path": "/var/tmp",
+    "en": "Large temp files that should survive reboot longer than /tmp; still cleaned by systemd-tmpfiles on timers.",
+    "de": "Große temporäre Dateien, die einen Neustart länger überstehen sollten als /tmp; Wird immer noch von systemd-tmpfiles auf Timern bereinigt.",
+    "ar": "الملفات المؤقتة الكبيرة التي يجب أن تظل قابلة لإعادة التشغيل لفترة أطول من /tmp؛ لا يزال يتم تنظيفه بواسطة ملفات systemd-tmpfiles على أجهزة ضبط الوقت."
+  },
+  {
+    "path": "/var/www",
+    "en": "Common default web root for Apache/nginx packaged sites (index.html, php apps); ownership www-data or apache.",
+    "de": "Gemeinsamer Standard-Webstamm für Apache/nginx-gepackte Websites (index.html, PHP-Apps); Eigentum www-data oder Apache.",
+    "ar": "جذر الويب الافتراضي الشائع لمواقع Apache/nginx المجمعة (index.html، تطبيقات php)؛ ملكية www-data أو apache."
+  }
+]

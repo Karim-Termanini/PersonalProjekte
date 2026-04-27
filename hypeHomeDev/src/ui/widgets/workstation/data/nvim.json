@@ -1,0 +1,1150 @@
+{
+  "id": "nvim",
+  "columns": 2,
+  "languages": [
+    {
+      "id": "en",
+      "label": "English"
+    },
+    {
+      "id": "de",
+      "label": "Deutsch"
+    },
+    {
+      "id": "ar",
+      "label": "العربية"
+    }
+  ],
+  "filter_chips": [
+    "n",
+    "i",
+    "v",
+    "c"
+  ],
+  "action_buttons": [
+    {
+      "label": "Configure Now",
+      "action": "navigate",
+      "target": "machine-setup",
+      "suggested": true
+    }
+  ],
+  "host_checks": [
+    {
+      "type": "command_exists",
+      "command": "nvim",
+      "label_ok": "● Neovim Installed",
+      "label_missing": "○ Neovim Not Found",
+      "detail": "Host check via command -v nvim"
+    }
+  ],
+  "i18n": {
+    "en": {
+      "lang_row_title": "Language",
+      "search_label": "Search",
+      "search_placeholder": "Type to filter commands…",
+      "chip_row_label": "Modes",
+      "chip_labels": {
+        "n": "Normal",
+        "i": "Insert",
+        "v": "Visual",
+        "c": "Command"
+      },
+      "chip_tooltips": {
+        "n": "Normal-mode motions and operators",
+        "i": "Insert and replace entry",
+        "v": "Visual selection",
+        "c": "Ex commands and colon prompts"
+      },
+      "groups": [
+        {
+          "id": "intro",
+          "title": "Neovim Cheatsheet",
+          "description": "Complete nvim command reference — searchable, fast, always free.",
+          "extra_search": "nvim cheatsheet",
+          "tags": [],
+          "items": []
+        },
+        {
+          "id": "modes",
+          "title": "Modes",
+          "description": "Entering and leaving modes",
+          "extra_search": "modes insert visual normal",
+          "tags": [],
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": "i",
+                  "value": "Insert before cursor",
+                  "warn": false
+                },
+                {
+                  "key": "a",
+                  "value": "Insert after cursor",
+                  "warn": false
+                },
+                {
+                  "key": "v / V / Ctrl+v",
+                  "value": "Visual character / line / block",
+                  "warn": false
+                },
+                {
+                  "key": ":",
+                  "value": "Command mode",
+                  "warn": false
+                },
+                {
+                  "key": "Esc / Ctrl+[",
+                  "value": "Return to Normal",
+                  "warn": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "nav_basic",
+          "title": "Navigation — Basic",
+          "description": "Move the cursor",
+          "extra_search": "hjkl motion scroll",
+          "tags": [
+            "n"
+          ],
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": "h j k l",
+                  "value": "← ↓ ↑ →",
+                  "warn": false
+                },
+                {
+                  "key": "w / b / e",
+                  "value": "Word motions",
+                  "warn": false
+                },
+                {
+                  "key": "0 / ^ / $",
+                  "value": "Line start / first non-blank / end",
+                  "warn": false
+                },
+                {
+                  "key": "gg / G",
+                  "value": "File start / file end",
+                  "warn": false
+                },
+                {
+                  "key": "Ctrl+d / Ctrl+u",
+                  "value": "Half-page down / up",
+                  "warn": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "editing",
+          "title": "Editing",
+          "description": "Change and repeat text",
+          "extra_search": "delete yank paste undo redo",
+          "tags": [
+            "n"
+          ],
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": "x / dd / dw",
+                  "value": "Delete char / line / word",
+                  "warn": false
+                },
+                {
+                  "key": "yy / yw / p",
+                  "value": "Yank line/word and paste",
+                  "warn": false
+                },
+                {
+                  "key": "u / Ctrl+r",
+                  "value": "Undo / redo",
+                  "warn": false
+                },
+                {
+                  "key": "cc / cw / C",
+                  "value": "Change line / word / to end",
+                  "warn": false
+                },
+                {
+                  "key": ".",
+                  "value": "Repeat last change",
+                  "warn": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "search_replace",
+          "title": "Search and replace",
+          "description": "/ and :s patterns",
+          "extra_search": "search substitute replace",
+          "tags": [
+            "n"
+          ],
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": "/pattern ?pattern",
+                  "value": "Search forward / backward",
+                  "warn": false
+                },
+                {
+                  "key": "n / N",
+                  "value": "Next / previous match",
+                  "warn": false
+                },
+                {
+                  "key": ":s/old/new/g",
+                  "value": "Replace all on current line",
+                  "warn": false
+                },
+                {
+                  "key": ":%s/old/new/gc",
+                  "value": "Replace all with confirmation",
+                  "warn": false
+                },
+                {
+                  "key": ":noh",
+                  "value": "Clear search highlight",
+                  "warn": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "splits",
+          "title": "Splits and windows",
+          "description": "Ctrl+w family",
+          "extra_search": "split window ctrl-w",
+          "tags": [
+            "n"
+          ],
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": ":sp / :vsp",
+                  "value": "Horizontal / vertical split",
+                  "warn": false
+                },
+                {
+                  "key": "Ctrl+w h/j/k/l",
+                  "value": "Move between splits",
+                  "warn": false
+                },
+                {
+                  "key": "Ctrl+w =",
+                  "value": "Equalize split sizes",
+                  "warn": false
+                },
+                {
+                  "key": "Ctrl+w q",
+                  "value": "Close split",
+                  "warn": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "tabs",
+          "title": "Tabs",
+          "description": "Tab pages",
+          "extra_search": "tab",
+          "tags": [
+            "c"
+          ],
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": ":tabnew",
+                  "value": "Open new tab",
+                  "warn": false
+                },
+                {
+                  "key": "gt / gT",
+                  "value": "Next / previous tab",
+                  "warn": false
+                },
+                {
+                  "key": ":tabclose / :tabonly",
+                  "value": "Close current / others",
+                  "warn": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "files_buffers",
+          "title": "Files and buffers",
+          "description": "Edit, save, quit",
+          "extra_search": "buffer write quit file",
+          "tags": [
+            "c"
+          ],
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": ":e {file}",
+                  "value": "Edit file",
+                  "warn": false
+                },
+                {
+                  "key": ":w / :wq / :x",
+                  "value": "Save / save+quit",
+                  "warn": false
+                },
+                {
+                  "key": ":q / :q!",
+                  "value": "Quit / quit without save",
+                  "warn": true
+                },
+                {
+                  "key": ":ls / :buffers / :bd",
+                  "value": "List / manage buffers",
+                  "warn": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "visual_mode",
+          "title": "Visual Mode",
+          "description": "After v, V, or Ctrl+v",
+          "extra_search": "visual block selection",
+          "tags": [
+            "n",
+            "v"
+          ],
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": "v / V / Ctrl+v + motion",
+                  "value": "Select chars/lines/blocks",
+                  "warn": false
+                },
+                {
+                  "key": "d / y / c",
+                  "value": "Delete / yank / change selection",
+                  "warn": false
+                },
+                {
+                  "key": "> / <",
+                  "value": "Indent / un-indent",
+                  "warn": false
+                },
+                {
+                  "key": "gv",
+                  "value": "Reselect last visual selection",
+                  "warn": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "nvim_specific",
+          "title": "Neovim-specific",
+          "description": "Built-ins and common plugin entry points",
+          "extra_search": "lsp terminal lazy mason diagnostic",
+          "tags": [],
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": ":checkhealth",
+                  "value": "Run health diagnostics",
+                  "warn": false
+                },
+                {
+                  "key": ":terminal",
+                  "value": "Open built-in terminal",
+                  "warn": false
+                },
+                {
+                  "key": ":Lazy / :Mason",
+                  "value": "Open plugin/LSP managers",
+                  "warn": false
+                },
+                {
+                  "key": "gd / grr / gra",
+                  "value": "LSP definition/references/code action",
+                  "warn": false
+                },
+                {
+                  "key": "]d / [d",
+                  "value": "Next / previous diagnostic",
+                  "warn": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "de": {
+      "lang_row_title": "Sprache",
+      "search_label": "Suche",
+      "search_placeholder": "Befehle filtern…",
+      "chip_row_label": "Modi",
+      "chip_labels": {
+        "n": "Normal",
+        "i": "Einfügen",
+        "v": "Visuell",
+        "c": "Befehl"
+      },
+      "chip_tooltips": {
+        "n": "Normalmodus: Bewegungen und Operatoren",
+        "i": "Einfügen und Ersetzen",
+        "v": "Visuelle Auswahl",
+        "c": "Ex-Befehle und Doppelpunkt"
+      },
+      "groups": [
+        {
+          "id": "intro",
+          "title": "Neovim-Spickzettel",
+          "description": "Komplette Befehlsreferenz — durchsuchbar, schnell, kostenlos.",
+          "extra_search": "nvim cheatsheet",
+          "tags": [],
+          "items": []
+        },
+        {
+          "id": "modes",
+          "title": "Modi",
+          "description": "Modi betreten und verlassen",
+          "extra_search": "modes insert visual normal",
+          "tags": [],
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": "i",
+                  "value": "Vor Cursor einfügen",
+                  "warn": false
+                },
+                {
+                  "key": "a",
+                  "value": "Nach Cursor einfügen",
+                  "warn": false
+                },
+                {
+                  "key": "v / V / Ctrl+v",
+                  "value": "Visuell Zeichen / Zeile / Block",
+                  "warn": false
+                },
+                {
+                  "key": ":",
+                  "value": "Befehlsmodus",
+                  "warn": false
+                },
+                {
+                  "key": "Esc / Ctrl+[",
+                  "value": "Zurück nach Normal",
+                  "warn": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "nav_basic",
+          "title": "Navigation — Grundlagen",
+          "description": "Cursor bewegen",
+          "extra_search": "hjkl motion scroll",
+          "tags": [
+            "n"
+          ],
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": "h j k l",
+                  "value": "← ↓ ↑ →",
+                  "warn": false
+                },
+                {
+                  "key": "w / b / e",
+                  "value": "Wortbewegungen",
+                  "warn": false
+                },
+                {
+                  "key": "0 / ^ / $",
+                  "value": "Zeilenanfang / erstes Nicht-Leerzeichen / Ende",
+                  "warn": false
+                },
+                {
+                  "key": "gg / G",
+                  "value": "Dateianfang / Dateiende",
+                  "warn": false
+                },
+                {
+                  "key": "Ctrl+d / Ctrl+u",
+                  "value": "Halbe Seite runter / hoch",
+                  "warn": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "editing",
+          "title": "Bearbeiten",
+          "description": "Text ändern und wiederholen",
+          "extra_search": "delete yank paste undo redo",
+          "tags": [
+            "n"
+          ],
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": "x / dd / dw",
+                  "value": "Zeichen / Zeile / Wort löschen",
+                  "warn": false
+                },
+                {
+                  "key": "yy / yw / p",
+                  "value": "Zeile/Wort kopieren und einfügen",
+                  "warn": false
+                },
+                {
+                  "key": "u / Ctrl+r",
+                  "value": "Rückgängig / Wiederholen",
+                  "warn": false
+                },
+                {
+                  "key": "cc / cw / C",
+                  "value": "Zeile / Wort / bis Zeilenende ändern",
+                  "warn": false
+                },
+                {
+                  "key": ".",
+                  "value": "Letzte Änderung wiederholen",
+                  "warn": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "search_replace",
+          "title": "Suchen und Ersetzen",
+          "description": "Muster mit / und :s",
+          "extra_search": "search substitute replace",
+          "tags": [
+            "n"
+          ],
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": "/pattern ?pattern",
+                  "value": "Vorwärts / rückwärts suchen",
+                  "warn": false
+                },
+                {
+                  "key": "n / N",
+                  "value": "Nächster / vorheriger Treffer",
+                  "warn": false
+                },
+                {
+                  "key": ":s/old/new/g",
+                  "value": "Alle auf aktueller Zeile ersetzen",
+                  "warn": false
+                },
+                {
+                  "key": ":%s/old/new/gc",
+                  "value": "Alle mit Bestätigung ersetzen",
+                  "warn": false
+                },
+                {
+                  "key": ":noh",
+                  "value": "Suchhervorhebung löschen",
+                  "warn": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "splits",
+          "title": "Splits und Fenster",
+          "description": "Tastenfolge Strg+w",
+          "extra_search": "split window ctrl-w",
+          "tags": [
+            "n"
+          ],
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": ":sp / :vsp",
+                  "value": "Horizontal / vertikal teilen",
+                  "warn": false
+                },
+                {
+                  "key": "Ctrl+w h/j/k/l",
+                  "value": "Zwischen Splits wechseln",
+                  "warn": false
+                },
+                {
+                  "key": "Ctrl+w =",
+                  "value": "Split-Größen angleichen",
+                  "warn": false
+                },
+                {
+                  "key": "Ctrl+w q",
+                  "value": "Split schließen",
+                  "warn": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "tabs",
+          "title": "Tabs",
+          "description": "Tab-Seiten",
+          "extra_search": "tab",
+          "tags": [
+            "c"
+          ],
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": ":tabnew",
+                  "value": "Neuen Tab öffnen",
+                  "warn": false
+                },
+                {
+                  "key": "gt / gT",
+                  "value": "Nächster / vorheriger Tab",
+                  "warn": false
+                },
+                {
+                  "key": ":tabclose / :tabonly",
+                  "value": "Aktuellen / andere schließen",
+                  "warn": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "files_buffers",
+          "title": "Dateien und Puffer",
+          "description": "Bearbeiten, speichern, beenden",
+          "extra_search": "buffer write quit file",
+          "tags": [
+            "c"
+          ],
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": ":e {file}",
+                  "value": "Datei bearbeiten",
+                  "warn": false
+                },
+                {
+                  "key": ":w / :wq / :x",
+                  "value": "Speichern / speichern+beenden",
+                  "warn": false
+                },
+                {
+                  "key": ":q / :q!",
+                  "value": "Beenden / ohne Speichern beenden",
+                  "warn": true
+                },
+                {
+                  "key": ":ls / :buffers / :bd",
+                  "value": "Puffer auflisten / verwalten",
+                  "warn": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "visual_mode",
+          "title": "Visueller Modus",
+          "description": "Nach v, V oder Strg+v",
+          "extra_search": "visual block selection",
+          "tags": [
+            "n",
+            "v"
+          ],
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": "v / V / Ctrl+v + motion",
+                  "value": "Zeichen/Zeilen/Blöcke wählen",
+                  "warn": false
+                },
+                {
+                  "key": "d / y / c",
+                  "value": "Auswahl löschen / kopieren / ändern",
+                  "warn": false
+                },
+                {
+                  "key": "> / <",
+                  "value": "Einrücken / Ausrücken",
+                  "warn": false
+                },
+                {
+                  "key": "gv",
+                  "value": "Letzte visuelle Auswahl erneut",
+                  "warn": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "nvim_specific",
+          "title": "Neovim-spezifisch",
+          "description": "Eingebaute Funktionen und gängige Plugin-Einstiege",
+          "extra_search": "lsp terminal lazy mason diagnostic",
+          "tags": [],
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": ":checkhealth",
+                  "value": "Diagnose ausführen",
+                  "warn": false
+                },
+                {
+                  "key": ":terminal",
+                  "value": "Integriertes Terminal öffnen",
+                  "warn": false
+                },
+                {
+                  "key": ":Lazy / :Mason",
+                  "value": "Plugin-/LSP-Manager öffnen",
+                  "warn": false
+                },
+                {
+                  "key": "gd / grr / gra",
+                  "value": "LSP: Definition / Referenzen / Code-Aktion",
+                  "warn": false
+                },
+                {
+                  "key": "]d / [d",
+                  "value": "Nächste / vorherige Diagnose",
+                  "warn": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "ar": {
+      "lang_row_title": "اللغة",
+      "search_label": "بحث",
+      "search_placeholder": "صفِّ الأوامر…",
+      "chip_row_label": "الأوضاع",
+      "chip_labels": {
+        "n": "عادي",
+        "i": "إدراج",
+        "v": "مرئي",
+        "c": "أوامر"
+      },
+      "chip_tooltips": {
+        "n": "حركات ومشغلات الوضع العادي",
+        "i": "الدخول إلى الإدراج والاستبدال",
+        "v": "التحديد المرئي",
+        "c": "أوامر Ex وموجه النقطتين"
+      },
+      "groups": [
+        {
+          "id": "intro",
+          "title": "مفكرة Neovim",
+          "description": "مرجع أوامر كامل — قابل للبحث وسريع ومجاني.",
+          "extra_search": "nvim cheatsheet",
+          "tags": [],
+          "items": []
+        },
+        {
+          "id": "modes",
+          "title": "الأوضاع",
+          "description": "دخول الأوضاع والخروج منها",
+          "extra_search": "modes insert visual normal",
+          "tags": [],
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": "i",
+                  "value": "إدراج قبل المؤشر",
+                  "warn": false
+                },
+                {
+                  "key": "a",
+                  "value": "إدراج بعد المؤشر",
+                  "warn": false
+                },
+                {
+                  "key": "v / V / Ctrl+v",
+                  "value": "مرئي حرف/سطر/كتلة",
+                  "warn": false
+                },
+                {
+                  "key": ":",
+                  "value": "وضع الأوامر",
+                  "warn": false
+                },
+                {
+                  "key": "Esc / Ctrl+[",
+                  "value": "العودة إلى العادي",
+                  "warn": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "nav_basic",
+          "title": "التنقل — أساسيات",
+          "description": "تحريك المؤشر",
+          "extra_search": "hjkl motion scroll",
+          "tags": [
+            "n"
+          ],
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": "h j k l",
+                  "value": "← ↓ ↑ →",
+                  "warn": false
+                },
+                {
+                  "key": "w / b / e",
+                  "value": "حركات الكلمات",
+                  "warn": false
+                },
+                {
+                  "key": "0 / ^ / $",
+                  "value": "بداية السطر / أول غير فراغ / النهاية",
+                  "warn": false
+                },
+                {
+                  "key": "gg / G",
+                  "value": "بداية الملف / نهاية الملف",
+                  "warn": false
+                },
+                {
+                  "key": "Ctrl+d / Ctrl+u",
+                  "value": "نصف صفحة لأسفل / لأعلى",
+                  "warn": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "editing",
+          "title": "التحرير",
+          "description": "تغيير النص وتكرار العمليات",
+          "extra_search": "delete yank paste undo redo",
+          "tags": [
+            "n"
+          ],
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": "x / dd / dw",
+                  "value": "حذف حرف / سطر / كلمة",
+                  "warn": false
+                },
+                {
+                  "key": "yy / yw / p",
+                  "value": "نسخ سطر/كلمة ولصق",
+                  "warn": false
+                },
+                {
+                  "key": "u / Ctrl+r",
+                  "value": "تراجع / إعادة",
+                  "warn": false
+                },
+                {
+                  "key": "cc / cw / C",
+                  "value": "تغيير سطر / كلمة / حتى النهاية",
+                  "warn": false
+                },
+                {
+                  "key": ".",
+                  "value": "تكرار آخر تغيير",
+                  "warn": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "search_replace",
+          "title": "البحث والاستبدال",
+          "description": "أنماط ‎/‎ و ‎:s‎",
+          "extra_search": "search substitute replace",
+          "tags": [
+            "n"
+          ],
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": "/pattern ?pattern",
+                  "value": "بحث للأمام / للخلف",
+                  "warn": false
+                },
+                {
+                  "key": "n / N",
+                  "value": "التطابق التالي / السابق",
+                  "warn": false
+                },
+                {
+                  "key": ":s/old/new/g",
+                  "value": "استبدال الكل في السطر الحالي",
+                  "warn": false
+                },
+                {
+                  "key": ":%s/old/new/gc",
+                  "value": "استبدال الكل مع تأكيد",
+                  "warn": false
+                },
+                {
+                  "key": ":noh",
+                  "value": "مسح تمييز البحث",
+                  "warn": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "splits",
+          "title": "النوافذ المقسّمة",
+          "description": "عائلة المفاتيح ‎Ctrl+w‎",
+          "extra_search": "split window ctrl-w",
+          "tags": [
+            "n"
+          ],
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": ":sp / :vsp",
+                  "value": "تقسيم أفقي / عمودي",
+                  "warn": false
+                },
+                {
+                  "key": "Ctrl+w h/j/k/l",
+                  "value": "التنقل بين الأقسام",
+                  "warn": false
+                },
+                {
+                  "key": "Ctrl+w =",
+                  "value": "تسوية أحجام الأقسام",
+                  "warn": false
+                },
+                {
+                  "key": "Ctrl+w q",
+                  "value": "إغلاق القسم",
+                  "warn": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "tabs",
+          "title": "العلامات",
+          "description": "صفحات التبويب",
+          "extra_search": "tab",
+          "tags": [
+            "c"
+          ],
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": ":tabnew",
+                  "value": "علامة تبويب جديدة",
+                  "warn": false
+                },
+                {
+                  "key": "gt / gT",
+                  "value": "التالي / السابق",
+                  "warn": false
+                },
+                {
+                  "key": ":tabclose / :tabonly",
+                  "value": "إغلاق الحالي / الباقي",
+                  "warn": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "files_buffers",
+          "title": "الملفات والمخازن المؤقتة",
+          "description": "تحرير وحفظ وخروج",
+          "extra_search": "buffer write quit file",
+          "tags": [
+            "c"
+          ],
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": ":e {file}",
+                  "value": "تحرير ملف",
+                  "warn": false
+                },
+                {
+                  "key": ":w / :wq / :x",
+                  "value": "حفظ / حفظ وخروج",
+                  "warn": false
+                },
+                {
+                  "key": ":q / :q!",
+                  "value": "خروج / خروج دون حفظ",
+                  "warn": true
+                },
+                {
+                  "key": ":ls / :buffers / :bd",
+                  "value": "عرض/إدارة المخازن",
+                  "warn": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "visual_mode",
+          "title": "الوضع المرئي",
+          "description": "بعد ‎v‎ أو ‎V‎ أو ‎Ctrl+v‎",
+          "extra_search": "visual block selection",
+          "tags": [
+            "n",
+            "v"
+          ],
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": "v / V / Ctrl+v + motion",
+                  "value": "تحديد أحرف/أسطر/كتل",
+                  "warn": false
+                },
+                {
+                  "key": "d / y / c",
+                  "value": "حذف / نسخ / تغيير التحديد",
+                  "warn": false
+                },
+                {
+                  "key": "> / <",
+                  "value": "زيادة/إنقاص المسافة البادئة",
+                  "warn": false
+                },
+                {
+                  "key": "gv",
+                  "value": "إعادة تحديد آخر تحديد مرئي",
+                  "warn": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "nvim_specific",
+          "title": "خاص بـ Neovim",
+          "description": "مدمجات ونقاط دخول شائعة للإضافات",
+          "extra_search": "lsp terminal lazy mason diagnostic",
+          "tags": [],
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": ":checkhealth",
+                  "value": "تشغيل فحوصات الصحة",
+                  "warn": false
+                },
+                {
+                  "key": ":terminal",
+                  "value": "فتح طرفية مدمجة",
+                  "warn": false
+                },
+                {
+                  "key": ":Lazy / :Mason",
+                  "value": "فتح مديري الإضافات/LSP",
+                  "warn": false
+                },
+                {
+                  "key": "gd / grr / gra",
+                  "value": "LSP: تعريف/مراجع/إجراء كود",
+                  "warn": false
+                },
+                {
+                  "key": "]d / [d",
+                  "value": "التشخيص التالي / السابق",
+                  "warn": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

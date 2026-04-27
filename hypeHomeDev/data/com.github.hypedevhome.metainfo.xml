@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.github.hypedevhome</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <name>HypeDevHome</name>
+  <summary>Developer dashboard for Linux</summary>
+  <description>
+    <p>
+      HypeDevHome is a comprehensive developer dashboard and tool manager for Linux.
+      It provides a unified interface for managing development environments, monitoring
+      system resources, and accessing common developer tools.
+    </p>
+    <p>Key features:</p>
+    <ul>
+      <li>Unified developer dashboard with system monitoring</li>
+      <li>Docker and container management interface</li>
+      <li>Git repository browser and quick actions</li>
+      <li>Flatpak application management</li>
+      <li>Terminal multiplexer with split panes</li>
+      <li>Extension system for custom tools and integrations</li>
+      <li>Project templates and quick starters</li>
+    </ul>
+  </description>
+  
+  <url type="homepage">https://github.com/hypedevhome/hypeHomeDev</url>
+  <url type="bugtracker">https://github.com/hypedevhome/hypeHomeDev/issues</url>
+  <url type="help">https://github.com/hypedevhome/hypeHomeDev/wiki</url>
+  <url type="donation">https://github.com/sponsors/hypedevhome</url>
+  
+  <screenshots>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/hypedevhome/hypeHomeDev/main/assets/screenshots/main.png</image>
+      <caption>Main dashboard interface</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/hypedevhome/hypeHomeDev/main/assets/screenshots/docker.png</image>
+      <caption>Docker container management</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/hypedevhome/hypeHomeDev/main/assets/screenshots/git.png</image>
+      <caption>Git repository browser</caption>
+    </screenshot>
+  </screenshots>
+  
+  <developer_name>The HypeDevHome Team</developer_name>
+  
+  <content_rating type="oars-1.1">
+    <content_attribute id="social-chat">none</content_attribute>
+    <content_attribute id="social-audio">none</content_attribute>
+    <content_attribute id="social-contacts">none</content_attribute>
+    <content_attribute id="social-location">none</content_attribute>
+    <content_attribute id="money-purchasing">none</content_attribute>
+    <content_attribute id="money-gambling">none</content_attribute>
+  </content_rating>
+  
+  <releases>
+    <release version="0.1.0" date="2024-01-01">
+      <description>
+        <p>Initial release featuring:</p>
+        <ul>
+          <li>Basic application skeleton</li>
+          <li>GTK4/Libadwaita interface</li>
+          <li>Configuration management</li>
+          <li>Docker development environment</li>
+          <li>Flatpak packaging</li>
+        </ul>
+      </description>
+    </release>
+  </releases>
+  
+  <provides>
+    <binary>hypedevhome</binary>
+  </provides>
+  
+  <categories>
+    <category>Development</category>
+    <category>Utility</category>
+  </categories>
+  
+  <keywords>
+    <keyword>developer</keyword>
+    <keyword>dashboard</keyword>
+    <keyword>tools</keyword>
+    <keyword>terminal</keyword>
+    <keyword>git</keyword>
+    <keyword>docker</keyword>
+    <keyword>flatpak</keyword>
+    <keyword>linux</keyword>
+  </keywords>
+  
+  <custom>
+    <value key="Flatpak::ref">app/com.github.hypedevhome/x86_64/stable</value>
+    <value key="Flatpak::repo">https://flathub.org/repo/appstream/com.github.hypedevhome.flatpakref</value>
+  </custom>
+</component>

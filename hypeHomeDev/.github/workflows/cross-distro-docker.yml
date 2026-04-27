@@ -1,0 +1,36 @@
+# Ubuntu + Arch images: slow (full image build each time). Run manually before releases
+# or when changing GTK/Dockerfiles — not on every PR (default CI is self-hosted Test workflow).
+
+name: Cross-distro (Docker)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  docker-ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Build Ubuntu image
+        run: docker build -f Dockerfile.ubuntu -t hypedevhome-ubuntu .
+
+      - name: Pytest in container
+        run: |
+          docker run --rm -e CI=1 -e GDK_BACKEND=x11 hypedevhome-ubuntu bash -lc \
+            'cd /app && dbus-run-session -- xvfb-run -a python3 -m pytest tests/ -q --tb=line'
+
+  docker-arch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Build Arch image
+        run: docker build -f Dockerfile.arch -t hypedevhome-arch .
+
+      # Rolling Arch ships newest Python; PyGObject + full GTK UI tests can abort under xvfb.
+      # We still exercise core/config/utils; run UI tests on Ubuntu container or self-hosted.
+      - name: Pytest in container (skip tests/test_ui)
+        run: |
+          docker run --rm -e CI=1 -e GDK_BACKEND=x11 hypedevhome-arch bash -lc \
+            'cd /app && dbus-run-session -- xvfb-run -a python3 -m pytest tests/ -q --tb=line --ignore=tests/test_ui'

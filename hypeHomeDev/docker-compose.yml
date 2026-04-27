@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hypedevhome-dev
+    volumes:
+      # Mount project directory for live development
+      - .:/app
+      # For X11 display (optional)
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      # For Wayland display (optional)
+      - /run/user/1000:/run/user/1000:rw
+      # SSH agent forwarding (optional)
+      - ${SSH_AUTH_SOCK:-/dev/null}:/tmp/ssh-agent.sock
+    environment:
+      # Display environment variables
+      - DISPLAY=${DISPLAY:-:0}
+      - WAYLAND_DISPLAY=${WAYLAND_DISPLAY:-wayland-0}
+      - XDG_RUNTIME_DIR=/run/user/1000
+      # SSH agent forwarding
+      - SSH_AUTH_SOCK=/tmp/ssh-agent.sock
+      # Python development
+      - PYTHONPATH=/app/src
+      - PYTHONUNBUFFERED=1
+      # GTK theme settings
+      - GTK_THEME=Adwaita:dark
+    working_dir: /app
+    stdin_open: true
+    tty: true
+    # Use host network for better compatibility
+    network_mode: host
+    # Run as current user to avoid permission issues
+    user: "${UID:-1000}:${GID:-1000}"
+    # Health check (simple Python check)
+    healthcheck:
+      test: ["CMD", "python3", "--version"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Future services can be added here:
+  # db:
+  #   image: postgres:15
+  #   environment:
+  #     - POSTGRES_DB=hypedevhome
+  #     - POSTGRES_USER=dev
+  #     - POSTGRES_PASSWORD=dev
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   ports:
+  #     - "5432:5432"
+
+  # mock-api:
+  #   image: mockserver/mockserver
+  #   ports:
+  #     - "1080:1080"
+
+# Volumes for persistent data
+volumes:
+  postgres_data:
+
+# Networks (optional)
+networks:
+  default:
+    name: hypedevhome-network
+
+# Usage instructions:
+# 1. For X11: docker-compose up dev
+# 2. For Wayland: set WAYLAND_DISPLAY environment variable first
+# 3. To run commands in container: docker-compose exec dev bash
+# 4. To rebuild: docker-compose build --no-cache dev

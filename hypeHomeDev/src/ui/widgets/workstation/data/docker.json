@@ -1,0 +1,1346 @@
+{
+  "id": "docker",
+  "columns": 3,
+  "languages": [
+    {
+      "id": "en",
+      "label": "English"
+    },
+    {
+      "id": "de",
+      "label": "Deutsch"
+    },
+    {
+      "id": "ar",
+      "label": "العربية"
+    }
+  ],
+  "host_checks": [
+    {
+      "type": "command_exists",
+      "command": "docker",
+      "label_ok": "● Docker Installed",
+      "label_missing": "○ Docker Not Found",
+      "detail": "Host check via command -v docker"
+    }
+  ],
+  "i18n": {
+    "en": {
+      "lang_row_title": "Language",
+      "search_label": "Search",
+      "search_placeholder": "Filter sections by topic…",
+      "groups": [
+        {
+          "id": "intro",
+          "title": "Docker Compose cheatsheet",
+          "description": "Quick reference for Docker Compose commands and configuration.",
+          "items": [
+            {
+              "type": "link",
+              "label": "Docker Documentation",
+              "url": "https://docs.docker.com/"
+            },
+            {
+              "type": "link",
+              "label": "Docker Compose Docs",
+              "url": "https://docs.docker.com/compose/"
+            }
+          ]
+        },
+        {
+          "id": "basic",
+          "title": "Basic Example",
+          "description": "docker-compose.yml",
+          "items": [
+            {
+              "type": "code",
+              "code": "services:\n  web:\n    build:\n      context: ./Path\n      dockerfile: Dockerfile\n    ports:\n      - \"5000:5000\"\n    volumes:\n      - .:/code\n  redis:\n    image: redis"
+            }
+          ]
+        },
+        {
+          "id": "version",
+          "title": "Version",
+          "description": "Migration v1 → v2",
+          "items": [
+            {
+              "type": "text",
+              "text": "Docker Compose is now integrated into Docker. V1: docker-compose ARG  |  V2: docker compose ARG"
+            },
+            {
+              "type": "link",
+              "label": "Migration Guide",
+              "url": "https://docs.docker.com/compose/migrate/"
+            }
+          ]
+        },
+        {
+          "id": "cmds1",
+          "title": "Commands",
+          "description": "Common operations",
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": "docker compose version",
+                  "value": "Show version"
+                },
+                {
+                  "key": "docker compose config",
+                  "value": "Validate and view config"
+                },
+                {
+                  "key": "docker compose start",
+                  "value": "Start services"
+                },
+                {
+                  "key": "docker compose stop",
+                  "value": "Stop services"
+                },
+                {
+                  "key": "docker compose restart",
+                  "value": "Restart services"
+                },
+                {
+                  "key": "docker compose run",
+                  "value": "Run a one-off command"
+                },
+                {
+                  "key": "docker compose create",
+                  "value": "Create containers"
+                },
+                {
+                  "key": "docker compose attach",
+                  "value": "Attach to running container"
+                },
+                {
+                  "key": "docker compose pause",
+                  "value": "Pause services"
+                },
+                {
+                  "key": "docker compose unpause",
+                  "value": "Resume paused services"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "cmds2",
+          "title": "Commands",
+          "description": "More operations",
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": "docker compose wait",
+                  "value": "Wait for service readiness"
+                },
+                {
+                  "key": "docker compose up",
+                  "value": "Create and start containers"
+                },
+                {
+                  "key": "docker compose down",
+                  "value": "Stop and remove containers"
+                },
+                {
+                  "key": "docker compose ps",
+                  "value": "List containers"
+                },
+                {
+                  "key": "docker compose top",
+                  "value": "Display running processes"
+                },
+                {
+                  "key": "docker compose events",
+                  "value": "Stream service events"
+                },
+                {
+                  "key": "docker compose logs",
+                  "value": "View service logs"
+                },
+                {
+                  "key": "docker compose images",
+                  "value": "List service images"
+                },
+                {
+                  "key": "docker compose build",
+                  "value": "Build service images"
+                },
+                {
+                  "key": "docker compose push",
+                  "value": "Push service images"
+                },
+                {
+                  "key": "docker compose cp",
+                  "value": "Copy files from/to container"
+                },
+                {
+                  "key": "docker compose exec",
+                  "value": "Execute command in container"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "build",
+          "title": "Service Configuration",
+          "description": "Building",
+          "items": [
+            {
+              "type": "code",
+              "code": "web:\n  build:\n    context: .\n    args:\n      APP_HOME: app\n    dockerfile: Dockerfile.dev"
+            },
+            {
+              "type": "text",
+              "text": "build from Dockerfile"
+            },
+            {
+              "type": "code",
+              "code": "image: ubuntu:14.04\nimage: tutum/influxdb"
+            },
+            {
+              "type": "text",
+              "text": "build from image"
+            }
+          ]
+        },
+        {
+          "id": "ports",
+          "title": "Service Configuration",
+          "description": "Ports & Exposure",
+          "items": [
+            {
+              "type": "code",
+              "code": "ports:\n  - \"3000\"\n  - \"8000:80\"\n\nexpose:\n  - \"3000\""
+            },
+            {
+              "type": "text",
+              "text": "ports: publish to host   |   expose: only to linked services"
+            }
+          ]
+        },
+        {
+          "id": "commands",
+          "title": "Service Configuration",
+          "description": "Commands",
+          "items": [
+            {
+              "type": "code",
+              "code": "command: bundle exec thin -p 3000\n\ncommand: [bundle, exec, thin, -p, 3000]\n\nentrypoint: /app/start.sh\nentrypoint: [php, -d, vendor/bin/phpunit]"
+            }
+          ]
+        },
+        {
+          "id": "environment",
+          "title": "Service Configuration",
+          "description": "Environment variables",
+          "items": [
+            {
+              "type": "code",
+              "code": "environment:\n  RACK_ENV: development\n\nenvironment:\n  - RACK_ENV=development\n\nenv_file: .env\nenv_file: [.env, .development.env]"
+            }
+          ]
+        },
+        {
+          "id": "dependencies",
+          "title": "Service Configuration",
+          "description": "Dependencies",
+          "items": [
+            {
+              "type": "code",
+              "code": "links:\n  - db:database\n  - redis\n\ndepends_on:\n  - db\n\ndepends_on:\n  db:\n    condition: service_healthy\n  db-init:\n    condition: service_completed_successfully"
+            }
+          ]
+        },
+        {
+          "id": "other_options",
+          "title": "Service Configuration",
+          "description": "Other options",
+          "items": [
+            {
+              "type": "code",
+              "code": "extends:\n  file: common.yml\n  service: webapp\n\nvolumes:\n  - /var/lib/mysql\n  - ./_data:/var/lib/mysql\n\nrestart: unless-stopped"
+            },
+            {
+              "type": "text",
+              "text": "restart: always | on-failure | no (default) | unless-stopped"
+            }
+          ]
+        },
+        {
+          "id": "labels",
+          "title": "Advanced Features",
+          "description": "Labels",
+          "items": [
+            {
+              "type": "code",
+              "code": "services:\n  web:\n    labels:\n      com.example.description: \"Accounting web app\""
+            }
+          ]
+        },
+        {
+          "id": "dns",
+          "title": "Advanced Features",
+          "description": "DNS servers",
+          "items": [
+            {
+              "type": "code",
+              "code": "services:\n  web:\n    # Use a single DNS server\n    dns: 8.8.8.8\n    # Or a list of servers\n    # dns:\n    #   - 8.8.8.8\n    #   - 8.8.4.4"
+            }
+          ]
+        },
+        {
+          "id": "devices",
+          "title": "Advanced Features",
+          "description": "Devices",
+          "items": [
+            {
+              "type": "code",
+              "code": "services:\n  web:\n    devices:\n      - \"/dev/ttyUSB0:/dev/ttyUSB0\""
+            }
+          ]
+        },
+        {
+          "id": "ext_links",
+          "title": "Advanced Features",
+          "description": "External links",
+          "items": [
+            {
+              "type": "code",
+              "code": "services:\n  web:\n    external_links:\n      - redis_1\n      - project_db_1:mysql"
+            }
+          ]
+        },
+        {
+          "id": "healthcheck",
+          "title": "Advanced Features",
+          "description": "Healthcheck",
+          "items": [
+            {
+              "type": "code",
+              "code": "healthcheck:\n  test: [\"CMD\", \"curl\", \"-f\", \"http://localhost\"]\n  interval: 1m30s\n  timeout: 10s\n  retries: 3\n  start_period: 40s"
+            }
+          ]
+        },
+        {
+          "id": "hosts",
+          "title": "Advanced Features",
+          "description": "Hosts & Network",
+          "items": [
+            {
+              "type": "code",
+              "code": "extra_hosts:\n  - \"somehost:192.168.1.100\"\n\nnetworks:\n  frontend:\n\nnetworks:\n  default:\n    external:\n      name: frontend"
+            }
+          ]
+        },
+        {
+          "id": "volumes",
+          "title": "Advanced Features",
+          "description": "Volumes",
+          "items": [
+            {
+              "type": "code",
+              "code": "db:\n  image: postgres:latest\n  volumes:\n    - \"/var/run/postgres/postgres.sock:/var/run/postgres/postgres.sock\"\n    - \"dbdata:/var/lib/postgresql/data\"\n\nvolumes:\n  dbdata:"
+            }
+          ]
+        },
+        {
+          "id": "user",
+          "title": "Advanced Features",
+          "description": "User",
+          "items": [
+            {
+              "type": "code",
+              "code": "user: root\nuser: 0:0"
+            },
+            {
+              "type": "text",
+              "text": "specifying user or user:group with ids"
+            }
+          ]
+        },
+        {
+          "id": "docker_cli",
+          "title": "Docker CLI",
+          "description": "Core commands",
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": "docker build -t 'app/name' .",
+                  "value": "Create image from Dockerfile"
+                },
+                {
+                  "key": "docker run [options] IMAGE",
+                  "value": "Run command in image"
+                },
+                {
+                  "key": "docker ps",
+                  "value": "List running containers"
+                },
+                {
+                  "key": "docker ps -a",
+                  "value": "List all containers"
+                },
+                {
+                  "key": "docker logs $ID",
+                  "value": "View container logs"
+                },
+                {
+                  "key": "docker logs -f $ID",
+                  "value": "Follow log output"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "create_run",
+          "title": "Docker CLI",
+          "description": "Create & run",
+          "items": [
+            {
+              "type": "code",
+              "code": "docker create [options] IMAGE\n  -a, --attach\n  -i, --interactive\n  -t, --tty\n  -p, --publish 5000:5000\n  -v, --volume pwd:/app\n  -e, --env NAME=value"
+            },
+            {
+              "type": "text",
+              "text": "See docker create for full options list"
+            }
+          ]
+        },
+        {
+          "id": "manage",
+          "title": "Docker CLI",
+          "description": "Manage containers",
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": "docker exec CONTAINER CMD",
+                  "value": "Run command in container"
+                },
+                {
+                  "key": "docker start [options] CONTAINER",
+                  "value": "Start container"
+                },
+                {
+                  "key": "docker stop [options] CONTAINER",
+                  "value": "Stop container"
+                },
+                {
+                  "key": "docker kill $ID",
+                  "value": "Force stop container"
+                },
+                {
+                  "key": "docker images",
+                  "value": "List images"
+                },
+                {
+                  "key": "docker rmi IMAGE",
+                  "value": "Delete image"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "cleanup",
+          "title": "Docker CLI",
+          "description": "Cleanup",
+          "items": [
+            {
+              "type": "code",
+              "code": "docker system prune\n# Clean dangling resources\n\ndocker system prune -a\n# Remove all unused images\n\ndocker container prune\n# Remove stopped containers\n\ndocker image prune\n# Remove dangling images\n\ndocker volume prune\n# Remove unused volumes"
+            }
+          ]
+        }
+      ]
+    },
+    "de": {
+      "lang_row_title": "Sprache",
+      "search_label": "Suche",
+      "search_placeholder": "Abschnitte nach Thema filtern…",
+      "groups": [
+        {
+          "id": "intro",
+          "title": "Docker-Compose-Spickzettel",
+          "description": "Kurzreferenz für Compose-Befehle und Konfiguration.",
+          "items": [
+            {
+              "type": "link",
+              "label": "Docker-Dokumentation",
+              "url": "https://docs.docker.com/"
+            },
+            {
+              "type": "link",
+              "label": "Docker-Compose-Dokumentation",
+              "url": "https://docs.docker.com/compose/"
+            }
+          ]
+        },
+        {
+          "id": "basic",
+          "title": "Einfaches Beispiel",
+          "description": "docker-compose.yml",
+          "items": [
+            {
+              "type": "code",
+              "code": "services:\n  web:\n    build:\n      context: ./Path\n      dockerfile: Dockerfile\n    ports:\n      - \"5000:5000\"\n    volumes:\n      - .:/code\n  redis:\n    image: redis"
+            }
+          ]
+        },
+        {
+          "id": "version",
+          "title": "Version",
+          "description": "Migration v1 → v2",
+          "items": [
+            {
+              "type": "text",
+              "text": "Docker Compose ist jetzt in Docker integriert. V1: docker-compose ARG  |  V2: docker compose ARG"
+            },
+            {
+              "type": "link",
+              "label": "Migrationsleitfaden",
+              "url": "https://docs.docker.com/compose/migrate/"
+            }
+          ]
+        },
+        {
+          "id": "cmds1",
+          "title": "Befehle",
+          "description": "Häufige Operationen",
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": "docker compose version",
+                  "value": "Version anzeigen"
+                },
+                {
+                  "key": "docker compose config",
+                  "value": "Konfiguration prüfen und anzeigen"
+                },
+                {
+                  "key": "docker compose start",
+                  "value": "Services starten"
+                },
+                {
+                  "key": "docker compose stop",
+                  "value": "Services stoppen"
+                },
+                {
+                  "key": "docker compose restart",
+                  "value": "Services neu starten"
+                },
+                {
+                  "key": "docker compose run",
+                  "value": "Einmaligen Befehl ausführen"
+                },
+                {
+                  "key": "docker compose create",
+                  "value": "Container erzeugen"
+                },
+                {
+                  "key": "docker compose attach",
+                  "value": "An laufenden Container anbinden"
+                },
+                {
+                  "key": "docker compose pause",
+                  "value": "Services anhalten"
+                },
+                {
+                  "key": "docker compose unpause",
+                  "value": "Services fortsetzen"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "cmds2",
+          "title": "Befehle",
+          "description": "Weitere Operationen",
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": "docker compose wait",
+                  "value": "Auf Bereitschaft warten"
+                },
+                {
+                  "key": "docker compose up",
+                  "value": "Container erzeugen und starten"
+                },
+                {
+                  "key": "docker compose down",
+                  "value": "Container stoppen und entfernen"
+                },
+                {
+                  "key": "docker compose ps",
+                  "value": "Container auflisten"
+                },
+                {
+                  "key": "docker compose top",
+                  "value": "Laufende Prozesse anzeigen"
+                },
+                {
+                  "key": "docker compose events",
+                  "value": "Service-Ereignisse streamen"
+                },
+                {
+                  "key": "docker compose logs",
+                  "value": "Service-Logs anzeigen"
+                },
+                {
+                  "key": "docker compose images",
+                  "value": "Service-Images auflisten"
+                },
+                {
+                  "key": "docker compose build",
+                  "value": "Service-Images bauen"
+                },
+                {
+                  "key": "docker compose push",
+                  "value": "Service-Images pushen"
+                },
+                {
+                  "key": "docker compose cp",
+                  "value": "Dateien aus/ in Container kopieren"
+                },
+                {
+                  "key": "docker compose exec",
+                  "value": "Befehl im Container ausführen"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "build",
+          "title": "Dienst-Konfiguration",
+          "description": "Build",
+          "items": [
+            {
+              "type": "code",
+              "code": "web:\n  build:\n    context: .\n    args:\n      APP_HOME: app\n    dockerfile: Dockerfile.dev"
+            },
+            {
+              "type": "text",
+              "text": "Build aus Dockerfile"
+            },
+            {
+              "type": "code",
+              "code": "image: ubuntu:14.04\nimage: tutum/influxdb"
+            },
+            {
+              "type": "text",
+              "text": "Build aus Image"
+            }
+          ]
+        },
+        {
+          "id": "ports",
+          "title": "Dienst-Konfiguration",
+          "description": "Ports & Freigabe",
+          "items": [
+            {
+              "type": "code",
+              "code": "ports:\n  - \"3000\"\n  - \"8000:80\"\n\nexpose:\n  - \"3000\""
+            },
+            {
+              "type": "text",
+              "text": "ports: auf Host veröffentlichen   |   expose: nur für verlinkte Services"
+            }
+          ]
+        },
+        {
+          "id": "commands",
+          "title": "Dienst-Konfiguration",
+          "description": "Befehle",
+          "items": [
+            {
+              "type": "code",
+              "code": "command: bundle exec thin -p 3000\n\ncommand: [bundle, exec, thin, -p, 3000]\n\nentrypoint: /app/start.sh\nentrypoint: [php, -d, vendor/bin/phpunit]"
+            }
+          ]
+        },
+        {
+          "id": "environment",
+          "title": "Dienst-Konfiguration",
+          "description": "Umgebungsvariablen",
+          "items": [
+            {
+              "type": "code",
+              "code": "environment:\n  RACK_ENV: development\n\nenvironment:\n  - RACK_ENV=development\n\nenv_file: .env\nenv_file: [.env, .development.env]"
+            }
+          ]
+        },
+        {
+          "id": "dependencies",
+          "title": "Dienst-Konfiguration",
+          "description": "Abhängigkeiten",
+          "items": [
+            {
+              "type": "code",
+              "code": "links:\n  - db:database\n  - redis\n\ndepends_on:\n  - db\n\ndepends_on:\n  db:\n    condition: service_healthy\n  db-init:\n    condition: service_completed_successfully"
+            }
+          ]
+        },
+        {
+          "id": "other_options",
+          "title": "Dienst-Konfiguration",
+          "description": "Weitere Optionen",
+          "items": [
+            {
+              "type": "code",
+              "code": "extends:\n  file: common.yml\n  service: webapp\n\nvolumes:\n  - /var/lib/mysql\n  - ./_data:/var/lib/mysql\n\nrestart: unless-stopped"
+            },
+            {
+              "type": "text",
+              "text": "restart: always | on-failure | no (Standard) | unless-stopped"
+            }
+          ]
+        },
+        {
+          "id": "labels",
+          "title": "Erweiterte Funktionen",
+          "description": "Labels",
+          "items": [
+            {
+              "type": "code",
+              "code": "services:\n  web:\n    labels:\n      com.example.description: \"Accounting web app\""
+            }
+          ]
+        },
+        {
+          "id": "dns",
+          "title": "Erweiterte Funktionen",
+          "description": "DNS-Server",
+          "items": [
+            {
+              "type": "code",
+              "code": "services:\n  web:\n    # Use a single DNS server\n    dns: 8.8.8.8\n    # Or a list of servers\n    # dns:\n    #   - 8.8.8.8\n    #   - 8.8.4.4"
+            }
+          ]
+        },
+        {
+          "id": "devices",
+          "title": "Erweiterte Funktionen",
+          "description": "Geräte",
+          "items": [
+            {
+              "type": "code",
+              "code": "services:\n  web:\n    devices:\n      - \"/dev/ttyUSB0:/dev/ttyUSB0\""
+            }
+          ]
+        },
+        {
+          "id": "ext_links",
+          "title": "Erweiterte Funktionen",
+          "description": "Externe Links",
+          "items": [
+            {
+              "type": "code",
+              "code": "services:\n  web:\n    external_links:\n      - redis_1\n      - project_db_1:mysql"
+            }
+          ]
+        },
+        {
+          "id": "healthcheck",
+          "title": "Erweiterte Funktionen",
+          "description": "Healthcheck",
+          "items": [
+            {
+              "type": "code",
+              "code": "healthcheck:\n  test: [\"CMD\", \"curl\", \"-f\", \"http://localhost\"]\n  interval: 1m30s\n  timeout: 10s\n  retries: 3\n  start_period: 40s"
+            }
+          ]
+        },
+        {
+          "id": "hosts",
+          "title": "Erweiterte Funktionen",
+          "description": "Hosts & Netzwerk",
+          "items": [
+            {
+              "type": "code",
+              "code": "extra_hosts:\n  - \"somehost:192.168.1.100\"\n\nnetworks:\n  frontend:\n\nnetworks:\n  default:\n    external:\n      name: frontend"
+            }
+          ]
+        },
+        {
+          "id": "volumes",
+          "title": "Erweiterte Funktionen",
+          "description": "Volumes",
+          "items": [
+            {
+              "type": "code",
+              "code": "db:\n  image: postgres:latest\n  volumes:\n    - \"/var/run/postgres/postgres.sock:/var/run/postgres/postgres.sock\"\n    - \"dbdata:/var/lib/postgresql/data\"\n\nvolumes:\n  dbdata:"
+            }
+          ]
+        },
+        {
+          "id": "user",
+          "title": "Erweiterte Funktionen",
+          "description": "Benutzer",
+          "items": [
+            {
+              "type": "code",
+              "code": "user: root\nuser: 0:0"
+            },
+            {
+              "type": "text",
+              "text": "Benutzer oder user:group mit IDs"
+            }
+          ]
+        },
+        {
+          "id": "docker_cli",
+          "title": "Docker-CLI",
+          "description": "Kernbefehle",
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": "docker build -t 'app/name' .",
+                  "value": "Image aus Dockerfile erstellen"
+                },
+                {
+                  "key": "docker run [options] IMAGE",
+                  "value": "Befehl im Image ausführen"
+                },
+                {
+                  "key": "docker ps",
+                  "value": "Laufende Container auflisten"
+                },
+                {
+                  "key": "docker ps -a",
+                  "value": "Alle Container auflisten"
+                },
+                {
+                  "key": "docker logs $ID",
+                  "value": "Container-Logs anzeigen"
+                },
+                {
+                  "key": "docker logs -f $ID",
+                  "value": "Log-Ausgabe folgen"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "create_run",
+          "title": "Docker-CLI",
+          "description": "Erzeugen & ausführen",
+          "items": [
+            {
+              "type": "code",
+              "code": "docker create [options] IMAGE\n  -a, --attach\n  -i, --interactive\n  -t, --tty\n  -p, --publish 5000:5000\n  -v, --volume pwd:/app\n  -e, --env NAME=value"
+            },
+            {
+              "type": "text",
+              "text": "Alle Optionen: docker create"
+            }
+          ]
+        },
+        {
+          "id": "manage",
+          "title": "Docker-CLI",
+          "description": "Container verwalten",
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": "docker exec CONTAINER CMD",
+                  "value": "Befehl im Container ausführen"
+                },
+                {
+                  "key": "docker start [options] CONTAINER",
+                  "value": "Container starten"
+                },
+                {
+                  "key": "docker stop [options] CONTAINER",
+                  "value": "Container stoppen"
+                },
+                {
+                  "key": "docker kill $ID",
+                  "value": "Container hart beenden"
+                },
+                {
+                  "key": "docker images",
+                  "value": "Images auflisten"
+                },
+                {
+                  "key": "docker rmi IMAGE",
+                  "value": "Image löschen"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "cleanup",
+          "title": "Docker-CLI",
+          "description": "Aufräumen",
+          "items": [
+            {
+              "type": "code",
+              "code": "docker system prune\n# Clean dangling resources\n\ndocker system prune -a\n# Remove all unused images\n\ndocker container prune\n# Remove stopped containers\n\ndocker image prune\n# Remove dangling images\n\ndocker volume prune\n# Remove unused volumes"
+            }
+          ]
+        }
+      ]
+    },
+    "ar": {
+      "lang_row_title": "اللغة",
+      "search_label": "بحث",
+      "search_placeholder": "تصفية الأقسام حسب الموضوع…",
+      "groups": [
+        {
+          "id": "intro",
+          "title": "مفكرة Docker Compose",
+          "description": "مرجع سريع لأوامر وإعدادات Compose.",
+          "items": [
+            {
+              "type": "link",
+              "label": "توثيق Docker",
+              "url": "https://docs.docker.com/"
+            },
+            {
+              "type": "link",
+              "label": "توثيق Docker Compose",
+              "url": "https://docs.docker.com/compose/"
+            }
+          ]
+        },
+        {
+          "id": "basic",
+          "title": "مثال أساسي",
+          "description": "docker-compose.yml",
+          "items": [
+            {
+              "type": "code",
+              "code": "services:\n  web:\n    build:\n      context: ./Path\n      dockerfile: Dockerfile\n    ports:\n      - \"5000:5000\"\n    volumes:\n      - .:/code\n  redis:\n    image: redis"
+            }
+          ]
+        },
+        {
+          "id": "version",
+          "title": "الإصدار",
+          "description": "الترحيل من v1 إلى v2",
+          "items": [
+            {
+              "type": "text",
+              "text": "أصبح Docker Compose مدمجًا في Docker. V1: docker-compose ARG  |  V2: docker compose ARG"
+            },
+            {
+              "type": "link",
+              "label": "دليل الترحيل",
+              "url": "https://docs.docker.com/compose/migrate/"
+            }
+          ]
+        },
+        {
+          "id": "cmds1",
+          "title": "الأوامر",
+          "description": "عمليات شائعة",
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": "docker compose version",
+                  "value": "عرض الإصدار"
+                },
+                {
+                  "key": "docker compose config",
+                  "value": "التحقق من الإعداد وعرضه"
+                },
+                {
+                  "key": "docker compose start",
+                  "value": "تشغيل الخدمات"
+                },
+                {
+                  "key": "docker compose stop",
+                  "value": "إيقاف الخدمات"
+                },
+                {
+                  "key": "docker compose restart",
+                  "value": "إعادة تشغيل الخدمات"
+                },
+                {
+                  "key": "docker compose run",
+                  "value": "تشغيل أمر لمرة واحدة"
+                },
+                {
+                  "key": "docker compose create",
+                  "value": "إنشاء الحاويات"
+                },
+                {
+                  "key": "docker compose attach",
+                  "value": "الاتصال بحاوية تعمل"
+                },
+                {
+                  "key": "docker compose pause",
+                  "value": "إيقاف الخدمات مؤقتًا"
+                },
+                {
+                  "key": "docker compose unpause",
+                  "value": "استئناف الخدمات"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "cmds2",
+          "title": "الأوامر",
+          "description": "المزيد من العمليات",
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": "docker compose wait",
+                  "value": "انتظار الجاهزية"
+                },
+                {
+                  "key": "docker compose up",
+                  "value": "إنشاء الحاويات وتشغيلها"
+                },
+                {
+                  "key": "docker compose down",
+                  "value": "إيقاف الحاويات وإزالتها"
+                },
+                {
+                  "key": "docker compose ps",
+                  "value": "عرض الحاويات"
+                },
+                {
+                  "key": "docker compose top",
+                  "value": "عرض العمليات"
+                },
+                {
+                  "key": "docker compose events",
+                  "value": "بث أحداث الخدمة"
+                },
+                {
+                  "key": "docker compose logs",
+                  "value": "عرض سجلات الخدمة"
+                },
+                {
+                  "key": "docker compose images",
+                  "value": "عرض صور الخدمة"
+                },
+                {
+                  "key": "docker compose build",
+                  "value": "بناء صور الخدمة"
+                },
+                {
+                  "key": "docker compose push",
+                  "value": "دفع صور الخدمة"
+                },
+                {
+                  "key": "docker compose cp",
+                  "value": "نسخ ملفات من/إلى الحاوية"
+                },
+                {
+                  "key": "docker compose exec",
+                  "value": "تنفيذ أمر داخل الحاوية"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "build",
+          "title": "إعداد الخدمة",
+          "description": "البناء",
+          "items": [
+            {
+              "type": "code",
+              "code": "web:\n  build:\n    context: .\n    args:\n      APP_HOME: app\n    dockerfile: Dockerfile.dev"
+            },
+            {
+              "type": "text",
+              "text": "بناء من Dockerfile"
+            },
+            {
+              "type": "code",
+              "code": "image: ubuntu:14.04\nimage: tutum/influxdb"
+            },
+            {
+              "type": "text",
+              "text": "بناء من صورة"
+            }
+          ]
+        },
+        {
+          "id": "ports",
+          "title": "إعداد الخدمة",
+          "description": "المنافذ والتعرّض",
+          "items": [
+            {
+              "type": "code",
+              "code": "ports:\n  - \"3000\"\n  - \"8000:80\"\n\nexpose:\n  - \"3000\""
+            },
+            {
+              "type": "text",
+              "text": "ports: نشر على المضيف   |   expose: للخدمات المرتبطة فقط"
+            }
+          ]
+        },
+        {
+          "id": "commands",
+          "title": "إعداد الخدمة",
+          "description": "الأوامر",
+          "items": [
+            {
+              "type": "code",
+              "code": "command: bundle exec thin -p 3000\n\ncommand: [bundle, exec, thin, -p, 3000]\n\nentrypoint: /app/start.sh\nentrypoint: [php, -d, vendor/bin/phpunit]"
+            }
+          ]
+        },
+        {
+          "id": "environment",
+          "title": "إعداد الخدمة",
+          "description": "متغيرات البيئة",
+          "items": [
+            {
+              "type": "code",
+              "code": "environment:\n  RACK_ENV: development\n\nenvironment:\n  - RACK_ENV=development\n\nenv_file: .env\nenv_file: [.env, .development.env]"
+            }
+          ]
+        },
+        {
+          "id": "dependencies",
+          "title": "إعداد الخدمة",
+          "description": "التبعيات",
+          "items": [
+            {
+              "type": "code",
+              "code": "links:\n  - db:database\n  - redis\n\ndepends_on:\n  - db\n\ndepends_on:\n  db:\n    condition: service_healthy\n  db-init:\n    condition: service_completed_successfully"
+            }
+          ]
+        },
+        {
+          "id": "other_options",
+          "title": "إعداد الخدمة",
+          "description": "خيارات أخرى",
+          "items": [
+            {
+              "type": "code",
+              "code": "extends:\n  file: common.yml\n  service: webapp\n\nvolumes:\n  - /var/lib/mysql\n  - ./_data:/var/lib/mysql\n\nrestart: unless-stopped"
+            },
+            {
+              "type": "text",
+              "text": "restart: always | on-failure | no (افتراضي) | unless-stopped"
+            }
+          ]
+        },
+        {
+          "id": "labels",
+          "title": "ميزات متقدمة",
+          "description": "التسميات",
+          "items": [
+            {
+              "type": "code",
+              "code": "services:\n  web:\n    labels:\n      com.example.description: \"Accounting web app\""
+            }
+          ]
+        },
+        {
+          "id": "dns",
+          "title": "ميزات متقدمة",
+          "description": "خوادم DNS",
+          "items": [
+            {
+              "type": "code",
+              "code": "services:\n  web:\n    # Use a single DNS server\n    dns: 8.8.8.8\n    # Or a list of servers\n    # dns:\n    #   - 8.8.8.8\n    #   - 8.8.4.4"
+            }
+          ]
+        },
+        {
+          "id": "devices",
+          "title": "ميزات متقدمة",
+          "description": "الأجهزة",
+          "items": [
+            {
+              "type": "code",
+              "code": "services:\n  web:\n    devices:\n      - \"/dev/ttyUSB0:/dev/ttyUSB0\""
+            }
+          ]
+        },
+        {
+          "id": "ext_links",
+          "title": "ميزات متقدمة",
+          "description": "روابط خارجية",
+          "items": [
+            {
+              "type": "code",
+              "code": "services:\n  web:\n    external_links:\n      - redis_1\n      - project_db_1:mysql"
+            }
+          ]
+        },
+        {
+          "id": "healthcheck",
+          "title": "ميزات متقدمة",
+          "description": "فحص الصحة",
+          "items": [
+            {
+              "type": "code",
+              "code": "healthcheck:\n  test: [\"CMD\", \"curl\", \"-f\", \"http://localhost\"]\n  interval: 1m30s\n  timeout: 10s\n  retries: 3\n  start_period: 40s"
+            }
+          ]
+        },
+        {
+          "id": "hosts",
+          "title": "ميزات متقدمة",
+          "description": "المضيفون والشبكة",
+          "items": [
+            {
+              "type": "code",
+              "code": "extra_hosts:\n  - \"somehost:192.168.1.100\"\n\nnetworks:\n  frontend:\n\nnetworks:\n  default:\n    external:\n      name: frontend"
+            }
+          ]
+        },
+        {
+          "id": "volumes",
+          "title": "ميزات متقدمة",
+          "description": "المجلدات المستمرة",
+          "items": [
+            {
+              "type": "code",
+              "code": "db:\n  image: postgres:latest\n  volumes:\n    - \"/var/run/postgres/postgres.sock:/var/run/postgres/postgres.sock\"\n    - \"dbdata:/var/lib/postgresql/data\"\n\nvolumes:\n  dbdata:"
+            }
+          ]
+        },
+        {
+          "id": "user",
+          "title": "ميزات متقدمة",
+          "description": "المستخدم",
+          "items": [
+            {
+              "type": "code",
+              "code": "user: root\nuser: 0:0"
+            },
+            {
+              "type": "text",
+              "text": "تحديد مستخدم أو user:group بالمعرفات"
+            }
+          ]
+        },
+        {
+          "id": "docker_cli",
+          "title": "واجهة Docker",
+          "description": "أوامر أساسية",
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": "docker build -t 'app/name' .",
+                  "value": "إنشاء صورة من Dockerfile"
+                },
+                {
+                  "key": "docker run [options] IMAGE",
+                  "value": "تشغيل أمر في الصورة"
+                },
+                {
+                  "key": "docker ps",
+                  "value": "عرض الحاويات العاملة"
+                },
+                {
+                  "key": "docker ps -a",
+                  "value": "عرض كل الحاويات"
+                },
+                {
+                  "key": "docker logs $ID",
+                  "value": "عرض سجلات الحاوية"
+                },
+                {
+                  "key": "docker logs -f $ID",
+                  "value": "متابعة السجل"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "create_run",
+          "title": "واجهة Docker",
+          "description": "إنشاء وتشغيل",
+          "items": [
+            {
+              "type": "code",
+              "code": "docker create [options] IMAGE\n  -a, --attach\n  -i, --interactive\n  -t, --tty\n  -p, --publish 5000:5000\n  -v, --volume pwd:/app\n  -e, --env NAME=value"
+            },
+            {
+              "type": "text",
+              "text": "راجع docker create لقائمة الخيارات"
+            }
+          ]
+        },
+        {
+          "id": "manage",
+          "title": "واجهة Docker",
+          "description": "إدارة الحاويات",
+          "items": [
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "key": "docker exec CONTAINER CMD",
+                  "value": "تنفيذ أمر في الحاوية"
+                },
+                {
+                  "key": "docker start [options] CONTAINER",
+                  "value": "تشغيل الحاوية"
+                },
+                {
+                  "key": "docker stop [options] CONTAINER",
+                  "value": "إيقاف الحاوية"
+                },
+                {
+                  "key": "docker kill $ID",
+                  "value": "إيقاف قسري"
+                },
+                {
+                  "key": "docker images",
+                  "value": "عرض الصور"
+                },
+                {
+                  "key": "docker rmi IMAGE",
+                  "value": "حذف الصورة"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "cleanup",
+          "title": "واجهة Docker",
+          "description": "تنظيف",
+          "items": [
+            {
+              "type": "code",
+              "code": "docker system prune\n# Clean dangling resources\n\ndocker system prune -a\n# Remove all unused images\n\ndocker container prune\n# Remove stopped containers\n\ndocker image prune\n# Remove dangling images\n\ndocker volume prune\n# Remove unused volumes"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

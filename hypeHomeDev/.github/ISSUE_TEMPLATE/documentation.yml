@@ -1,0 +1,55 @@
+name: 📝 Documentation Improvement
+description: Suggest improvements or corrections to documentation
+title: "[Docs]: "
+labels: ["documentation", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve our documentation!
+  - type: input
+    id: contact
+    attributes:
+      label: Contact Details (optional)
+      description: How can we reach you if we need more information?
+      placeholder: email@example.com
+    validations:
+      required: false
+  - type: dropdown
+    id: doc_type
+    attributes:
+      label: Documentation Type
+      description: Which type of documentation does this relate to?
+      options:
+        - README
+        - CONTRIBUTING
+        - Code comments
+        - Wiki / User guide
+        - Developer documentation
+        - API documentation
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: Current State
+      description: What is the current state of the documentation? What's missing or incorrect?
+      placeholder: The current docs say... but they're missing...
+    validations:
+      required: true
+  - type: textarea
+    id: improvement
+    attributes:
+      label: Suggested Improvement
+      description: What would you like to see changed, added, or improved?
+      placeholder: It would be better if...
+    validations:
+      required: true
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Add any other context, screenshots, or examples about the documentation improvement.
+    validations:
+      required: false

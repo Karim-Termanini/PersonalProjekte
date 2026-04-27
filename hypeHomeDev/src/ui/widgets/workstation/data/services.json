@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "services": [
+    {
+      "id": "tailscale",
+      "name": "Tailscale",
+      "unit": "tailscaled.service",
+      "binary": "tailscale",
+      "package_name": "tailscale",
+      "website": "https://tailscale.com/",
+      "description": {
+        "en": "Zero-config mesh VPN. Requires tailscaled service.",
+        "de": "Zero-Config-Mesh-VPN. Benötigt den tailscaled-Dienst.",
+        "ar": "شبكة VPN متداخلة بدون إعدادات معقدة. تتطلب خدمة tailscaled."
+      }
+    },
+    {
+      "id": "docker",
+      "name": "Docker",
+      "unit": "docker.service",
+      "binary": "docker",
+      "package_name": "docker",
+      "website": "https://docs.docker.com/",
+      "description": {
+        "en": "Container runtime and tooling. Requires docker daemon service.",
+        "de": "Container-Runtime und Werkzeuge. Benötigt den Docker-Daemon-Dienst.",
+        "ar": "وقت تشغيل للحاويات وأدواتها. يتطلب خدمة Docker daemon."
+      }
+    },
+    {
+      "id": "nordvpn",
+      "name": "NordVPN",
+      "unit": "nordvpnd.service",
+      "binary": "nordvpn",
+      "package_name": "nordvpn",
+      "website": "https://nordvpn.com/",
+      "description": {
+        "en": "NordVPN CLI + daemon for secure tunneling.",
+        "de": "NordVPN-CLI + Daemon für sicheres Tunneling.",
+        "ar": "واجهة NordVPN مع خدمة daemon للاتصال الآمن."
+      }
+    },
+    {
+      "id": "ollama",
+      "name": "Ollama",
+      "unit": "ollama.service",
+      "binary": "ollama",
+      "package_name": "ollama",
+      "website": "https://ollama.com/",
+      "description": {
+        "en": "Local LLM runtime and API. Managed via ollama.service when installed from distro packages.",
+        "de": "Lokale LLM-Laufzeit und API. Wird über ollama.service verwaltet, wenn über Paketquellen installiert.",
+        "ar": "تشغيل نماذج لغوية محلية وواجهة API. يُدار عبر ollama.service عند التثبيت من مستودعات التوزيعة."
+      }
+    },
+    {
+      "id": "dropbox",
+      "name": "Dropbox",
+      "kind": "process",
+      "binary": "dropbox",
+      "package_name": "dropbox",
+      "flatpak_id": "com.dropbox.Client",
+      "website": "https://www.dropbox.com/",
+      "status_cmd": "dropbox running",
+      "start_cmd": "dropbox start",
+      "stop_cmd": "dropbox stop",
+      "description": {
+        "en": "File sync daemon managed as a user process.",
+        "de": "Dateisynchronisations-Daemon, als Benutzerprozess verwaltet.",
+        "ar": "خدمة مزامنة ملفات تُدار كعملية مستخدم."
+      }
+    }
+  ]
+}
+

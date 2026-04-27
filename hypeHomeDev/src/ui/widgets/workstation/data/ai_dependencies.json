@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "stacks": {
+    "nvidia_driver": {
+      "dnf": "sudo dnf install -y akmod-nvidia xorg-x11-drv-nvidia-cuda",
+      "apt": "sudo apt install -y nvidia-driver",
+      "pacman": "sudo pacman -S --noconfirm nvidia nvidia-utils",
+      "zypper": "sudo zypper install -y nvidia-glG05 nvidia-computeG05",
+      "apk": "# NVIDIA not supported on Alpine",
+      "unknown": "# Install NVIDIA driver with your package manager"
+    },
+    "nvidia_cuda": {
+      "dnf": "sudo dnf install -y cuda-toolkit",
+      "apt": "sudo apt install -y nvidia-cuda-toolkit",
+      "pacman": "sudo pacman -S --noconfirm cuda",
+      "zypper": "sudo zypper install -y cuda-toolkit",
+      "apk": "# CUDA not supported on Alpine",
+      "unknown": "# Install CUDA toolkit with your package manager"
+    },
+    "amd_rocm": {
+      "dnf": "sudo dnf install -y rocm-hip-runtime rocm-smi",
+      "apt": "sudo apt install -y rocm-hip-runtime rocm-smi-lib",
+      "pacman": "sudo pacman -S --noconfirm rocm-hip-runtime rocm-smi-lib",
+      "zypper": "sudo zypper install -y rocm-hip-runtime",
+      "apk": "# ROCm not supported on Alpine",
+      "unknown": "# Install ROCm with your package manager"
+    },
+    "intel_gpu": {
+      "dnf": "sudo dnf install -y intel-compute-runtime intel-opencl",
+      "apt": "sudo apt install -y intel-opencl-icd intel-level-zero-gpu level-zero",
+      "pacman": "sudo pacman -S --noconfirm intel-compute-runtime level-zero-loader",
+      "zypper": "sudo zypper install -y intel-opencl intel-level-zero-gpu",
+      "apk": "# Intel compute runtime not supported on Alpine",
+      "unknown": "# Install Intel compute runtime with your package manager"
+    }
+  },
+  "checks": {
+    "nvidia_driver": "nvidia-smi",
+    "nvidia_cuda": "nvcc --version",
+    "amd_rocm": "rocm-smi",
+    "intel_gpu": "clinfo | head -5"
+  }
+}

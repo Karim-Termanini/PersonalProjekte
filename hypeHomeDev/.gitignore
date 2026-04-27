@@ -1,0 +1,426 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+.pybuilder/
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# poetry
+poetry.lock
+
+# pdm
+.pdm.toml
+
+# PEP 582; used by e.g. github.com/David-OConnor/pyflow
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# Docker
+.env
+docker-compose.override.yml
+
+# Flatpak
+.flatpak-builder/
+repo/
+builddir/
+builddir-test/
+repo-test/
+*.flatpak
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-*
+*.code-workspace
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Linux
+*~
+
+# KDE directory preferences
+.directory
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+*.pid
+*.pid.lock
+
+# Config files (user-specific)
+~/.config/dev-home/
+
+# Logs
+*.log
+logs/
+
+# Coverage reports
+.coverage
+htmlcov/
+
+# Test results
+test-results/
+junit.xml
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Backup files
+*.bak
+*.backup
+
+# Secret files
+secrets.yml
+secrets.yaml
+*.secret
+*.key
+*.pem
+*.crt
+
+# Large files
+*.zip
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+
+# Media files
+*.mp4
+*.avi
+*.mov
+*.mp3
+*.wav
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+*.ico
+*.icns
+
+# Documentation builds
+docs/_build/
+site/
+
+# MkDocs
+site/
+
+# Sphinx
+_build/
+
+# Jupyter
+.ipynb_checkpoints
+
+# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# Visual Studio
+.vs/
+
+# JetBrains IDEs
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Eclipse
+.project
+.classpath
+.settings/
+bin/
+tmp/
+
+# NetBeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# Vim
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+*.un~
+Session.vim
+.netrwhist
+*~
+
+# Emacs
+*~
+\#*
+.\#*
+.DS_Store
+
+# Kate
+.*.kate-swp
+
+# Micro
+.*.micro/
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+*.pid
+*.pid.lock
+
+# System files
+.directory
+.trash-*
+lost+found/
+
+# Package files
+*.deb
+*.rpm
+*.exe
+*.msi
+*.dmg
+*.pkg
+
+# Archive files
+*.zip
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+
+# Binary files
+*.exe
+*.dll
+*.so
+*.dylib
+*.class
+*.o
+*.obj
+
+# Minified files
+*.min.js
+*.min.css
+
+# Map files
+*.map
+
+# Font files
+*.ttf
+*.otf
+*.woff
+*.woff2
+*.eot
+
+# Image files
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+*.ico
+*.icns
+*.svg
+# Exception: app icons for Flatpak/desktop
+!assets/icons/*.svg
+
+# Audio files
+*.mp3
+*.wav
+*.ogg
+*.flac
+
+# Video files
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.webm
+
+# Document files
+*.pdf
+*.doc
+*.docx
+*.xls
+*.xlsx
+*.ppt
+*.pptx
+*.odt
+*.ods
+*.odp
+
+# 3D files
+*.stl
+*.obj
+*.fbx
+*.blend
+
+# CAD files
+*.dwg
+*.dxf
+
+# Game files
+*.unity
+*.unitypackage
+*.asset
+*.prefab
+*.mat
+*.fbx
+*.blend
+
+# Other
+.cache/
+.node_modules/
+bower_components/
+.sass-cache/
+.jekyll-cache/
+.sass-cache/
+.scss-cache/
+.htaccess
+*/.htaccess
+error_log
+access_log.obsidian/

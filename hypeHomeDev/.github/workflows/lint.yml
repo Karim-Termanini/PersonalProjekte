@@ -1,0 +1,30 @@
+name: Lint
+
+on:
+  push:
+    branches:
+      - main
+      - "phase-*"
+  pull_request:
+    branches:
+      - main
+      - "phase-*"
+
+jobs:
+  lint:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Install Linting dependencies
+        run: |
+          python3 -m pip install --user --upgrade pip
+          python3 -m pip install --user ruff
+
+      - name: Run ruff (lint)
+        run: python3 -m ruff check src/ tests/
+
+      - name: Run ruff (format check)
+        run: python3 -m ruff format --check src/ tests/

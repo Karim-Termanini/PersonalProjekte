@@ -1,0 +1,33 @@
+name: Type Check
+
+on:
+  push:
+    branches:
+      - main
+      - "phase-*"
+  pull_request:
+    branches:
+      - main
+      - "phase-*"
+
+jobs:
+  type-check:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Install Python dependencies
+        run: |
+          python3 -m pip install --user aiohttp httpx cachetools python-dateutil
+          python3 -m pip install --user --no-deps PyGObject-stubs mypy
+
+      - name: Install project
+        run: |
+          python3 -m pip install --user --no-deps -e .
+
+      - name: Run mypy
+        run: |
+          export PYTHONPATH=$PYTHONPATH:src
+          python3 -m mypy -p app -p config -p core -p ui -p utils -m main --ignore-missing-imports --allow-untyped-defs --warn-return-any

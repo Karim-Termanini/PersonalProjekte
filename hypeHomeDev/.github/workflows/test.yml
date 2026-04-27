@@ -1,0 +1,53 @@
+# Default CI: one full run on your self-hosted runner (fast path, no duplicate Docker builds).
+# Cross-distro Docker: see workflow "Cross-distro (Docker)" (manual).
+
+name: Test
+
+on:
+  push:
+    branches:
+      - main
+      - "phase-*"
+  pull_request:
+    branches:
+      - main
+      - "phase-*"
+
+jobs:
+  test:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install Python dependencies
+        run: |
+          python3 -m pip install --user aiohttp httpx cachetools python-dateutil
+
+      - name: Install project
+        run: |
+          python3 -m pip install --user --no-deps -e .
+
+      - name: Run tests with coverage
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: |
+          export PYTHONPATH=$PYTHONPATH:src
+          xvfb-run python3 -m pytest tests/ --cov=app --cov=config --cov=core --cov=ui --cov=utils --cov-report=xml -q
+
+      - name: Upload coverage report
+        uses: codecov/codecov-action@v5
+        if: always()
+        with:
+          files: ./coverage.xml
+          fail_ci_if_error: false
+          verbose: true

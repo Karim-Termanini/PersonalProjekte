@@ -1,0 +1,175 @@
+{
+    "stacks": [
+        {
+            "id": "python_ds",
+            "name": "Python Data Science",
+            "description": "Jupyter, Pandas, Scipy, and Machine Learning essentials",
+            "icon": "python-symbolic",
+            "image": "fedora:latest",
+            "packages": [
+                "python3",
+                "python3-pip",
+                "python3-pandas",
+                "python3-numpy",
+                "python3-scipy",
+                "python3-matplotlib",
+                "python3-notebook",
+                "python3-venv",
+                "gcc",
+                "g++",
+                "git"
+            ],
+            "init_commands": [
+                "pip install --upgrade pip",
+                "pip install scikit-learn seaborn plotly",
+                "pip install jupyterlab ipykernel"
+            ],
+            "exports": [
+                "jupyter-notebook",
+                "jupyter-lab",
+                "python3"
+            ],
+            "env_vars": {
+                "PYTHONPATH": "/workspace:/home/user/.local/lib/python3.11/site-packages",
+                "JUPYTER_CONFIG_DIR": "/home/user/.jupyter"
+            },
+            "volumes": [
+                "${HOME}/.jupyter:/home/user/.jupyter",
+                "${HOME}/.local/share/jupyter:/home/user/.local/share/jupyter"
+            ],
+            "init_script": "#!/bin/bash\n# Python Data Science stack initialization\necho 'Setting up Python Data Science environment...'\npython3 -m pip install --user --upgrade pip setuptools wheel\nmkdir -p ~/.jupyter\ncat > ~/.jupyter/jupyter_notebook_config.py << 'EOF'\nc.NotebookApp.ip = '0.0.0.0'\nc.NotebookApp.open_browser = False\nc.NotebookApp.port = 8888\nEOF\necho 'Python Data Science stack ready!'"
+        },
+        {
+            "id": "node_web",
+            "name": "Node.js Web Dev",
+            "description": "Modern frontend development with Node, Yarn, and PNPM",
+            "icon": "web-browser-symbolic",
+            "image": "node:20-alpine",
+            "packages": [
+                "curl",
+                "git",
+                "bash"
+            ],
+            "init_commands": [
+                "npm install -g yarn pnpm typescript vitest @angular/cli vue-cli",
+                "npm install -g eslint prettier"
+            ],
+            "exports": [
+                "node",
+                "npm",
+                "yarn",
+                "pnpm"
+            ],
+            "env_vars": {
+                "NODE_ENV": "development",
+                "NPM_CONFIG_PREFIX": "/home/user/.npm-global"
+            },
+            "volumes": [
+                "${HOME}/.npm:/home/user/.npm",
+                "${HOME}/.config/yarn:/home/user/.config/yarn"
+            ],
+            "init_script": "#!/bin/bash\n# Node.js Web Dev stack initialization\necho 'Setting up Node.js Web Development environment...'\nmkdir -p ~/.npm-global\nnpm config set prefix '~/.npm-global'\necho 'export PATH=~/.npm-global/bin:$PATH' >> ~/.bashrc\nexport PATH=~/.npm-global/bin:$PATH\nnpm install -g create-react-app create-next-app\necho 'Node.js Web Dev stack ready!'"
+        },
+        {
+            "id": "rust_backend",
+            "name": "Rust Backend",
+            "description": "Systems programming with Rustup, Cargo, and essential tools",
+            "icon": "system-run-symbolic",
+            "image": "rust:latest",
+            "packages": [
+                "curl",
+                "git",
+                "gcc",
+                "g++",
+                "make",
+                "openssl-devel",
+                "pkg-config"
+            ],
+            "init_commands": [
+                "rustup component add rust-analyzer clippy rustfmt",
+                "cargo install cargo-watch cargo-edit cargo-audit"
+            ],
+            "exports": [
+                "cargo",
+                "rustc",
+                "rustup"
+            ],
+            "env_vars": {
+                "CARGO_HOME": "/home/user/.cargo",
+                "RUSTUP_HOME": "/home/user/.rustup",
+                "RUST_BACKTRACE": "1"
+            },
+            "volumes": [
+                "${HOME}/.cargo:/home/user/.cargo",
+                "${HOME}/.rustup:/home/user/.rustup"
+            ],
+            "init_script": "#!/bin/bash\n# Rust Backend stack initialization\necho 'Setting up Rust Backend environment...'\nrustup default stable\nrustup update\ncargo install --locked trunk\necho 'Rust Backend stack ready!'"
+        },
+        {
+            "id": "go_services",
+            "name": "Go Services",
+            "description": "Scalable service development with Go and hot-reloading",
+            "icon": "application-x-executable-symbolic",
+            "image": "golang:latest",
+            "packages": [
+                "git",
+                "make",
+                "curl",
+                "wget"
+            ],
+            "init_commands": [
+                "go install golang.org/x/tools/gopls@latest",
+                "go install github.com/go-delve/delve/cmd/dlv@latest",
+                "go install github.com/cosmtrek/air@latest"
+            ],
+            "exports": [
+                "go",
+                "air",
+                "gopls"
+            ],
+            "env_vars": {
+                "GOPATH": "/home/user/go",
+                "GO111MODULE": "on",
+                "GOPROXY": "https://proxy.golang.org,direct"
+            },
+            "volumes": [
+                "${HOME}/go:/home/user/go"
+            ],
+            "init_script": "#!/bin/bash\n# Go Services stack initialization\necho 'Setting up Go Services environment...'\nmkdir -p ~/go/src ~/go/bin ~/go/pkg\necho 'export GOPATH=$HOME/go' >> ~/.bashrc\necho 'export PATH=$PATH:$GOPATH/bin' >> ~/.bashrc\ngo install github.com/cespare/reflex@latest\necho 'Go Services stack ready!'"
+        },
+        {
+            "id": "java_microservices",
+            "name": "Java Microservices",
+            "description": "Enterprise Java development with Maven, Spring Boot, and Gradle",
+            "icon": "application-x-java-symbolic",
+            "image": "eclipse-temurin:21-jdk",
+            "packages": [
+                "maven",
+                "gradle",
+                "git",
+                "curl",
+                "wget"
+            ],
+            "init_commands": [
+                "curl -s \"https://get.sdkman.io\" | bash",
+                "source \"$HOME/.sdkman/bin/sdkman-init.sh\"",
+                "sdk install springboot"
+            ],
+            "exports": [
+                "java",
+                "javac",
+                "mvn",
+                "gradle"
+            ],
+            "env_vars": {
+                "JAVA_HOME": "/usr/lib/jvm/java-21-openjdk",
+                "MAVEN_OPTS": "-Xmx1024m"
+            },
+            "volumes": [
+                "${HOME}/.m2:/home/user/.m2",
+                "${HOME}/.gradle:/home/user/.gradle"
+            ],
+            "init_script": "#!/bin/bash\n# Java Microservices stack initialization\necho 'Setting up Java Microservices environment...'\nsource \"$HOME/.sdkman/bin/sdkman-init.sh\" 2>/dev/null || true\nsdk install maven 3.9.6\nsdk install gradle 8.7\necho 'Java Microservices stack ready!'"
+        }
+    ]
+}

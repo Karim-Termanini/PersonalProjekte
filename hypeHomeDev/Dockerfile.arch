@@ -1,0 +1,51 @@
+# Dockerfile.arch for HypeDevHome cross-distro testing
+# Base: Arch Linux (Latest)
+FROM archlinux:latest
+
+# Refresh keyring then full sync (avoids signing/key errors in minimal CI images)
+RUN pacman-key --init \
+    && pacman -Sy --noconfirm archlinux-keyring \
+    && pacman-key --populate archlinux \
+    && pacman -Syu --noconfirm && \
+    pacman -S --noconfirm \
+    python \
+    python-pip \
+    gtk4 \
+    libadwaita \
+    gobject-introspection \
+    cairo \
+    meson \
+    gcc \
+    make \
+    pkg-config \
+    git \
+    sudo \
+    xorg-server-xvfb \
+    dbus
+
+# Create a non-root user
+RUN useradd -m -s /bin/bash dev && \
+    echo "dev ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+# Set working directory
+WORKDIR /app
+
+# Copy project files
+COPY . /app
+
+# Set environment variables for GTK / Python
+ENV PYTHONPATH=/app/src
+ENV PYTHONUNBUFFERED=1
+
+# Install Python dependencies (single stack: pip-built PyGObject; do not install pacman python-gobject).
+RUN if [ -f "pyproject.toml" ]; then \
+    pip install --no-cache-dir --break-system-packages -e ".[dev]"; \
+    fi
+
+RUN chown -R dev:dev /app
+
+# Switch to non-root user
+USER dev
+
+# Default command
+CMD ["bash"]

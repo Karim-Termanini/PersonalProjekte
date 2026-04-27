@@ -1,0 +1,57 @@
+# Dockerfile.ubuntu for HypeDevHome cross-distro testing
+# Base: Ubuntu 24.04 (Noble)
+FROM ubuntu:24.04
+
+# Avoid interaction during package install
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip \
+    python3-gi \
+    python3-gi-cairo \
+    gir1.2-gtk-4.0 \
+    gir1.2-adw-1 \
+    libadwaita-1-dev \
+    libgirepository1.0-dev \
+    libgirepository-2.0-dev \
+    gcc \
+    g++ \
+    make \
+    pkg-config \
+    git \
+    sudo \
+    xvfb \
+    dbus \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create a non-root user
+RUN useradd -m -s /bin/bash dev && \
+    echo "dev ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+# Set working directory
+WORKDIR /app
+
+# Copy project files
+COPY . /app
+
+# Set environment variables for GTK / Python
+ENV PYTHONPATH=/app/src
+ENV PYTHONUNBUFFERED=1
+
+# Install Python dependencies
+# Ubuntu 24.04 requires --break-system-packages for pip outside venv.
+# --ignore-installed: apt's python3-gi ships PyGObject; pip cannot uninstall it safely.
+RUN if [ -f "pyproject.toml" ]; then \
+    pip3 install --no-cache-dir --break-system-packages --ignore-installed -e ".[dev]"; \
+    fi
+
+# Repo is root-owned after COPY; dev needs write for pytest cache and temp files.
+RUN chown -R dev:dev /app
+
+# Switch to non-root user
+USER dev
+
+# Default command
+CMD ["bash"]

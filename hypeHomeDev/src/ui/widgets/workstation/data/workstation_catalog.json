@@ -1,0 +1,1524 @@
+{
+  "schema_version": 2,
+  "placeholders": {
+    "GO_VERSION": "1.23.4",
+    "GO_ARCH": "linux-amd64",
+    "NVM_VERSION": "0.40.1",
+    "USER_NAME": "Your Name",
+    "USER_EMAIL": "you@example.com"
+  },
+  "categories": [
+    {
+      "id": "dev",
+      "label": "Dev",
+      "groups": [
+        {
+          "title": "Python",
+          "description": "uv is the modern fast installer; pipx for CLI tools; pyenv for version management.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Install uv (recommended)",
+              "command": "curl -LsSf https://astral.sh/uv/install.sh | sh",
+              "check_cmd": "uv --version"
+            },
+            {
+              "type": "runnable",
+              "title": "Install Python via uv",
+              "command": "uv python install 3.12"
+            },
+            {
+              "type": "runnable",
+              "title": "Install pipx",
+              "distro_install": "pipx",
+              "check_cmd": "pipx --version"
+            },
+            {
+              "type": "runnable",
+              "title": "Install pyenv",
+              "command": "curl https://pyenv.run | bash",
+              "check_cmd": "pyenv --version"
+            },
+            {
+              "type": "runnable",
+              "title": "Install system Python",
+              "distro_install": "python3 python3-pip python3-venv",
+              "check_cmd": "python3 --version"
+            }
+          ]
+        },
+        {
+          "title": "Rust",
+          "description": "rustup manages Rust toolchains, cargo is the build system.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Install rustup + stable",
+              "command": "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y",
+              "check_cmd": "rustc --version"
+            },
+            {
+              "type": "runnable",
+              "title": "Update Rust",
+              "command": "rustup update"
+            },
+            {
+              "type": "runnable",
+              "title": "Install nightly",
+              "command": "rustup toolchain install nightly"
+            }
+          ]
+        },
+        {
+          "title": "Go",
+          "description": "Install from the official tarball or your distro package manager.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Install Go (distro)",
+              "distro_install": "golang",
+              "check_cmd": "go version"
+            },
+            {
+              "type": "runnable",
+              "title": "Install Go (official)",
+              "command": "curl -fsSL https://go.dev/dl/go{{GO_VERSION}}.{{GO_ARCH}}.tar.gz | sudo tar -C /usr/local -xzf -"
+            }
+          ]
+        },
+        {
+          "title": "Node.js",
+          "description": "nvm for version management; fnm as a faster alternative.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Install nvm",
+              "command": "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v{{NVM_VERSION}}/install.sh | bash",
+              "check_cmd": "nvm --version"
+            },
+            {
+              "type": "runnable",
+              "title": "Install Node LTS (via nvm)",
+              "command": "nvm install --lts"
+            },
+            {
+              "type": "runnable",
+              "title": "Install fnm (fast alt)",
+              "command": "curl -fsSL https://fnm.vercel.app/install | bash",
+              "check_cmd": "fnm --version"
+            },
+            {
+              "type": "runnable",
+              "title": "Install Node (distro)",
+              "distro_install": "nodejs npm",
+              "check_cmd": "node --version"
+            }
+          ]
+        },
+        {
+          "title": "Java",
+          "description": "SDKMAN manages JDKs and tools (Gradle, Maven, etc.).",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Install SDKMAN",
+              "command": "curl -s \"https://get.sdkman.io\" | bash",
+              "check_cmd": "sdk version"
+            },
+            {
+              "type": "runnable",
+              "title": "Install Java 21 (SDKMAN)",
+              "command": "sdk install java 21-open"
+            },
+            {
+              "type": "runnable",
+              "title": "Install OpenJDK (distro)",
+              "distro_packages": {
+                "dnf": "java-21-openjdk-devel",
+                "apt": "openjdk-21-jdk",
+                "pacman": "jdk-openjdk",
+                "zypper": "java-21-openjdk-devel",
+                "apk": "openjdk21",
+                "unknown": "openjdk-21-jdk"
+              },
+              "check_cmd": "java --version"
+            },
+            {
+              "type": "runnable",
+              "title": "Install Maven",
+              "distro_install": "maven",
+              "check_cmd": "mvn --version"
+            },
+            {
+              "type": "runnable",
+              "title": "Install Gradle (SDKMAN)",
+              "command": "sdk install gradle"
+            }
+          ]
+        },
+        {
+          "title": "C / C++",
+          "description": "Compiler toolchain + build systems.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Install C/C++ toolchain",
+              "distro_packages": {
+                "dnf": "gcc gcc-c++ make cmake gdb",
+                "apt": "build-essential cmake gdb",
+                "pacman": "base-devel cmake gdb",
+                "zypper": "gcc gcc-c++ make cmake gdb",
+                "apk": "build-base cmake gdb",
+                "unknown": "gcc g++ make cmake gdb"
+              },
+              "check_cmd": "gcc --version"
+            },
+            {
+              "type": "runnable",
+              "title": "Install Clang",
+              "distro_install": "clang",
+              "check_cmd": "clang --version"
+            }
+          ]
+        },
+        {
+          "title": ".NET / C#",
+          "description": "Official .NET SDK for building C# / F# / VB.NET applications.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Install .NET SDK",
+              "distro_install": "dotnet-sdk-8.0",
+              "check_cmd": "dotnet --version"
+            }
+          ]
+        },
+        {
+          "title": "PHP",
+          "description": "PHP runtime + Composer package manager.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Install PHP",
+              "distro_install": "php php-cli php-mbstring",
+              "check_cmd": "php --version"
+            },
+            {
+              "type": "runnable",
+              "title": "Install Composer",
+              "command": "curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer",
+              "check_cmd": "composer --version"
+            }
+          ]
+        }
+      ],
+      "removal_groups": [
+        {
+          "title": "Python",
+          "description": "Remove Python version managers and tools.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Uninstall uv",
+              "command": "rm -rf ~/.cargo/bin/uv ~/.cargo/bin/uvx"
+            },
+            {
+              "type": "runnable",
+              "title": "Uninstall pyenv",
+              "command": "rm -rf ~/.pyenv"
+            },
+            {
+              "type": "runnable",
+              "title": "Uninstall pipx",
+              "command": "pipx uninstall-all && pip uninstall pipx"
+            },
+            {
+              "type": "runnable",
+              "title": "Remove pip cache",
+              "command": "pip cache purge"
+            },
+            {
+              "type": "runnable",
+              "title": "Remove uv cache",
+              "command": "uv cache clean"
+            }
+          ]
+        },
+        {
+          "title": "Rust",
+          "description": "Remove rustup, toolchains, and cargo caches.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Remove a toolchain",
+              "command": "rustup toolchain uninstall stable"
+            },
+            {
+              "type": "runnable",
+              "title": "Uninstall rustup entirely",
+              "command": "rustup self uninstall"
+            },
+            {
+              "type": "runnable",
+              "title": "Clean cargo cache",
+              "command": "cargo cache -a 2>/dev/null || rm -rf ~/.cargo/registry ~/.cargo/git"
+            }
+          ]
+        },
+        {
+          "title": "Go",
+          "description": "Remove Go installation and caches.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Remove Go (official)",
+              "command": "sudo rm -rf /usr/local/go"
+            },
+            {
+              "type": "runnable",
+              "title": "Remove Go (distro)",
+              "distro_remove": "golang"
+            },
+            {
+              "type": "runnable",
+              "title": "Clean module cache",
+              "command": "go clean -modcache"
+            },
+            {
+              "type": "runnable",
+              "title": "Clean build cache",
+              "command": "go clean -cache"
+            }
+          ]
+        },
+        {
+          "title": "Node.js",
+          "description": "Remove Node version managers and npm cache.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Uninstall Node version (nvm)",
+              "command": "nvm uninstall VERSION"
+            },
+            {
+              "type": "runnable",
+              "title": "Uninstall nvm",
+              "command": "rm -rf ~/.nvm"
+            },
+            {
+              "type": "runnable",
+              "title": "Uninstall fnm",
+              "command": "rm -rf ~/.local/share/fnm ~/.fnm"
+            },
+            {
+              "type": "runnable",
+              "title": "Remove Node (distro)",
+              "distro_remove": "nodejs npm"
+            },
+            {
+              "type": "runnable",
+              "title": "Clean npm cache",
+              "command": "npm cache clean --force"
+            }
+          ]
+        },
+        {
+          "title": "Java / SDKMAN",
+          "description": "Remove JDKs and SDKMAN.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Uninstall Java (SDKMAN)",
+              "command": "sdk uninstall java VERSION"
+            },
+            {
+              "type": "runnable",
+              "title": "Uninstall SDKMAN",
+              "command": "rm -rf ~/.sdkman"
+            },
+            {
+              "type": "runnable",
+              "title": "Remove OpenJDK (distro)",
+              "distro_remove": "java-21-openjdk-devel"
+            },
+            {
+              "type": "runnable",
+              "title": "Remove Maven (distro)",
+              "distro_remove": "maven"
+            }
+          ]
+        },
+        {
+          "title": "C / C++",
+          "description": "Remove compilers and build tools.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Remove C/C++ toolchain",
+              "distro_remove_packages": {
+                "dnf": "gcc gcc-c++ cmake gdb",
+                "apt": "build-essential cmake gdb",
+                "pacman": "base-devel cmake gdb",
+                "zypper": "gcc gcc-c++ cmake gdb",
+                "apk": "build-base cmake gdb",
+                "unknown": "gcc g++ cmake gdb"
+              }
+            },
+            {
+              "type": "runnable",
+              "title": "Remove Clang",
+              "distro_remove": "clang"
+            }
+          ]
+        },
+        {
+          "title": ".NET",
+          "description": "Remove .NET SDK.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Remove .NET SDK",
+              "distro_remove": "dotnet-sdk-8.0"
+            }
+          ]
+        },
+        {
+          "title": "PHP",
+          "description": "Remove PHP and Composer.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Remove PHP",
+              "distro_remove": "php php-cli php-mbstring"
+            },
+            {
+              "type": "runnable",
+              "title": "Remove Composer",
+              "command": "sudo rm -f /usr/local/bin/composer"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "editors",
+      "label": "Editors",
+      "groups": [
+        {
+          "title": "Visual Studio Code",
+          "description": "Microsoft's editor. Flatpak or official repo.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Install (Flatpak)",
+              "flatpak": "com.visualstudio.Code",
+              "check_cmd": "flatpak info com.visualstudio.Code"
+            },
+            {
+              "type": "runnable",
+              "title": "Install (RPM repo — Fedora)",
+              "pm_only": "dnf",
+              "command": "sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc && printf '[code]\\nname=Visual Studio Code\\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\\nenabled=1\\ngpgcheck=1\\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc\\n' | sudo tee /etc/yum.repos.d/vscode.repo > /dev/null && sudo dnf install -y code"
+            }
+          ]
+        },
+        {
+          "title": "Cursor",
+          "description": "AI-native code editor. AppImage download.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Download Cursor AppImage",
+              "command": "curl -fsSL https://www.cursor.com/api/download?platform=linux-x64 -o \"$HOME/Downloads/cursor.appimage\" && chmod +x \"$HOME/Downloads/cursor.appimage\"",
+              "check_cmd": "which cursor"
+            }
+          ]
+        },
+        {
+          "title": "Zed",
+          "description": "High-performance GPU-accelerated editor written in Rust.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Install Zed",
+              "command": "curl -f https://zed.dev/install.sh | sh",
+              "check_cmd": "which zed"
+            }
+          ]
+        },
+        {
+          "title": "Sublime Text",
+          "description": "Fast, lightweight text editor.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Install (Flatpak)",
+              "flatpak": "com.sublimetext.three",
+              "check_cmd": "flatpak info com.sublimetext.three"
+            },
+            {
+              "type": "runnable",
+              "title": "Install (distro)",
+              "distro_install": "sublime-text",
+              "check_cmd": "which subl"
+            }
+          ]
+        },
+        {
+          "title": "Neovim",
+          "description": "Hyperextensible terminal-based editor.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Install Neovim",
+              "distro_install": "neovim",
+              "check_cmd": "nvim --version"
+            },
+            {
+              "type": "runnable",
+              "title": "Install (AppImage latest)",
+              "command": "curl -fsSLo \"$HOME/Downloads/nvim.appimage\" https://github.com/neovim/neovim/releases/latest/download/nvim.appimage && chmod +x \"$HOME/Downloads/nvim.appimage\""
+            }
+          ]
+        },
+        {
+          "title": "Emacs",
+          "description": "The extensible, self-documenting editor.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Install Emacs",
+              "distro_install": "emacs",
+              "check_cmd": "emacs --version"
+            }
+          ]
+        },
+        {
+          "title": "JetBrains Toolbox",
+          "description": "Manage all JetBrains IDEs (IntelliJ, PyCharm, WebStorm, etc.).",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Install (Flatpak)",
+              "flatpak": "com.jetbrains.Toolbox",
+              "check_cmd": "flatpak info com.jetbrains.Toolbox"
+            }
+          ]
+        }
+      ],
+      "removal_groups": [
+        {
+          "title": "VS Code",
+          "description": "Remove Visual Studio Code and its configuration.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Uninstall (Flatpak)",
+              "flatpak_remove": "com.visualstudio.Code"
+            },
+            {
+              "type": "runnable",
+              "title": "Uninstall (distro)",
+              "distro_remove": "code"
+            },
+            {
+              "type": "runnable",
+              "title": "Remove config",
+              "command": "rm -rf ~/.config/Code ~/.vscode"
+            }
+          ]
+        },
+        {
+          "title": "Cursor",
+          "description": "Remove Cursor editor.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Remove AppImage",
+              "command": "rm -f ~/Downloads/cursor.appimage"
+            },
+            {
+              "type": "runnable",
+              "title": "Remove config",
+              "command": "rm -rf ~/.config/Cursor ~/.cursor"
+            }
+          ]
+        },
+        {
+          "title": "Zed",
+          "description": "Remove Zed editor.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Uninstall Zed",
+              "command": "rm -rf ~/.local/bin/zed ~/.local/share/zed"
+            },
+            {
+              "type": "runnable",
+              "title": "Remove config",
+              "command": "rm -rf ~/.config/zed"
+            }
+          ]
+        },
+        {
+          "title": "Sublime Text",
+          "description": "Remove Sublime Text.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Uninstall (Flatpak)",
+              "flatpak_remove": "com.sublimetext.three"
+            },
+            {
+              "type": "runnable",
+              "title": "Uninstall (distro)",
+              "distro_remove": "sublime-text"
+            },
+            {
+              "type": "runnable",
+              "title": "Remove config",
+              "command": "rm -rf ~/.config/sublime-text"
+            }
+          ]
+        },
+        {
+          "title": "Neovim",
+          "description": "Remove Neovim and its configuration.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Uninstall (distro)",
+              "distro_remove": "neovim"
+            },
+            {
+              "type": "runnable",
+              "title": "Remove AppImage",
+              "command": "rm -f ~/Downloads/nvim.appimage"
+            },
+            {
+              "type": "runnable",
+              "title": "Remove config + data",
+              "command": "rm -rf ~/.config/nvim ~/.local/share/nvim ~/.local/state/nvim"
+            }
+          ]
+        },
+        {
+          "title": "Emacs",
+          "description": "Remove Emacs and its configuration.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Uninstall (distro)",
+              "distro_remove": "emacs"
+            },
+            {
+              "type": "runnable",
+              "title": "Remove config",
+              "command": "rm -rf ~/.emacs.d ~/.config/emacs"
+            }
+          ]
+        },
+        {
+          "title": "JetBrains Toolbox",
+          "description": "Remove JetBrains Toolbox and all managed IDEs.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Uninstall (Flatpak)",
+              "flatpak_remove": "com.jetbrains.Toolbox"
+            },
+            {
+              "type": "runnable",
+              "title": "Remove Toolbox + IDEs",
+              "command": "rm -rf ~/.local/share/JetBrains ~/.config/JetBrains"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "terminals",
+      "label": "Terminals",
+      "groups": [
+        {
+          "title": "Alacritty",
+          "description": "GPU-accelerated terminal emulator.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Install Alacritty",
+              "distro_install": "alacritty",
+              "check_cmd": "alacritty --version"
+            }
+          ]
+        },
+        {
+          "title": "Ghostty",
+          "description": "Fast, native terminal by Mitchell Hashimoto.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Install (Flatpak)",
+              "flatpak": "com.mitchellh.ghostty",
+              "check_cmd": "flatpak info com.mitchellh.ghostty"
+            },
+            {
+              "type": "runnable",
+              "title": "Build from source",
+              "command": "git clone https://github.com/ghostty-org/ghostty && cd ghostty && zig build -Doptimize=ReleaseFast"
+            }
+          ]
+        },
+        {
+          "title": "Kitty",
+          "description": "Feature-rich GPU-based terminal.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Install Kitty",
+              "distro_install": "kitty",
+              "check_cmd": "kitty --version"
+            },
+            {
+              "type": "runnable",
+              "title": "Install (official script)",
+              "command": "curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin"
+            }
+          ]
+        },
+        {
+          "title": "WezTerm",
+          "description": "GPU-accelerated terminal with Lua configuration.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Install (Flatpak)",
+              "flatpak": "org.wezfurlong.wezterm",
+              "check_cmd": "flatpak info org.wezfurlong.wezterm"
+            },
+            {
+              "type": "runnable",
+              "title": "Install (distro)",
+              "distro_install": "wezterm",
+              "check_cmd": "wezterm --version"
+            }
+          ]
+        },
+        {
+          "title": "tmux",
+          "description": "Terminal multiplexer.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Install tmux",
+              "distro_install": "tmux",
+              "check_cmd": "tmux -V"
+            }
+          ]
+        },
+        {
+          "title": "Starship",
+          "description": "Cross-shell prompt.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Install Starship",
+              "command": "curl -sS https://starship.rs/install.sh | sh",
+              "check_cmd": "starship --version"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "alacritty_cfg",
+      "label": "Alacritty Config",
+      "groups": [
+        {
+          "title": "General",
+          "description": "Config: ~/.config/alacritty/alacritty.toml",
+          "rows": [
+            {
+              "title": "Create config dir",
+              "command": "mkdir -p ~/.config/alacritty"
+            },
+            {
+              "type": "terminal",
+              "title": "Open config in vim",
+              "command": "vim ~/.config/alacritty/alacritty.toml"
+            }
+          ]
+        },
+        {
+          "title": "Font",
+          "description": "Set font family and size.",
+          "rows": [
+            {
+              "title": "Set font (JetBrains Mono 13)",
+              "command": "[font]\nsize = 13.0\n\n[font.normal]\nfamily = \"JetBrains Mono\"\nstyle = \"Regular\"\n",
+              "tag": "~/.config/alacritty/alacritty.toml:font"
+            }
+          ]
+        },
+        {
+          "title": "Themes",
+          "rows": [
+            {
+              "title": "Import themes repo",
+              "command": "git clone https://github.com/alacritty/alacritty-theme ~/.config/alacritty/themes"
+            },
+            {
+              "title": "Set Dracula theme",
+              "command": "import = [\"~/.config/alacritty/themes/themes/dracula.toml\"]\n",
+              "tag": "~/.config/alacritty/alacritty.toml:theme"
+            }
+          ]
+        }
+      ],
+      "removal_groups": [
+        {
+          "title": "Alacritty",
+          "description": "Remove Alacritty and its config.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Uninstall (distro)",
+              "distro_remove": "alacritty"
+            },
+            {
+              "type": "runnable",
+              "title": "Remove config",
+              "command": "rm -rf ~/.config/alacritty"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ghostty_cfg",
+      "label": "Ghostty Config",
+      "groups": [
+        {
+          "title": "General",
+          "description": "Config: ~/.config/ghostty/config",
+          "rows": [
+            {
+              "title": "Create config dir",
+              "command": "mkdir -p ~/.config/ghostty"
+            },
+            {
+              "type": "terminal",
+              "title": "Open config in vim",
+              "command": "vim ~/.config/ghostty/config"
+            }
+          ]
+        },
+        {
+          "title": "Appearance",
+          "rows": [
+            {
+              "title": "Set font (JetBrains Mono 13)",
+              "command": "font-family = JetBrains Mono\nfont-size = 13\n",
+              "tag": "~/.config/ghostty/config:font"
+            },
+            {
+              "title": "Set Dracula theme",
+              "command": "theme = Dracula\n",
+              "tag": "~/.config/ghostty/config:theme"
+            },
+            {
+              "title": "Opacity + Padding",
+              "command": "background-opacity = 0.92\nwindow-padding-x = 8\nwindow-padding-y = 8\n",
+              "tag": "~/.config/ghostty/config:window"
+            }
+          ]
+        }
+      ],
+      "removal_groups": [
+        {
+          "title": "Ghostty",
+          "description": "Remove Ghostty and its config.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Uninstall (Flatpak)",
+              "flatpak_remove": "com.mitchellh.ghostty"
+            },
+            {
+              "type": "runnable",
+              "title": "Uninstall (distro)",
+              "distro_remove": "ghostty"
+            },
+            {
+              "type": "runnable",
+              "title": "Remove config",
+              "command": "rm -rf ~/.config/ghostty"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tmux_cfg",
+      "label": "tmux Config",
+      "groups": [
+        {
+          "title": "General",
+          "description": "Config: ~/.tmux.conf",
+          "rows": [
+            {
+              "type": "terminal",
+              "title": "Open config in vim",
+              "command": "vim ~/.tmux.conf"
+            },
+            {
+              "title": "Reload config",
+              "command": "tmux source-file ~/.tmux.conf"
+            }
+          ]
+        },
+        {
+          "title": "Settings",
+          "rows": [
+            {
+              "title": "Set prefix to Ctrl+A",
+              "command": "unbind C-b\nset -g prefix C-a\nbind C-a send-prefix\n",
+              "tag": "~/.tmux.conf:prefix"
+            },
+            {
+              "title": "Enable mouse mode",
+              "command": "set -g mouse on\n",
+              "tag": "~/.tmux.conf:mouse"
+            },
+            {
+              "title": "256 color support",
+              "command": "set -g default-terminal \"tmux-256color\"\nset -ag terminal-overrides \",xterm-256color:RGB\"\n",
+              "tag": "~/.tmux.conf:colors"
+            }
+          ]
+        },
+        {
+          "title": "Plugins (TPM)",
+          "rows": [
+            {
+              "title": "Install TPM",
+              "command": "git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm"
+            },
+            {
+              "title": "Add TPM to config",
+              "command": "set -g @plugin \"tmux-plugins/tpm\"\nset -g @plugin \"tmux-plugins/tmux-sensible\"\nrun \"~/.tmux/plugins/tpm/tpm\"\n",
+              "tag": "~/.tmux.conf:tpm"
+            }
+          ]
+        }
+      ],
+      "removal_groups": [
+        {
+          "title": "tmux",
+          "description": "Remove tmux, config, and plugins.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Uninstall (distro)",
+              "distro_remove": "tmux"
+            },
+            {
+              "type": "runnable",
+              "title": "Remove config",
+              "command": "rm -f ~/.tmux.conf"
+            },
+            {
+              "type": "runnable",
+              "title": "Remove plugins (TPM)",
+              "command": "rm -rf ~/.tmux"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "zsh_cfg",
+      "label": "Zsh Config",
+      "groups": [
+        {
+          "title": "General",
+          "description": "Config: ~/.zshrc",
+          "rows": [
+            {
+              "type": "terminal",
+              "title": "Open config in vim",
+              "command": "vim ~/.zshrc"
+            },
+            {
+              "title": "Reload config",
+              "command": "source ~/.zshrc"
+            }
+          ]
+        },
+        {
+          "title": "Plugins &amp; Themes",
+          "rows": [
+            {
+              "title": "Set agnoster theme",
+              "command": "sed -i 's/ZSH_THEME=.*/ZSH_THEME=\"agnoster\"/' ~/.zshrc"
+            },
+            {
+              "title": "Common dev aliases",
+              "command": "alias ll=\"ls -lah\"\nalias gs=\"git status\"\nalias gp=\"git push\"\nalias dc=\"docker compose\"\n",
+              "tag": "~/.zshrc:aliases"
+            }
+          ]
+        }
+      ],
+      "removal_groups": [
+        {
+          "title": "Zsh + Oh My Zsh",
+          "description": "Remove Zsh and Oh My Zsh.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Uninstall Oh My Zsh",
+              "command": "rm -rf ~/.oh-my-zsh"
+            },
+            {
+              "type": "runnable",
+              "title": "Uninstall Zsh (distro)",
+              "distro_remove": "zsh"
+            },
+            {
+              "type": "runnable",
+              "title": "Reset default shell",
+              "command": "chsh -s /bin/bash"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "kitty_cfg",
+      "label": "Kitty Config",
+      "groups": [
+        {
+          "title": "Appearance",
+          "description": "Config: ~/.config/kitty/kitty.conf",
+          "rows": [
+            {
+              "title": "Set font (JetBrains Mono 13)",
+              "command": "font_family JetBrains Mono\nfont_size 13.0\nbold_font auto\nitalic_font auto\n",
+              "tag": "~/.config/kitty/kitty.conf:font"
+            },
+            {
+              "title": "Set Dracula theme",
+              "command": "kitty +kitten themes --reload-in=all Dracula"
+            },
+            {
+              "title": "Opacity + Padding",
+              "command": "background_opacity 0.92\nwindow_padding_width 8\nhide_window_decorations no\n",
+              "tag": "~/.config/kitty/kitty.conf:window"
+            }
+          ]
+        }
+      ],
+      "removal_groups": [
+        {
+          "title": "Kitty",
+          "description": "Remove Kitty and its config.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Uninstall (distro)",
+              "distro_remove": "kitty"
+            },
+            {
+              "type": "runnable",
+              "title": "Uninstall (official script)",
+              "command": "rm -rf ~/.local/kitty.app"
+            },
+            {
+              "type": "runnable",
+              "title": "Remove config",
+              "command": "rm -rf ~/.config/kitty"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "wezterm_cfg",
+      "label": "WezTerm Config",
+      "groups": [
+        {
+          "title": "General",
+          "description": "Config: ~/.config/wezterm/wezterm.lua — use WezTerm docs for full Lua config.",
+          "rows": [
+            {
+              "title": "Create config dir",
+              "command": "mkdir -p ~/.config/wezterm"
+            },
+            {
+              "type": "terminal",
+              "title": "Open config in vim",
+              "command": "vim ~/.config/wezterm/wezterm.lua"
+            }
+          ]
+        }
+      ],
+      "removal_groups": [
+        {
+          "title": "WezTerm",
+          "description": "Remove WezTerm and its config.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Uninstall (Flatpak)",
+              "flatpak_remove": "org.wezfurlong.wezterm"
+            },
+            {
+              "type": "runnable",
+              "title": "Uninstall (distro)",
+              "distro_remove": "wezterm"
+            },
+            {
+              "type": "runnable",
+              "title": "Remove config (legacy)",
+              "command": "rm -f ~/.wezterm.lua"
+            },
+            {
+              "type": "runnable",
+              "title": "Remove config dir",
+              "command": "rm -rf ~/.config/wezterm"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "starship_cfg",
+      "label": "Starship Config",
+      "groups": [
+        {
+          "title": "General",
+          "description": "Config: ~/.config/starship.toml",
+          "rows": [
+            {
+              "title": "Add to bash",
+              "command": "eval \"$(starship init bash)\"\n",
+              "tag": "~/.bashrc:starship"
+            },
+            {
+              "title": "Add to zsh",
+              "command": "eval \"$(starship init zsh)\"\n",
+              "tag": "~/.zshrc:starship"
+            },
+            {
+              "title": "Nerd Font Symbols",
+              "command": "starship preset nerd-font-symbols -o ~/.config/starship.toml"
+            }
+          ]
+        }
+      ],
+      "removal_groups": [
+        {
+          "title": "Starship",
+          "description": "Remove Starship prompt.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Remove binary",
+              "command": "rm -f ~/.local/bin/starship /usr/local/bin/starship"
+            },
+            {
+              "type": "runnable",
+              "title": "Remove config",
+              "command": "rm -f ~/.config/starship.toml"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cleanup",
+      "label": "Cleanup",
+      "groups": [
+        {
+          "title": "Distro and Flatpak (copy templates)",
+          "description": "Replace PACKAGENAME / APP_ID / SNAPNAME before running. For searchable removal, use Install → Packages.",
+          "rows": [
+            {
+              "type": "copy",
+              "pm_only": "dnf",
+              "title": "Remove one package",
+              "distro_remove": "PACKAGENAME"
+            },
+            {
+              "type": "copy",
+              "pm_only": "dnf",
+              "title": "List installed (verbose)",
+              "command": "dnf list --installed"
+            },
+            {
+              "type": "copy",
+              "pm_only": "dnf",
+              "title": "Search name in installed RPMs",
+              "command": "rpm -qa | grep -i partial_name"
+            },
+            {
+              "type": "copy",
+              "pm_only": "apt",
+              "title": "Remove one package",
+              "distro_remove": "PACKAGENAME"
+            },
+            {
+              "type": "copy",
+              "pm_only": "apt",
+              "title": "List installed packages",
+              "command": "dpkg -l | less"
+            },
+            {
+              "type": "copy",
+              "pm_only": "apt",
+              "title": "Search installed",
+              "command": "dpkg -l | grep -i partial_name"
+            },
+            {
+              "type": "copy",
+              "pm_only": "pacman",
+              "title": "Remove one package",
+              "distro_remove": "PACKAGENAME"
+            },
+            {
+              "type": "copy",
+              "pm_only": "pacman",
+              "title": "List installed",
+              "command": "pacman -Q"
+            },
+            {
+              "type": "copy",
+              "pm_only": "pacman",
+              "title": "Search installed",
+              "command": "pacman -Qs partial_name"
+            },
+            {
+              "type": "copy",
+              "pm_only": "zypper",
+              "title": "Remove one package",
+              "distro_remove": "PACKAGENAME"
+            },
+            {
+              "type": "copy",
+              "pm_only": "zypper",
+              "title": "List installed",
+              "command": "zypper se -i"
+            },
+            {
+              "type": "copy",
+              "pm_only": "apk",
+              "title": "Remove one package",
+              "distro_remove": "PACKAGENAME"
+            },
+            {
+              "type": "copy",
+              "pm_only": "apk",
+              "title": "List installed",
+              "command": "apk list -I"
+            },
+            {
+              "type": "copy",
+              "pm_only": "unknown",
+              "title": "Remove package (edit manager)",
+              "distro_remove": "PACKAGENAME"
+            },
+            {
+              "type": "copy",
+              "title": "Uninstall Flatpak app",
+              "command": "flatpak uninstall --user APP_ID"
+            },
+            {
+              "type": "copy",
+              "title": "Uninstall Flatpak + delete data",
+              "command": "flatpak uninstall --user --delete-data APP_ID"
+            },
+            {
+              "type": "copy",
+              "title": "Remove snap",
+              "command": "sudo snap remove SNAPNAME"
+            },
+            {
+              "type": "copy",
+              "title": "Remove snap + purge data",
+              "command": "sudo snap remove --purge SNAPNAME"
+            }
+          ]
+        },
+        {
+          "title": "Lists you can run here",
+          "description": "No placeholders; output may open in a terminal if sudo is needed.",
+          "rows": [
+            {
+              "type": "runnable",
+              "pm_only": "dnf",
+              "title": "Preview installed RPM names (first 200)",
+              "command": "rpm -qa | sort | head -200"
+            },
+            {
+              "type": "runnable",
+              "pm_only": "apt",
+              "title": "Preview installed packages (first 200)",
+              "command": "dpkg -l | head -200"
+            },
+            {
+              "type": "runnable",
+              "pm_only": "pacman",
+              "title": "Preview installed packages (first 200)",
+              "command": "pacman -Q | head -200"
+            },
+            {
+              "type": "runnable",
+              "pm_only": "zypper",
+              "title": "List installed (first 200 lines)",
+              "command": "zypper se -i | head -200"
+            },
+            {
+              "type": "runnable",
+              "pm_only": "apk",
+              "title": "List installed (first 200 lines)",
+              "command": "apk list -I | head -200"
+            },
+            {
+              "type": "runnable",
+              "title": "List Flatpak apps (user)",
+              "command": "flatpak list --app --user"
+            },
+            {
+              "type": "runnable",
+              "title": "List Snap apps",
+              "command": "snap list 2>/dev/null || echo 'snap not installed'"
+            }
+          ]
+        },
+        {
+          "title": "Flatpak cleanup",
+          "description": "Removes unused runtimes (not apps). May ask for permission in a terminal.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Remove unused Flatpak runtimes",
+              "command": "flatpak uninstall --user --unused"
+            }
+          ]
+        },
+        {
+          "title": "System cache",
+          "description": "Clean package manager and system caches.",
+          "rows": [
+            {
+              "type": "runnable",
+              "pm_only": "dnf",
+              "title": "Clean dnf cache",
+              "command": "sudo dnf clean all"
+            },
+            {
+              "type": "runnable",
+              "pm_only": "dnf",
+              "title": "Remove old kernels",
+              "command": "sudo dnf remove --oldinstallonly"
+            },
+            {
+              "type": "runnable",
+              "pm_only": "apt",
+              "title": "Clean apt cache",
+              "command": "sudo apt clean"
+            },
+            {
+              "type": "runnable",
+              "pm_only": "apt",
+              "title": "Autoremove orphans",
+              "command": "sudo apt autoremove -y"
+            },
+            {
+              "type": "runnable",
+              "pm_only": "apt",
+              "title": "Purge removed configs",
+              "command": "sudo dpkg --purge $(dpkg -l | awk '/^rc/ {print $2}')"
+            },
+            {
+              "type": "runnable",
+              "pm_only": "pacman",
+              "title": "Clean pacman cache",
+              "command": "sudo pacman -Sc --noconfirm"
+            },
+            {
+              "type": "runnable",
+              "pm_only": "pacman",
+              "title": "Remove orphans",
+              "command": "sudo pacman -Rns $(pacman -Qdtq) --noconfirm"
+            },
+            {
+              "type": "runnable",
+              "pm_only": "unknown",
+              "title": "Clean package cache",
+              "command": "echo 'Run your distro cache clean command'"
+            },
+            {
+              "type": "runnable",
+              "title": "Clean Flatpak unused",
+              "command": "flatpak uninstall --user --unused"
+            }
+          ]
+        },
+        {
+          "title": "User cache",
+          "description": "Free space from user-level caches (safe to remove).",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Check ~/.cache size",
+              "command": "du -sh ~/.cache"
+            },
+            {
+              "type": "runnable",
+              "title": "Clean thumbnail cache",
+              "command": "rm -rf ~/.cache/thumbnails"
+            },
+            {
+              "type": "runnable",
+              "title": "Clean pip cache",
+              "command": "pip cache purge"
+            },
+            {
+              "type": "runnable",
+              "title": "Clean npm cache",
+              "command": "npm cache clean --force"
+            },
+            {
+              "type": "runnable",
+              "title": "Clean uv cache",
+              "command": "uv cache clean"
+            },
+            {
+              "type": "runnable",
+              "title": "Clean cargo cache",
+              "command": "rm -rf ~/.cargo/registry ~/.cargo/git"
+            },
+            {
+              "type": "runnable",
+              "title": "Clean Go cache",
+              "command": "go clean -cache -modcache"
+            }
+          ]
+        },
+        {
+          "title": "Logs",
+          "description": "Clean old system logs to free disk space.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Check journal size",
+              "command": "journalctl --disk-usage"
+            },
+            {
+              "type": "runnable",
+              "title": "Keep last 7 days",
+              "command": "sudo journalctl --vacuum-time=7d"
+            },
+            {
+              "type": "runnable",
+              "title": "Keep max 500M",
+              "command": "sudo journalctl --vacuum-size=500M"
+            }
+          ]
+        },
+        {
+          "title": "Disk usage",
+          "description": "Find what is taking space.",
+          "rows": [
+            {
+              "type": "runnable",
+              "title": "Disk usage overview",
+              "command": "df -h /"
+            },
+            {
+              "type": "runnable",
+              "title": "Largest dirs in home",
+              "command": "du -sh ~/* ~/.* 2>/dev/null | sort -rh | head -20"
+            },
+            {
+              "type": "runnable",
+              "title": "Largest dirs system-wide",
+              "command": "sudo du -sh /* 2>/dev/null | sort -rh | head -15"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "config",
+      "label": "Config",
+      "groups": [
+        {
+          "id": "git",
+          "title": "Git Identity",
+          "description": "Configure your global Git personal settings.",
+          "rows": [
+            { "title": "Set Name", "command": "git config --global user.name \"{{USER_NAME}}\"" },
+            { "title": "Set Email", "command": "git config --global user.email \"{{USER_EMAIL}}\"" },
+            { "title": "Set Default Branch (main)", "command": "git config --global init.defaultBranch main" },
+            { "title": "Set Default Editor (vim)", "command": "git config --global core.editor vim" },
+            { "title": "Set Default Editor (vscode)", "command": "git config --global core.editor \"code --wait\"" },
+            { "title": "List all config", "command": "git config --list" }
+          ]
+        },
+        {
+          "id": "ssh",
+          "title": "SSH Identity",
+          "description": "Generate and manage SSH keys for GitHub/GitLab authentication.",
+          "rows": [
+            { "title": "Generate Ed25519 key", "command": "ssh-keygen -t ed25519 -C \"{{USER_EMAIL}}\"" },
+            { "title": "Generate RSA 4096 key", "command": "ssh-keygen -t rsa -b 4096 -C \"{{USER_EMAIL}}\"" },
+            { "type": "copy", "title": "Copy PubKey (Ed25519)", "command": "cat ~/.ssh/id_ed25519.pub" },
+            { "type": "copy", "title": "Copy PubKey (RSA)", "command": "cat ~/.ssh/id_rsa.pub" },
+            { "title": "Test GitHub connectivity", "command": "ssh -T git@github.com" }
+          ]
+        },
+        {
+          "id": "system",
+          "title": "System Tuning",
+          "description": "Distro-specific performance and mirror optimizations.",
+          "rows": [
+            {
+              "title": "Optimize DNF (Fedora)",
+              "pm_only": "dnf",
+              "command": "sudo sed -i '/^max_parallel_downloads=/d' /etc/dnf/dnf.conf && echo 'max_parallel_downloads=10' | sudo tee -a /etc/dnf/dnf.conf && sudo sed -i '/^fastestmirror=/d' /etc/dnf/dnf.conf && echo 'fastestmirror=True' | sudo tee -a /etc/dnf/dnf.conf && echo 'DNF optimized.'"
+            },
+            {
+              "title": "Update Mirrorlist (Arch)",
+              "pm_only": "pacman",
+              "command": "sudo pacman -Sy reflector --noconfirm && sudo reflector --latest 20 --protocol https --sort rate --save /etc/pacman.d/mirrorlist && echo 'Mirrors updated.'"
+            },
+            {
+              "title": "Check Update Sources (Ubuntu)",
+              "pm_only": "apt",
+              "command": "cat /etc/apt/sources.list"
+            }
+          ]
+        },
+        {
+          "id": "dotfiles",
+          "title": "Dotfiles and Aliases",
+          "description": "Manage common development aliases and environment variables.",
+          "rows": [
+            {
+              "title": "Add common aliases",
+              "command": "alias ll='ls -lah'\nalias gs='git status'\nalias dc='docker compose'\nalias gp='git push'\n",
+              "tag": "~/.zshrc:aliases"
+            },
+            {
+              "title": "Create Dev folder",
+              "command": "mkdir -p ~/dev && echo '~/dev folder ensured.'"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

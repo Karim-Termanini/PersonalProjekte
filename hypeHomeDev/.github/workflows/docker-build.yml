@@ -1,0 +1,33 @@
+name: Docker Build
+
+on:
+  push:
+    branches:
+      - main
+      - "phase-*"
+  pull_request:
+    branches:
+      - main
+      - "phase-*"
+
+jobs:
+  docker-build:
+    runs-on: self-hosted
+
+    env:
+      DOCKER_CONFIG: ${{ github.workspace }}/.docker
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Create safe docker config
+        run: |
+          mkdir -p $DOCKER_CONFIG
+          echo '{"auths":{}}' > $DOCKER_CONFIG/config.json
+
+      - name: Build Docker image (Native)
+        run: docker build -t hypedevhome:ci .
+
+      - name: Verify container runs
+        run: docker run --rm hypedevhome:ci python3 --version

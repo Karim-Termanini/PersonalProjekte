@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  HypeDevHome — Main window UI definition (placeholder).
+  Currently unused; the window is built programmatically in window.py.
+  This file will be populated in Phase 1 when the navigation shell is added.
+-->
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <requires lib="libadwaita" version="1.0"/>
+
+  <template class="HypeDevHomeWindow" parent="AdwApplicationWindow">
+    <property name="default-width">1200</property>
+    <property name="default-height">800</property>
+    <property name="title">HypeDevHome</property>
+  </template>
+</interface>

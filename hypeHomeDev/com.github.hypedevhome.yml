@@ -1,0 +1,67 @@
+# Flatpak manifest for HypeDevHome
+app-id: com.github.hypedevhome
+runtime: org.gnome.Platform
+runtime-version: '47'
+sdk: org.gnome.Sdk
+command: hypedevhome
+finish-args:
+  # Display access
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --share=ipc
+
+  # DBus access
+  - --talk-name=org.freedesktop.secrets
+  - --talk-name=org.freedesktop.Notifications
+  # org.freedesktop.systemd1: Workstation → Servers (runtime/systemd rows) and
+  # Services (factory rows) use SystemdManager on the host for GetUnit/properties,
+  # start/stop/restart, and enable/disable unit files. Broad well-known name is
+  # required because systemd exposes one manager object; mutating calls remain
+  # subject to PolKit on the host. There is no narrower Flatpak portal for this.
+  - --system-talk-name=org.freedesktop.systemd1
+
+  # Filesystem access
+  - --filesystem=~/.config/dev-home:create
+  - --filesystem=~/Dev:rw
+
+  # Network access
+  - --share=network
+  - --socket=ssh-auth
+
+  # Hardware access
+  - --device=dri
+
+  # System integration
+  - --talk-name=org.gtk.vfs.*
+
+modules:
+  # Application Python dependencies
+  # Note: PyGObject is already bundled in GNOME SDK
+  - name: hypedevhome-deps
+    buildsystem: simple
+    build-commands:
+      - pip3 install --no-build-isolation --no-deps --prefix=/app .
+
+    sources:
+      - type: dir
+        path: .
+
+  # Desktop file and metadata
+  - name: hypedevhome-data
+    buildsystem: simple
+    build-commands:
+      - install -Dm644 data/com.github.hypedevhome.desktop /app/share/applications/com.github.hypedevhome.desktop
+      - install -Dm644 data/com.github.hypedevhome.metainfo.xml /app/share/metainfo/com.github.hypedevhome.metainfo.xml
+      - install -Dm644 assets/icons/com.github.hypedevhome.svg /app/share/icons/hicolor/scalable/apps/com.github.hypedevhome.svg
+      - install -Dm644 assets/icons/com.github.hypedevhome-symbolic.svg /app/share/icons/hicolor/symbolic/apps/com.github.hypedevhome-symbolic.svg
+    sources:
+      - type: dir
+        path: .
+
+cleanup:
+  - /app/include
+  - /app/lib/pkgconfig
+  - /app/share/doc
+  - /app/share/man
+  - '*.a'
+  - '*.la'

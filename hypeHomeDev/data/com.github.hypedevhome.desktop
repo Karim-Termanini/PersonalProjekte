@@ -1,0 +1,30 @@
+[Desktop Entry]
+Type=Application
+Name=HypeDevHome
+GenericName=Developer Dashboard
+Comment=Developer dashboard and tool manager for Linux
+Exec=hypedevhome
+Icon=com.github.hypedevhome
+Terminal=false
+Categories=Development;Utility;
+StartupNotify=true
+StartupWMClass=hypedevhome
+
+# Flatpak-specific
+X-Flatpak=com.github.hypedevhome
+X-Flatpak-RenamedFrom=hypedevhome.desktop;
+
+# Keywords for application menu
+Keywords=developer;dashboard;tools;terminal;git;docker;flatpak;
+
+# Additional metadata
+MimeType=
+Actions=
+
+# Only show in GNOME
+OnlyShowIn=GNOME;Unity;XFCE;Pantheon;
+
+# Internationalization
+Name[en]=HypeDevHome
+Comment[en]=Developer dashboard and tool manager for Linux
+GenericName[en]=Developer Dashboard

@@ -1,0 +1,121 @@
+name: 🐛 Bug Report
+description: Report a bug to help us improve HypeDevHome
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: input
+    id: contact
+    attributes:
+      label: Contact Details (optional)
+      description: How can we reach you if we need more information?
+      placeholder: email@example.com
+    validations:
+      required: false
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: A clear and concise description of the bug.
+      placeholder: Describe the bug in detail...
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce the issue?
+      placeholder: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+      placeholder: I expected that...
+    validations:
+      required: true
+  - type: dropdown
+    id: distro
+    attributes:
+      label: Linux Distribution
+      description: Which distribution are you running on?
+      options:
+        - Ubuntu
+        - Fedora
+        - Arch Linux
+        - Debian
+        - Linux Mint
+        - Pop!_OS
+        - Manjaro
+        - openSUSE
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: desktop_env
+    attributes:
+      label: Desktop Environment
+      description: Which desktop environment are you using?
+      options:
+        - GNOME
+        - KDE Plasma
+        - Hyprland
+        - Sway
+        - XFCE
+        - MATE
+        - Cinnamon
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: display_server
+    attributes:
+      label: Display Server
+      options:
+        - Wayland
+        - X11
+    validations:
+      required: true
+  - type: dropdown
+    id: installation_method
+    attributes:
+      label: Installation Method
+      options:
+        - Flatpak
+        - Docker
+        - Local build
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: app_version
+    attributes:
+      label: App Version
+      description: What version of HypeDevHome are you using?
+      placeholder: v0.1.0 or commit hash
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant Log Output
+      description: Please copy and paste any relevant log output.
+      render: shell
+    validations:
+      required: false
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: If applicable, add screenshots to help explain your problem.
+    validations:
+      required: false

@@ -1,0 +1,339 @@
+/* HypeDevHome — Custom styles for dashboard interactions */
+
+/* Slight dim while dragging (0.5 felt “invisible”; keep source readable) */
+.dragging {
+    opacity: 0.88;
+    transition: opacity 0.15s ease-in-out;
+}
+
+/* Drop target indicator (if using a placeholder, we apply this) */
+.drop-placeholder {
+    background-color: alpha(@accent_bg_color, 0.2);
+    border: 2px dashed @accent_bg_color;
+    border-radius: 12px;
+}
+
+/* Dashboard widget header: keep title icon readable */
+.widget-header > image {
+    min-width: 24px;
+    min-height: 24px;
+}
+
+/* Preferences dialogs: keep switches compact (GTK4 rejects max-height here) */
+preferencesdialog switch {
+    min-height: 22px;
+}
+
+/* Card highlight on hover */
+.card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: box-shadow 0.2s ease;
+}
+
+/* GitHub repo rows: pointer cursor + hover (see github_repos_widget.py) */
+.github-repo-row {
+    transition: background-color 0.15s ease;
+    border-radius: 9px;
+}
+
+.github-repo-row:hover {
+    background-color: alpha(@accent_bg_color, 0.22);
+}
+
+/* Premium progress bars */
+progressbar.os-bar trough {
+    min-height: 10px;
+    border-radius: 6px;
+    background-color: alpha(@window_fg_color, 0.1);
+}
+
+progressbar.os-bar progress {
+    border-radius: 6px;
+    min-height: 10px;
+}
+
+/* Numeric labels */
+.numeric {
+    font-family: "JetBrains Mono", "Roboto Mono", monospace;
+    font-weight: bold;
+}
+
+/* Learn → Linux FHS tree: humanist sans (Calibri/Carlito/Arial stack), normal weight */
+treeview.workstation-fhs-tree {
+    font-family: Calibri, Carlito, Arial, "Liberation Sans", "DejaVu Sans", sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+treeview.workstation-fhs-tree header button {
+    font-family: Calibri, Carlito, Arial, "Liberation Sans", "DejaVu Sans", sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* Workstation hub: subsection bar under main sidebar selection */
+.workstation-subsection-switcher {
+    padding-bottom: 4px;
+    border-bottom: 1px solid alpha(@window_fg_color, 0.12);
+}
+
+/* Workstation apps source labels near Installed button */
+.workstation-source-label {
+    font-weight: 600;
+}
+
+.workstation-source-apt {
+    color: #e74c3c;
+}
+
+.workstation-source-dnf {
+    color: #3498db;
+}
+
+.workstation-source-pacman {
+    color: #16a085;
+}
+
+.workstation-source-zypper {
+    color: #2ecc71;
+}
+
+.workstation-source-apk {
+    color: #9b59b6;
+}
+
+.workstation-source-flatpak {
+    color: #f1c40f;
+}
+
+.workstation-source-aur {
+    color: #e67e22;
+}
+
+.workstation-source-manual {
+    color: #ff66cc;
+}
+
+.workstation-source-system {
+    color: #95a5a6;
+}
+
+/* Bash Cheatsheet: improve readability with Arial + semantic colors */
+/* Standardize group styling across all three columns */
+.bash-cheatsheet-group {
+    background-color: transparent;
+}
+
+.bash-cheatsheet-group preferencesgroup {
+    background-color: transparent;
+}
+
+/* (Learn page section titles are colored via Pango markup in Python code) */
+
+.bash-cheatsheet-text {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 17px;
+    color: @window_fg_color;
+    line-height: 1.5;
+    font-weight: 400;
+    opacity: 1.0;
+}
+
+/* Code blocks: unified styling with grey background */
+.bash-code-block {
+    font-family: "JetBrains Mono", "Roboto Mono", monospace;
+    background-color: alpha(@window_fg_color, 0.08);
+    border-left: 3px solid @accent_color;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    margin-top: 6px;
+}
+
+.bash-code-block:last-child {
+    margin-bottom: 0;
+}
+
+/* Code block label styling */
+.bash-code-label {
+    font-family: "JetBrains Mono", "Roboto Mono", monospace;
+    font-size: 16px;
+    color: @window_fg_color;
+    font-weight: 400;
+}
+
+/* Table rows - unified styling with card appearance and grey background */
+.bash-table-card {
+    background-color: alpha(@window_fg_color, 0.08);
+    border-left: 3px solid @accent_color;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    margin-top: 6px;
+}
+
+.bash-table-card:last-child {
+    margin-bottom: 0;
+}
+
+.bash-table-row {
+    background-color: transparent;
+}
+
+.bash-table-key {
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 600;
+    color: @accent_color;
+    font-size: 17px;
+}
+
+.bash-table-value {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 17px;
+    color: @window_fg_color;
+    opacity: 1.0;
+}
+
+/* Link rows - unified with card appearance and grey background */
+.bash-link-card {
+    background-color: alpha(@window_fg_color, 0.08);
+    border-left: 3px solid @accent_color;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    margin-top: 6px;
+}
+
+.bash-link-card:last-child {
+    margin-bottom: 0;
+}
+
+.bash-link-row {
+    background-color: transparent;
+}
+
+.bash-link-title {
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 600;
+    color: @accent_color;
+    font-size: 17px;
+}
+
+.bash-link-url {
+    font-family: "Roboto Mono", monospace;
+    font-size: 16px;
+    color: @window_fg_color;
+    opacity: 0.8;
+}
+
+/* Workstation → Servers → Overview (monitor-style dashboard) */
+.servers-dashboard-card {
+    background-color: alpha(@window_fg_color, 0.04);
+    border: 1px solid alpha(@window_fg_color, 0.08);
+    border-radius: 8px;
+    padding: 10px 12px;
+}
+
+.servers-dashboard-card-title {
+    font-weight: 600;
+    opacity: 0.85;
+    font-size: 0.9rem;
+}
+
+.servers-dashboard-stat {
+    font-size: 1.05rem;
+    font-weight: 500;
+}
+
+.servers-status-led {
+    font-size: 1.6rem;
+    color: #22c55e;
+}
+
+.servers-topn-row {
+    padding-bottom: 6px;
+}
+
+levelbar.servers-level-bar trough {
+    min-height: 8px;
+    border-radius: 5px;
+    background-color: alpha(@window_fg_color, 0.12);
+}
+
+levelbar.servers-level-bar block.low,
+levelbar.servers-level-bar block.high,
+levelbar.servers-level-bar block.full {
+    border-radius: 5px;
+    background-color: @accent_bg_color;
+}
+
+levelbar.servers-level-bar-mem block.low,
+levelbar.servers-level-bar-mem block.high,
+levelbar.servers-level-bar-mem block.full {
+    background-color: #3b82f6;
+}
+
+levelbar.servers-level-bar-in block.low,
+levelbar.servers-level-bar-in block.high,
+levelbar.servers-level-bar-in block.full {
+    background-color: #22c55e;
+}
+
+levelbar.servers-level-bar-out block.low,
+levelbar.servers-level-bar-out block.high,
+levelbar.servers-level-bar-out block.full {
+    background-color: #60a5fa;
+}
+
+levelbar.servers-level-bar-disk block.low,
+levelbar.servers-level-bar-disk block.high,
+levelbar.servers-level-bar-disk block.full {
+    background-color: #d97706;
+}
+
+levelbar.servers-level-bar-table block.low,
+levelbar.servers-level-bar-table block.high,
+levelbar.servers-level-bar-table block.full {
+    background-color: #22c55e;
+}
+
+.servers-fs-row {
+    padding: 4px 0;
+    border-bottom: 1px solid alpha(@window_fg_color, 0.06);
+}
+
+.servers-table-header {
+    padding: 4px 8px;
+    border-bottom: 2px solid alpha(@window_fg_color, 0.2);
+    font-weight: 600;
+}
+
+.servers-table-scroll {
+    min-height: 180px;
+}
+
+.servers-host-table {
+    padding: 4px 0 8px 0;
+}
+
+label.servers-table-header-cell {
+    font-weight: 700;
+    padding: 6px 2px 8px 2px;
+    border-bottom: 2px solid alpha(@window_fg_color, 0.22);
+}
+
+.servers-table-body {
+    border-radius: 0 0 8px 8px;
+    background-color: alpha(@window_fg_color, 0.02);
+}
+
+.servers-table-row {
+    padding: 4px 8px;
+    border-bottom: 1px solid alpha(@window_fg_color, 0.06);
+}
+
+.servers-table-cell {
+    padding: 6px 2px;
+    border-bottom: 1px solid alpha(@window_fg_color, 0.06);
+}
+
+.servers-table-row:hover {
+    background-color: alpha(@accent_bg_color, 0.08);
+}

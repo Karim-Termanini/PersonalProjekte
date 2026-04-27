@@ -1,0 +1,39 @@
+# Manual profiling runs for investigate_memory_leak.py and profile_github_performance.py.
+# Informational only: no thresholds or pass/fail gates on reported numbers.
+
+name: Profile scripts (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      script:
+        description: Which script to run
+        required: true
+        default: both
+        type: choice
+        options:
+          - both
+          - memory
+          - performance
+
+jobs:
+  profile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Build Ubuntu image (Dockerfile.ubuntu)
+        run: docker build -f Dockerfile.ubuntu -t hypedevhome-profile .
+
+      - name: Memory leak investigation
+        if: ${{ inputs.script == 'both' || inputs.script == 'memory' }}
+        run: |
+          docker run --rm -e CI=1 -e GDK_BACKEND=x11 hypedevhome-profile bash -lc \
+            'cd /app && dbus-run-session -- xvfb-run -a python3 investigate_memory_leak.py'
+
+      - name: GitHub performance profiling
+        if: ${{ inputs.script == 'both' || inputs.script == 'performance' }}
+        run: |
+          docker run --rm -e CI=1 -e GDK_BACKEND=x11 hypedevhome-profile bash -lc \
+            'cd /app && dbus-run-session -- xvfb-run -a python3 profile_github_performance.py'

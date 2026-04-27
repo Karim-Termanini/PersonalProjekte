@@ -1,0 +1,228 @@
+{
+  "id": "bash",
+  "columns": 2,
+  "languages": [
+    { "id": "en", "label": "English" },
+    { "id": "de", "label": "Deutsch" },
+    { "id": "ar", "label": "العربية" }
+  ],
+  "i18n": {
+    "en": {
+      "lang_row_title": "Language",
+      "search_label": "Search",
+      "search_placeholder": "Filter sections by topic…",
+      "groups": [
+        {
+          "id": "intro",
+          "title": "Bash scripting cheatsheet",
+          "description": "Introduction — This is a quick reference to getting started with Bash scripting.",
+          "items": [
+            { "type": "link", "label": "Learn bash in y minutes", "url": "https://learnxinyminutes.com/docs/bash/" },
+            { "type": "link", "label": "Bash Guide", "url": "https://mywiki.wooledge.org/BashGuide" },
+            { "type": "link", "label": "Bash Hackers Wiki", "url": "https://wiki.bash-hackers.org/" }
+          ]
+        },
+        {
+          "id": "example",
+          "title": "Example",
+          "description": "",
+          "items": [
+            {
+              "type": "code",
+              "code": "#!/usr/bin/env bash\n\nname=\"John\"\necho \"Hello $name!\""
+            }
+          ]
+        },
+        {
+          "id": "variables",
+          "title": "Variables",
+          "description": "",
+          "items": [
+            { "type": "code", "code": "name=\"John\"\necho $name  # see below\necho \"$name\"\necho \"${name}!\"" },
+            {
+              "type": "text",
+              "text": "Generally quote your variables unless they contain wildcards to expand or command fragments."
+            }
+          ]
+        },
+        {
+          "id": "execution",
+          "title": "Shell execution",
+          "description": "",
+          "items": [
+            {
+              "type": "code",
+              "code": "echo \"I'm in $(pwd)\"\necho \"I'm in `pwd`\"  # obsolescent\n# Same"
+            },
+            { "type": "text", "text": "See: Command substitution" }
+          ]
+        },
+        {
+          "id": "quotes",
+          "title": "String quotes",
+          "description": "",
+          "items": [
+            {
+              "type": "code",
+              "code": "name=\"John\"\necho \"Hi $name\"  #=> Hi John\necho 'Hi $name'  #=> Hi $name"
+            }
+          ]
+        },
+        {
+          "id": "strict",
+          "title": "Strict mode",
+          "description": "",
+          "items": [
+            { "type": "code", "code": "set -euo pipefail\nIFS=$'\\n\\t'" },
+            { "type": "text", "text": "See: Unofficial bash strict mode" }
+          ]
+        }
+      ]
+    },
+    "de": {
+      "lang_row_title": "Sprache",
+      "search_label": "Suche",
+      "search_placeholder": "Abschnitte nach Thema filtern…",
+      "groups": [
+        {
+          "id": "intro",
+          "title": "Bash-Scripting-Spickzettel",
+          "description": "Einführung — Dies ist eine Kurzreferenz für den Einstieg in das Bash-Scripting.",
+          "items": [
+            { "type": "link", "label": "Learn bash in y minutes", "url": "https://learnxinyminutes.com/docs/bash/" },
+            { "type": "link", "label": "Bash Guide", "url": "https://mywiki.wooledge.org/BashGuide" },
+            { "type": "link", "label": "Bash Hackers Wiki", "url": "https://wiki.bash-hackers.org/" }
+          ]
+        },
+        {
+          "id": "example",
+          "title": "Beispiel",
+          "description": "",
+          "items": [
+            {
+              "type": "code",
+              "code": "#!/usr/bin/env bash\n\nname=\"John\"\necho \"Hello $name!\""
+            }
+          ]
+        },
+        {
+          "id": "variables",
+          "title": "Variablen",
+          "description": "",
+          "items": [
+            { "type": "code", "code": "name=\"John\"\necho $name  # see below\necho \"$name\"\necho \"${name}!\"" },
+            {
+              "type": "text",
+              "text": "Setzen Sie Ihre Variablen generell in Anführungszeichen, es sei denn, sie enthalten Platzhalter oder Befehlsfragmente."
+            }
+          ]
+        },
+        {
+          "id": "execution",
+          "title": "Shell-Ausführung",
+          "description": "",
+          "items": [
+            {
+              "type": "code",
+              "code": "echo \"I'm in $(pwd)\"\necho \"I'm in `pwd`\"  # obsolescent\n# Same"
+            },
+            { "type": "text", "text": "Siehe: Befehlssubstitution" }
+          ]
+        },
+        {
+          "id": "quotes",
+          "title": "Anführungszeichen",
+          "description": "",
+          "items": [
+            {
+              "type": "code",
+              "code": "name=\"John\"\necho \"Hi $name\"  #=> Hi John\necho 'Hi $name'  #=> Hi $name"
+            }
+          ]
+        },
+        {
+          "id": "strict",
+          "title": "Strikter Modus",
+          "description": "",
+          "items": [
+            { "type": "code", "code": "set -euo pipefail\nIFS=$'\\n\\t'" },
+            { "type": "text", "text": "Siehe: Inoffizieller Bash Strict Mode" }
+          ]
+        }
+      ]
+    },
+    "ar": {
+      "lang_row_title": "اللغة",
+      "search_label": "بحث",
+      "search_placeholder": "تصفية الأقسام حسب الموضوع…",
+      "groups": [
+        {
+          "id": "intro",
+          "title": "مرجع سريع لبرمجة Bash",
+          "description": "مقدمة — هذا مرجع سريع لبدء استخدام برمجة Bash.",
+          "items": [
+            { "type": "link", "label": "Learn bash in y minutes", "url": "https://learnxinyminutes.com/docs/bash/" },
+            { "type": "link", "label": "Bash Guide", "url": "https://mywiki.wooledge.org/BashGuide" },
+            { "type": "link", "label": "Bash Hackers Wiki", "url": "https://wiki.bash-hackers.org/" }
+          ]
+        },
+        {
+          "id": "example",
+          "title": "مثال",
+          "description": "",
+          "items": [
+            {
+              "type": "code",
+              "code": "#!/usr/bin/env bash\n\nname=\"John\"\necho \"Hello $name!\""
+            }
+          ]
+        },
+        {
+          "id": "variables",
+          "title": "المتغيرات",
+          "description": "",
+          "items": [
+            { "type": "code", "code": "name=\"John\"\necho $name  # see below\necho \"$name\"\necho \"${name}!\"" },
+            {
+              "type": "text",
+              "text": "بشكل عام، قم بوضع متغيراتك بين علامتي اقتباس ما لم تكن تحتوي على علامات مرجعية أو أجزاء من الأوامر."
+            }
+          ]
+        },
+        {
+          "id": "execution",
+          "title": "تنفيذ الصدفة",
+          "description": "",
+          "items": [
+            {
+              "type": "code",
+              "code": "echo \"I'm in $(pwd)\"\necho \"I'm in `pwd`\"  # obsolescent\n# Same"
+            },
+            { "type": "text", "text": "انظر: استبدال الأمر" }
+          ]
+        },
+        {
+          "id": "quotes",
+          "title": "اقتباس السلسلة",
+          "description": "",
+          "items": [
+            {
+              "type": "code",
+              "code": "name=\"John\"\necho \"Hi $name\"  #=> Hi John\necho 'Hi $name'  #=> Hi $name"
+            }
+          ]
+        },
+        {
+          "id": "strict",
+          "title": "الوضع الصارم",
+          "description": "",
+          "items": [
+            { "type": "code", "code": "set -euo pipefail\nIFS=$'\\n\\t'" },
+            { "type": "text", "text": "انظر: وضع Bash الصارم غير الرسمي" }
+          ]
+        }
+      ]
+    }
+  }
+}
+

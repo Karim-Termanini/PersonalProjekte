@@ -1,0 +1,34 @@
+name: Flatpak Build
+
+on:
+  push:
+    branches:
+      - main
+      - "phase-*"
+  pull_request:
+    branches:
+      - main
+      - "phase-*"
+
+jobs:
+  flatpak-build:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Add Flathub remote (user scope)
+        run: flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+
+      - name: Install GNOME SDK
+        run: flatpak install --user --noninteractive flathub org.gnome.Sdk//47 org.gnome.Platform//47
+
+      - name: Build Flatpak
+        run: |
+          flatpak-builder --user --force-clean --install-deps-from=flathub builddir com.github.hypedevhome.yml
+
+      - name: Verify build artifacts
+        run: |
+          ls -la builddir/
+          test -d builddir

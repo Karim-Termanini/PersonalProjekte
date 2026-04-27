@@ -1,0 +1,90 @@
+{
+    "profiles": [
+        {
+            "id": "python_ds",
+            "name": "Python Data Science",
+            "description": "Python 3.12, Jupyter, Pandas, and PostgreSQL (via Docker).",
+            "icon": "python-symbolic",
+            "host_packages": ["python3", "python3-pip", "python3-venv", "gcc"],
+            "npm_packages": [],
+            "services": [],
+            "docker_containers": [
+                {
+                    "name": "postgres-ds",
+                    "image": "postgres:16",
+                    "ports": ["5432:5432"],
+                    "env": ["POSTGRES_PASSWORD=postgres"]
+                }
+            ],
+            "ai_models": []
+        },
+        {
+            "id": "web_fullstack",
+            "name": "Full-Stack Web Dev",
+            "description": "Node.js 20, PNPM, Redis, and VS Code tools.",
+            "icon": "web-browser-symbolic",
+            "host_packages": ["curl", "git"],
+            "npm_packages": ["pnpm", "typescript", "vercel"],
+            "services": [],
+            "docker_containers": [
+                {
+                    "name": "redis-web",
+                    "image": "redis:alpine",
+                    "ports": ["6379:6379"]
+                }
+            ],
+            "ai_models": []
+        },
+        {
+            "id": "ai_local",
+            "name": "Local AI / LLM",
+            "description": "Ollama engine, Llama 3, and Open WebUI dashboard.",
+            "icon": "preferences-desktop-accessibility-symbolic",
+            "host_packages": ["curl"],
+            "npm_packages": [],
+            "services": ["ollama.service"],
+            "docker_containers": [
+                {
+                    "name": "open-webui",
+                    "image": "ghcr.io/open-webui/open-webui:main",
+                    "ports": ["3000:8080"],
+                    "volumes": ["open-webui:/app/backend/data"]
+                }
+            ],
+            "ai_models": ["llama3", "mistral"]
+        },
+        {
+            "id": "build_essentials",
+            "name": "Build Essentials",
+            "description": "Compiler toolchain (gcc, make) plus git and curl for native extensions.",
+            "icon": "applications-engineering-symbolic",
+            "host_packages": ["gcc", "make", "git", "curl"],
+            "npm_packages": [],
+            "services": [],
+            "docker_containers": [],
+            "ai_models": []
+        },
+        {
+            "id": "git_collab",
+            "name": "Git & Collaboration",
+            "description": "Git and curl for remotes, PRs, and CI hooks (add SSH keys under Tools → Config).",
+            "icon": "vcs-git-symbolic",
+            "host_packages": ["git", "curl"],
+            "npm_packages": [],
+            "services": [],
+            "docker_containers": [],
+            "ai_models": []
+        },
+        {
+            "id": "terminal_essentials",
+            "name": "Terminal essentials",
+            "description": "nano and less for quick edits and paging logs on the host.",
+            "icon": "utilities-terminal-symbolic",
+            "host_packages": ["nano", "less"],
+            "npm_packages": [],
+            "services": [],
+            "docker_containers": [],
+            "ai_models": []
+        }
+    ]
+}
