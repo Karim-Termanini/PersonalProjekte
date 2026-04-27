@@ -313,7 +313,7 @@ class MachineSetupPage(BasePage):
 
                 root = self.get_root()
                 if isinstance(root, HypeDevHomeWindow):
-                    root.navigate_to("welcome")
+                    root.navigate_to("dashboard")
                 else:
                     # Fallback if window not found yet
                     self._stack.set_visible_child_name("apps")

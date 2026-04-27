@@ -1,7 +1,9 @@
-"""HypeDevHome — Dedicated system monitor page (new_plan.md Task 1.3).
+"""HypeDevHome — Monitor page.
 
-Host load, CPU/memory sparklines, containers/LAN table — reuses
-``WorkstationServersOverviewPanel`` (same data as Tools → Servers → Overview).
+Live system metrics only:
+- Host load, CPU/memory, containers/LAN table
+- Linux Filesystem (FHS) interactive tree
+No duplicate content from Tools → Servers.
 """
 
 from __future__ import annotations
@@ -10,6 +12,7 @@ import logging
 import gi
 
 gi.require_version("Gtk", "4.0")
+gi.require_version("Adw", "1")
 
 from gi.repository import Gtk  # noqa: E402
 
@@ -21,9 +24,9 @@ log = logging.getLogger(__name__)
 
 
 class SystemMonitorPage(BasePage):
-    """Full-width live monitor (local host + containers + neighbors)."""
+    """Full-width live monitor: local host + containers + filesystem reference."""
 
-    page_title = "System Monitor"
+    page_title = "Monitor"
     page_icon = "utilities-system-monitor-symbolic"
 
     def build_content(self) -> None:
@@ -40,31 +43,11 @@ class SystemMonitorPage(BasePage):
             scroll.set_overlay_scrolling(False)
         except (AttributeError, TypeError):
             pass
+
         outer = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
         outer.set_valign(Gtk.Align.START)
 
-        title = Gtk.Label(label="Live monitoring")
-        title.set_halign(Gtk.Align.START)
-        title.set_margin_start(18)
-        title.set_margin_end(18)
-        title.set_margin_top(12)
-        title.add_css_class("title-2")
-        outer.append(title)
-
-        sub = Gtk.Label(
-            label=(
-                "Host load, Docker rows, and LAN neighbors — one scrollable page "
-                "(Ctrl+2). Detailed charts also live under Tools → Servers → Overview."
-            ),
-        )
-        sub.set_halign(Gtk.Align.START)
-        sub.set_margin_start(18)
-        sub.set_margin_end(18)
-        sub.set_margin_bottom(8)
-        sub.set_wrap(True)
-        sub.add_css_class("dim-label")
-        outer.append(sub)
-
+        # ── Live system overview ─────────────────────────────────
         monitor_stack = Gtk.Stack(
             transition_type=Gtk.StackTransitionType.NONE,
             vexpand=False,
@@ -78,27 +61,25 @@ class SystemMonitorPage(BasePage):
         monitor_stack.set_visible_child_name("overview")
         outer.append(monitor_stack)
 
-        fhs_hdr = Gtk.Label(label="Linux filesystem (FHS)")
+        # ── Linux Filesystem (FHS) reference ─────────────────────
+        sep = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
+        sep.set_margin_top(16)
+        sep.set_margin_bottom(4)
+        outer.append(sep)
+
+        fhs_hdr = Gtk.Label(label="LINUX FILESYSTEM (FHS)")
         fhs_hdr.set_halign(Gtk.Align.START)
         fhs_hdr.set_margin_start(18)
         fhs_hdr.set_margin_end(18)
-        fhs_hdr.set_margin_top(16)
-        fhs_hdr.add_css_class("heading")
+        fhs_hdr.set_margin_top(8)
+        fhs_hdr.set_margin_bottom(6)
+        fhs_hdr.add_css_class("section-title")
         outer.append(fhs_hdr)
-
-        fhs_sub = Gtk.Label(
-            label="Expand for the interactive directory tree (formerly under Learn).",
-        )
-        fhs_sub.set_halign(Gtk.Align.START)
-        fhs_sub.set_margin_start(18)
-        fhs_sub.set_margin_end(18)
-        fhs_sub.set_wrap(True)
-        fhs_sub.add_css_class("dim-label")
-        outer.append(fhs_sub)
 
         fhs_btn = Gtk.ToggleButton(label="Show filesystem tree")
         fhs_btn.set_halign(Gtk.Align.START)
         fhs_btn.set_margin_start(18)
+        fhs_btn.set_margin_bottom(8)
         fhs_rev = Gtk.Revealer(
             transition_type=Gtk.RevealerTransitionType.CROSSFADE,
             reveal_child=False,
@@ -119,7 +100,7 @@ class SystemMonitorPage(BasePage):
 
     def on_shown(self) -> None:
         super().on_shown()
-        log.debug("System monitor page shown")
+        log.debug("Monitor page shown")
 
     def get_header_actions(self) -> list[Gtk.Widget]:
         return []

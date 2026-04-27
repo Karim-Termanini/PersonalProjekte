@@ -22,48 +22,34 @@ gi.require_version("Gtk", "4.0")
 
 from gi.repository import Adw, GLib, Gtk  # noqa: E402
 
-from core.maintenance.pulse_manager import PulseManager  # noqa: E402
 from core.state import AppState  # noqa: E402
 from ui.pages.base_page import BasePage  # noqa: E402
 from ui.widgets.desktop_config import DesktopConfig  # noqa: E402
 from ui.widgets.env_editor import EnvEditor  # noqa: E402
 from ui.widgets.hosts_editor import HostsEditor  # noqa: E402
-from ui.widgets.pulse_dashboard import PulseDashboard  # noqa: E402
-from ui.widgets.utilities_environments import UtilitiesEnvironments  # noqa: E402
 from ui.widgets.utilities_system_info import UtilitiesSystemInfo  # noqa: E402
 
 log = logging.getLogger(__name__)
 
 
 class UtilitiesPage(BasePage):
-    """Developer utility tools hub."""
+    """Settings hub: Hosts, Env Vars, Desktop Config, System Info."""
 
-    page_title = "Utilities"
+    page_title = "Settings"
     page_icon = "applications-utilities-symbolic"
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self._current_view = "hub"
-        state = AppState.get()
-        self._pulse_manager = state.pulse_manager
-        if not self._pulse_manager:
-            from core.setup.host_executor import HostExecutor
-
-            self._pulse_manager = PulseManager(HostExecutor())
-            state.pulse_manager = self._pulse_manager
-
-        self._pulse_status_label: Gtk.Label | None = None
         self._detection_label: Gtk.Label | None = None
         self._hub_timer_id = 0
-        # Sub-view titles for the main window header (avoid a second in-page HeaderBar).
+        # Sub-view titles for the main window header.
         self._view_titles: dict[str, str] = {
             "hub": self.page_title,
             "hosts": "Hosts Editor",
             "env": "Environment Variables",
             "desktop": "Desktop Configuration",
-            "pulse": "System Pulse",
             "sysinfo": "System Information",
-            "environments": "Environments",
         }
 
     def on_shown(self) -> None:
@@ -117,31 +103,13 @@ class UtilitiesPage(BasePage):
         )
         self._stack.add_named(self._desktop_view, "desktop")
 
-        # 5. Pulse View
-        self._pulse_view = self._build_tool_view(
-            "pulse",
-            PulseDashboard(),
-            description=(
-                "Maintenance snapshot style health: CPU/RAM, containers, and pending tasks. "
-                "Uses the same Pulse engine as the Maintenance hub — "
-                "good for a quick check without leaving Utilities."
-            ),
-        )
-        self._stack.add_named(self._pulse_view, "pulse")
-
+        # 4. System Info View
         self._sysinfo_view = self._build_tool_view(
             "sysinfo",
             UtilitiesSystemInfo(),
             description="OS release, kernel/platform, memory and disk snapshot from this process.",
         )
         self._stack.add_named(self._sysinfo_view, "sysinfo")
-
-        self._env_view_util = self._build_tool_view(
-            "environments",
-            UtilitiesEnvironments(),
-            description="Container tools (Docker, Podman, Distrobox, Toolbx). Full templates live in Machine Setup.",
-        )
-        self._stack.add_named(self._env_view_util, "environments")
 
         self.append(self._stack)
 
@@ -250,32 +218,11 @@ class UtilitiesPage(BasePage):
         sys_group.add(desktop_row)
         page.append(sys_group)
 
-        # --- Maintenance Pulse ---
-        pulse_group = Adw.PreferencesGroup(
-            title="Maintenance Pulse", description="Real-time system health and optimization"
-        )
-
-        # We'll put a simplified status here or a row that leads to a dashboard
-        pulse_row = Adw.ActionRow(
-            title="System Pulse",
-            subtitle="Check maintenance status and pending tasks",
-            icon_name="utilities-system-monitor-symbolic",
-            activatable=True,
-        )
-        # Pulse status indicator suffix
-        status_box = Gtk.Box(spacing=6, valign=Gtk.Align.CENTER)
-        self._pulse_status_label = Gtk.Label(label="Healthy")
-        self._pulse_status_label.add_css_class("success")
-        status_box.append(self._pulse_status_label)
-        pulse_row.add_suffix(status_box)
-        pulse_row.add_suffix(Gtk.Image(icon_name="go-next-symbolic"))
-        pulse_row.connect("activated", lambda _: self.navigate_to("pulse"))
-
-        pulse_group.add(pulse_row)
-        page.append(pulse_group)
+        # --- Maintenance Pulse → moved to Maintenance Hub ---
+        # (PulseDashboard removed from Settings to avoid duplication)
 
         more_group = Adw.PreferencesGroup(
-            title="More tools", description="Phase 5 utilities — system info and environments"
+            title="More tools", description="System reference"
         )
         sys_row = Adw.ActionRow(
             title="System information",
@@ -286,16 +233,6 @@ class UtilitiesPage(BasePage):
         sys_row.add_suffix(Gtk.Image(icon_name="go-next-symbolic"))
         sys_row.connect("activated", lambda _: self.navigate_to("sysinfo"))
         more_group.add(sys_row)
-
-        env_row = Adw.ActionRow(
-            title="Environments",
-            subtitle="Docker, Podman, Distrobox detection — use Machine Setup for full setup",
-            icon_name="applications-engineering-symbolic",
-            activatable=True,
-        )
-        env_row.add_suffix(Gtk.Image(icon_name="go-next-symbolic"))
-        env_row.connect("activated", lambda _: self.navigate_to("environments"))
-        more_group.add(env_row)
         page.append(more_group)
 
         clamp.set_child(page)
@@ -317,21 +254,7 @@ class UtilitiesPage(BasePage):
         self._detection_label.set_label("Detected: " + " · ".join(lines))
 
     def _refresh_hub_status(self) -> bool:
-        """Update status indicators on the hub view."""
-        if not self._pulse_manager or not self._pulse_status_label:
-            return True
-
-        summary = self._pulse_manager.get_summary()
-        self._pulse_status_label.set_label(summary["status"])
-
-        # Color coding
-        self._pulse_status_label.remove_css_class("success")
-        self._pulse_status_label.remove_css_class("warning")
-        if summary["status"] == "Healthy":
-            self._pulse_status_label.add_css_class("success")
-        else:
-            self._pulse_status_label.add_css_class("warning")
-
+        """Status refresh — pulse moved to Maintenance Hub."""
         return True
 
     def _build_tool_view(

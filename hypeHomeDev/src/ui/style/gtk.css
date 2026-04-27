@@ -1,339 +1,462 @@
-/* HypeDevHome — Custom styles for dashboard interactions */
+/* ═══════════════════════════════════════════════════════════════════
+   HypeDevHome — Nordic Theme
+   Palette: dark navy/slate background, teal accent, clean typography.
+   Inspired by Nordic Studio reference designs.
+   ═══════════════════════════════════════════════════════════════════
 
-/* Slight dim while dragging (0.5 felt “invisible”; keep source readable) */
-.dragging {
-    opacity: 0.88;
-    transition: opacity 0.15s ease-in-out;
+   Color tokens:
+   --bg-0:  #1a1d23  (window background)
+   --bg-1:  #20232b  (sidebar / panel)
+   --bg-2:  #262a35  (cards)
+   --bg-3:  #2e3340  (elevated / header strips)
+   --text-1: #d0d4e0  (primary text)
+   --text-2: #8b92a9  (secondary / dim)
+   --text-3: #55607e  (very dim / labels)
+   --accent:  #5cb8b2  (Nordic teal)
+   --green:   #22c55e
+   --red:     #ef4444
+   --amber:   #f59e0b
+   --blue:    #60a5fa
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Global base ─────────────────────────────────────────────────── */
+
+window.background,
+.background {
+    background-color: #1a1d23;
+    color: #d0d4e0;
 }
 
-/* Drop target indicator (if using a placeholder, we apply this) */
-.drop-placeholder {
-    background-color: alpha(@accent_bg_color, 0.2);
-    border: 2px dashed @accent_bg_color;
-    border-radius: 12px;
+.view,
+scrolledwindow > viewport {
+    background-color: #1a1d23;
+    color: #d0d4e0;
 }
 
-/* Dashboard widget header: keep title icon readable */
-.widget-header > image {
-    min-width: 24px;
-    min-height: 24px;
+label {
+    color: #d0d4e0;
 }
 
-/* Preferences dialogs: keep switches compact (GTK4 rejects max-height here) */
-preferencesdialog switch {
-    min-height: 22px;
+label.dim-label,
+.dim-label {
+    color: #8b92a9;
 }
 
-/* Card highlight on hover */
-.card:hover {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    transition: box-shadow 0.2s ease;
+/* ── Navigation sidebar (left rail) ─────────────────────────────── */
+
+.navigation-sidebar {
+    background-color: #20232b;
+    border-right: 1px solid rgba(255, 255, 255, 0.07);
+    padding: 8px 0;
 }
 
-/* GitHub repo rows: pointer cursor + hover (see github_repos_widget.py) */
-.github-repo-row {
-    transition: background-color 0.15s ease;
-    border-radius: 9px;
-}
-
-.github-repo-row:hover {
-    background-color: alpha(@accent_bg_color, 0.22);
-}
-
-/* Premium progress bars */
-progressbar.os-bar trough {
-    min-height: 10px;
+.navigation-sidebar > row {
     border-radius: 6px;
-    background-color: alpha(@window_fg_color, 0.1);
+    margin: 2px 8px;
+    padding: 6px 8px;
+    color: #8b92a9;
+    transition: background-color 120ms ease, color 120ms ease;
 }
 
-progressbar.os-bar progress {
-    border-radius: 6px;
-    min-height: 10px;
+.navigation-sidebar > row:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #d0d4e0;
 }
 
-/* Numeric labels */
-.numeric {
-    font-family: "JetBrains Mono", "Roboto Mono", monospace;
-    font-weight: bold;
+.navigation-sidebar > row:selected,
+.navigation-sidebar > row:selected:hover {
+    background-color: rgba(92, 184, 178, 0.15);
+    color: #5cb8b2;
 }
 
-/* Learn → Linux FHS tree: humanist sans (Calibri/Carlito/Arial stack), normal weight */
-treeview.workstation-fhs-tree {
-    font-family: Calibri, Carlito, Arial, "Liberation Sans", "DejaVu Sans", sans-serif;
-    font-size: 16px;
-    font-weight: 400;
+.navigation-sidebar > row:selected image {
+    color: #5cb8b2;
 }
 
-treeview.workstation-fhs-tree header button {
-    font-family: Calibri, Carlito, Arial, "Liberation Sans", "DejaVu Sans", sans-serif;
-    font-size: 16px;
-    font-weight: 600;
-}
+/* ── Cards (generic .card from Adwaita) ──────────────────────────── */
 
-/* Workstation hub: subsection bar under main sidebar selection */
-.workstation-subsection-switcher {
-    padding-bottom: 4px;
-    border-bottom: 1px solid alpha(@window_fg_color, 0.12);
-}
-
-/* Workstation apps source labels near Installed button */
-.workstation-source-label {
-    font-weight: 600;
-}
-
-.workstation-source-apt {
-    color: #e74c3c;
-}
-
-.workstation-source-dnf {
-    color: #3498db;
-}
-
-.workstation-source-pacman {
-    color: #16a085;
-}
-
-.workstation-source-zypper {
-    color: #2ecc71;
-}
-
-.workstation-source-apk {
-    color: #9b59b6;
-}
-
-.workstation-source-flatpak {
-    color: #f1c40f;
-}
-
-.workstation-source-aur {
-    color: #e67e22;
-}
-
-.workstation-source-manual {
-    color: #ff66cc;
-}
-
-.workstation-source-system {
-    color: #95a5a6;
-}
-
-/* Bash Cheatsheet: improve readability with Arial + semantic colors */
-/* Standardize group styling across all three columns */
-.bash-cheatsheet-group {
-    background-color: transparent;
-}
-
-.bash-cheatsheet-group preferencesgroup {
-    background-color: transparent;
-}
-
-/* (Learn page section titles are colored via Pango markup in Python code) */
-
-.bash-cheatsheet-text {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 17px;
-    color: @window_fg_color;
-    line-height: 1.5;
-    font-weight: 400;
-    opacity: 1.0;
-}
-
-/* Code blocks: unified styling with grey background */
-.bash-code-block {
-    font-family: "JetBrains Mono", "Roboto Mono", monospace;
-    background-color: alpha(@window_fg_color, 0.08);
-    border-left: 3px solid @accent_color;
-    border-radius: 6px;
-    margin-bottom: 12px;
-    margin-top: 6px;
-}
-
-.bash-code-block:last-child {
-    margin-bottom: 0;
-}
-
-/* Code block label styling */
-.bash-code-label {
-    font-family: "JetBrains Mono", "Roboto Mono", monospace;
-    font-size: 16px;
-    color: @window_fg_color;
-    font-weight: 400;
-}
-
-/* Table rows - unified styling with card appearance and grey background */
-.bash-table-card {
-    background-color: alpha(@window_fg_color, 0.08);
-    border-left: 3px solid @accent_color;
-    border-radius: 6px;
-    margin-bottom: 12px;
-    margin-top: 6px;
-}
-
-.bash-table-card:last-child {
-    margin-bottom: 0;
-}
-
-.bash-table-row {
-    background-color: transparent;
-}
-
-.bash-table-key {
-    font-family: Arial, Helvetica, sans-serif;
-    font-weight: 600;
-    color: @accent_color;
-    font-size: 17px;
-}
-
-.bash-table-value {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 17px;
-    color: @window_fg_color;
-    opacity: 1.0;
-}
-
-/* Link rows - unified with card appearance and grey background */
-.bash-link-card {
-    background-color: alpha(@window_fg_color, 0.08);
-    border-left: 3px solid @accent_color;
-    border-radius: 6px;
-    margin-bottom: 12px;
-    margin-top: 6px;
-}
-
-.bash-link-card:last-child {
-    margin-bottom: 0;
-}
-
-.bash-link-row {
-    background-color: transparent;
-}
-
-.bash-link-title {
-    font-family: Arial, Helvetica, sans-serif;
-    font-weight: 600;
-    color: @accent_color;
-    font-size: 17px;
-}
-
-.bash-link-url {
-    font-family: "Roboto Mono", monospace;
-    font-size: 16px;
-    color: @window_fg_color;
-    opacity: 0.8;
-}
-
-/* Workstation → Servers → Overview (monitor-style dashboard) */
-.servers-dashboard-card {
-    background-color: alpha(@window_fg_color, 0.04);
-    border: 1px solid alpha(@window_fg_color, 0.08);
+.card {
+    background-color: #262a35;
+    border: 1px solid rgba(255, 255, 255, 0.07);
     border-radius: 8px;
-    padding: 10px 12px;
+    color: #d0d4e0;
 }
 
-.servers-dashboard-card-title {
-    font-weight: 600;
-    opacity: 0.85;
+.card:hover {
+    border-color: rgba(92, 184, 178, 0.25);
+}
+
+/* ── Dashboard: status banner ────────────────────────────────────── */
+
+.dashboard-banner {
+    background-color: #262a35;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-left: 3px solid #5cb8b2;
+    border-radius: 8px;
+    padding: 16px 20px;
+}
+
+.banner-eyebrow {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.10em;
+    color: #8b92a9;
+    text-transform: uppercase;
+}
+
+.banner-status {
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: #5cb8b2;
+}
+
+.status-dot-healthy {
+    color: #22c55e;
     font-size: 0.9rem;
 }
 
-.servers-dashboard-stat {
-    font-size: 1.05rem;
-    font-weight: 500;
+.status-dot-warning {
+    color: #f59e0b;
+    font-size: 0.9rem;
 }
 
-.servers-status-led {
-    font-size: 1.6rem;
+/* ── Dashboard: metric cards ─────────────────────────────────────── */
+
+.metric-card {
+    background-color: #262a35;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 8px;
+    padding: 14px 16px;
+}
+
+.metric-card-title {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.10em;
+    color: #55607e;
+    text-transform: uppercase;
+}
+
+.metric-card-value {
+    font-family: "JetBrains Mono", "Roboto Mono", monospace;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #d0d4e0;
+    margin-top: 2px;
+}
+
+/* ── Dashboard: quick-link buttons ───────────────────────────────── */
+
+.quick-link-btn {
+    background-color: #262a35;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    color: #d0d4e0;
+    transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+.quick-link-btn:hover {
+    background-color: #2e3340;
+    border-color: rgba(92, 184, 178, 0.3);
+    color: #5cb8b2;
+}
+
+.quick-link-btn:hover image {
+    color: #5cb8b2;
+}
+
+/* ── Section labels (UPPERCASE dividers) ─────────────────────────── */
+
+.section-title {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.10em;
+    color: #55607e;
+}
+
+/* ── Status indicators ───────────────────────────────────────────── */
+
+.status-running  { color: #22c55e; }
+.status-stopped,
+.status-error    { color: #ef4444; }
+.status-starting,
+.status-warning  { color: #f59e0b; }
+
+.status-badge {
+    font-size: 0.70rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.status-badge-running {
+    background-color: rgba(34, 197, 94, 0.12);
     color: #22c55e;
+    border: 1px solid rgba(34, 197, 94, 0.28);
 }
 
-.servers-topn-row {
-    padding-bottom: 6px;
+.status-badge-stopped {
+    background-color: rgba(239, 68, 68, 0.12);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.28);
 }
+
+.status-badge-starting {
+    background-color: rgba(245, 158, 11, 0.12);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.28);
+}
+
+/* ── Numeric / monospace ─────────────────────────────────────────── */
+
+.numeric {
+    font-family: "JetBrains Mono", "Roboto Mono", monospace;
+    font-weight: 700;
+}
+
+/* ── Progress bars ───────────────────────────────────────────────── */
+
+progressbar.os-bar trough {
+    min-height: 5px;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+progressbar.os-bar progress {
+    border-radius: 4px;
+    min-height: 5px;
+    background-color: #5cb8b2;
+}
+
+progressbar.os-bar-success progress { background-color: #22c55e; }
+progressbar.os-bar-warning progress { background-color: #f59e0b; }
+progressbar.os-bar-error   progress { background-color: #ef4444; }
+
+/* ── Level bars (servers overview) ──────────────────────────────── */
 
 levelbar.servers-level-bar trough {
-    min-height: 8px;
-    border-radius: 5px;
-    background-color: alpha(@window_fg_color, 0.12);
+    min-height: 5px;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.08);
 }
 
 levelbar.servers-level-bar block.low,
 levelbar.servers-level-bar block.high,
 levelbar.servers-level-bar block.full {
-    border-radius: 5px;
-    background-color: @accent_bg_color;
+    border-radius: 4px;
+    background-color: #5cb8b2;
 }
-
 levelbar.servers-level-bar-mem block.low,
 levelbar.servers-level-bar-mem block.high,
-levelbar.servers-level-bar-mem block.full {
-    background-color: #3b82f6;
-}
-
+levelbar.servers-level-bar-mem block.full   { background-color: #60a5fa; }
 levelbar.servers-level-bar-in block.low,
 levelbar.servers-level-bar-in block.high,
-levelbar.servers-level-bar-in block.full {
-    background-color: #22c55e;
-}
-
+levelbar.servers-level-bar-in block.full    { background-color: #22c55e; }
 levelbar.servers-level-bar-out block.low,
 levelbar.servers-level-bar-out block.high,
-levelbar.servers-level-bar-out block.full {
-    background-color: #60a5fa;
-}
-
+levelbar.servers-level-bar-out block.full   { background-color: #5cb8b2; }
 levelbar.servers-level-bar-disk block.low,
 levelbar.servers-level-bar-disk block.high,
-levelbar.servers-level-bar-disk block.full {
-    background-color: #d97706;
-}
-
+levelbar.servers-level-bar-disk block.full  { background-color: #f59e0b; }
 levelbar.servers-level-bar-table block.low,
 levelbar.servers-level-bar-table block.high,
-levelbar.servers-level-bar-table block.full {
-    background-color: #22c55e;
+levelbar.servers-level-bar-table block.full { background-color: #22c55e; }
+
+/* ── Servers / Monitor dashboard cards ───────────────────────────── */
+
+.servers-dashboard-card {
+    background-color: #262a35;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 8px;
+    padding: 10px 14px;
 }
 
-.servers-fs-row {
-    padding: 4px 0;
-    border-bottom: 1px solid alpha(@window_fg_color, 0.06);
+.servers-dashboard-card-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #55607e;
+    text-transform: uppercase;
 }
+
+.servers-dashboard-stat {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #d0d4e0;
+}
+
+.servers-status-led { color: #22c55e; font-size: 1.4rem; }
+.servers-topn-row   { padding-bottom: 6px; }
 
 .servers-table-header {
     padding: 4px 8px;
-    border-bottom: 2px solid alpha(@window_fg_color, 0.2);
-    font-weight: 600;
-}
-
-.servers-table-scroll {
-    min-height: 180px;
-}
-
-.servers-host-table {
-    padding: 4px 0 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+    font-weight: 700;
+    color: #55607e;
+    font-size: 0.72rem;
+    letter-spacing: 0.07em;
 }
 
 label.servers-table-header-cell {
     font-weight: 700;
     padding: 6px 2px 8px 2px;
-    border-bottom: 2px solid alpha(@window_fg_color, 0.22);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+    color: #55607e;
+    font-size: 0.72rem;
+    letter-spacing: 0.07em;
 }
 
 .servers-table-body {
-    border-radius: 0 0 8px 8px;
-    background-color: alpha(@window_fg_color, 0.02);
+    border-radius: 0 0 6px 6px;
+    background-color: rgba(0, 0, 0, 0.15);
 }
 
 .servers-table-row {
     padding: 4px 8px;
-    border-bottom: 1px solid alpha(@window_fg_color, 0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    transition: background-color 100ms ease;
 }
+
+.servers-table-row:hover { background-color: rgba(255, 255, 255, 0.04); }
 
 .servers-table-cell {
     padding: 6px 2px;
-    border-bottom: 1px solid alpha(@window_fg_color, 0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
-.servers-table-row:hover {
-    background-color: alpha(@accent_bg_color, 0.08);
+.servers-table-scroll { min-height: 180px; }
+.servers-host-table   { padding: 4px 0 8px 0; }
+.servers-fs-row {
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
+
+/* ── Workstation sub-sidebar ─────────────────────────────────────── */
+
+.workstation-subsection-switcher {
+    background-color: #20232b;
+    border-right: 1px solid rgba(255, 255, 255, 0.07);
+    padding: 8px 0;
+}
+
+/* ── Bash/Learn cheatsheets ──────────────────────────────────────── */
+
+.bash-cheatsheet-group              { background-color: transparent; }
+.bash-cheatsheet-group preferencesgroup { background-color: transparent; }
+
+.bash-cheatsheet-text {
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 14px;
+    color: #d0d4e0;
+    line-height: 1.6;
+}
+
+.bash-code-block {
+    font-family: "JetBrains Mono", "Roboto Mono", monospace;
+    background-color: rgba(0, 0, 0, 0.25);
+    border-left: 2px solid #5cb8b2;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    margin-top: 4px;
+}
+
+.bash-code-label {
+    font-family: "JetBrains Mono", "Roboto Mono", monospace;
+    font-size: 13px;
+    color: #f6c90e;
+}
+
+.bash-table-card,
+.bash-link-card {
+    background-color: rgba(0, 0, 0, 0.15);
+    border-left: 2px solid #5cb8b2;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    margin-top: 4px;
+}
+
+.bash-table-key {
+    font-family: "JetBrains Mono", "Roboto Mono", monospace;
+    font-weight: 600;
+    color: #9cdcfe;
+    font-size: 13px;
+}
+
+.bash-table-value {
+    font-size: 13px;
+    color: #d0d4e0;
+}
+
+.bash-link-title {
+    font-weight: 600;
+    color: #5cb8b2;
+    font-size: 13px;
+}
+
+.bash-link-url {
+    font-family: "JetBrains Mono", "Roboto Mono", monospace;
+    font-size: 12px;
+    color: #55607e;
+}
+
+/* ── Drag and drop (widget grid) ─────────────────────────────────── */
+
+.dragging         { opacity: 0.85; }
+.drop-placeholder {
+    background-color: rgba(92, 184, 178, 0.10);
+    border: 2px dashed rgba(92, 184, 178, 0.4);
+    border-radius: 8px;
+}
+
+/* ── Widget header ───────────────────────────────────────────────── */
+
+.widget-header > image {
+    min-width: 20px;
+    min-height: 20px;
+}
+
+/* ── GitHub rows ─────────────────────────────────────────────────── */
+
+.github-repo-row {
+    transition: background-color 120ms ease;
+    border-radius: 6px;
+}
+
+.github-repo-row:hover { background-color: rgba(255, 255, 255, 0.04); }
+
+/* ── Workstation source labels ───────────────────────────────────── */
+
+.workstation-source-label  { font-weight: 600; font-size: 0.8rem; }
+.workstation-source-apt    { color: #f87171; }
+.workstation-source-dnf    { color: #60a5fa; }
+.workstation-source-pacman { color: #34d399; }
+.workstation-source-zypper { color: #4ade80; }
+.workstation-source-apk    { color: #c084fc; }
+.workstation-source-flatpak{ color: #fbbf24; }
+.workstation-source-aur    { color: #fb923c; }
+.workstation-source-manual { color: #f472b6; }
+.workstation-source-system { color: #55607e; }
+
+/* ── Linux FHS tree ──────────────────────────────────────────────── */
+
+treeview.workstation-fhs-tree {
+    font-family: "JetBrains Mono", "Roboto Mono", monospace;
+    font-size: 13px;
+    background-color: #1a1d23;
+    color: #d0d4e0;
+}
+
+treeview.workstation-fhs-tree header button {
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    background-color: #20232b;
+    color: #55607e;
+    letter-spacing: 0.05em;
+}
+
+/* ── Preferences dialogs ─────────────────────────────────────────── */
+
+preferencesdialog switch { min-height: 22px; }

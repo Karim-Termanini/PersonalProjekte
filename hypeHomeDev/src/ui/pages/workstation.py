@@ -24,12 +24,10 @@ from ui.widgets.workstation import (  # noqa: E402
     WorkstationServersPanel,
     WorkstationServicesPanel,
 )
-from ui.widgets.workstation.hub_home_panel import WorkstationHubHomePanel  # noqa: E402
 
 log = logging.getLogger(__name__)
 
 _SIDEBAR_ITEMS: tuple[tuple[str, str, str, str], ...] = (
-    ("dashboard", "Hub", "Shortcuts to Welcome, System Monitor, and Servers — no duplicate wizards", "view-list-symbolic"),
     ("apps", "Apps", "One-click apps and post-install configuration", "view-app-grid-symbolic"),
     (
         "servers",
@@ -40,26 +38,27 @@ _SIDEBAR_ITEMS: tuple[tuple[str, str, str, str], ...] = (
     (
         "services",
         "Services",
-        "Tailscale, Dropbox, NordVPN, Bitwarden, 1Password — hub still lists Docker for quick control",
+        "Tailscale, Dropbox, NordVPN, Bitwarden, 1Password",
         "application-x-firmware-symbolic",
     ),
     ("ai", "AI Tools", "Ollama, LM Studio, Open WebUI, GitHub Copilot CLI", "preferences-desktop-accessibility-symbolic"),
-    ("config", "Config", "Personalize Git, SSH keys, dotfiles, and system tweaks", "emblem-synchronizing-symbolic"),
-    ("install", "Install", "Packages, languages, editors, terminals", "folder-download-symbolic"),
+    ("config", "Config", "Git, SSH keys, dotfiles, Bash reference, and system tweaks", "emblem-synchronizing-symbolic"),
+    ("install", "Install", "Packages, languages, editors, terminals — includes full Machine Setup wizard", "folder-download-symbolic"),
     ("remove", "Remove", "Uninstall packages and dev stacks safely", "edit-delete-symbolic"),
+    ("extensions", "Extensions", "Browse and manage extensions to add new features", "application-x-addon-symbolic"),
 )
 
 
 class WorkstationPage(BasePage):
-    """Phase 7 workstation: sidebar sections (Hub, Apps, Servers, Services, AI, Config, Install, Remove)."""
+    """Tools hub: Apps, Servers, Services, AI, Config, Install, Remove, Extensions."""
 
     page_title = "Tools"
     page_icon = "preferences-desktop-apps-symbolic"
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
-        # Default to Servers (new_plan.md: primary workload hub), not Hub promos.
-        self._current_view = "servers"
+        # Default to Apps (first real section)
+        self._current_view = "apps"
         self._view_titles: dict[str, str] = {key: title for key, title, _s, _i in _SIDEBAR_ITEMS}
         self._subsection_reset_widgets: list[Any] = []
         self._stack_pages: dict[str, Gtk.Widget] = {}
@@ -109,12 +108,11 @@ class WorkstationPage(BasePage):
         config_p = WorkstationConfigPanel()
         install_p = WorkstationInstallPanel()
         remove_p = WorkstationRemovePanel()
-        dash_p = WorkstationHubHomePanel()
+        extensions_p = self._build_extensions_placeholder()
         self._subsection_reset_widgets = [
-            apps_p, servers_p, services_p, ai_p, config_p, install_p, remove_p, dash_p,
+            apps_p, servers_p, services_p, ai_p, config_p, install_p, remove_p,
         ]
         self._stack_pages = {
-            "dashboard": dash_p,
             "apps": apps_p,
             "servers": servers_p,
             "services": services_p,
@@ -122,9 +120,9 @@ class WorkstationPage(BasePage):
             "config": config_p,
             "install": install_p,
             "remove": remove_p,
+            "extensions": extensions_p,
         }
 
-        self._stack.add_named(dash_p, "dashboard")
         self._stack.add_named(apps_p, "apps")
         self._stack.add_named(servers_p, "servers")
         self._stack.add_named(services_p, "services")
@@ -132,6 +130,7 @@ class WorkstationPage(BasePage):
         self._stack.add_named(config_p, "config")
         self._stack.add_named(install_p, "install")
         self._stack.add_named(remove_p, "remove")
+        self._stack.add_named(extensions_p, "extensions")
 
         body.append(sidebar_scroll)
         body.append(sep)
@@ -141,6 +140,19 @@ class WorkstationPage(BasePage):
         self.append(outer)
 
         self._goto_workstation_section(self._current_view)
+
+    def _build_extensions_placeholder(self) -> Gtk.Widget:
+        """Extensions placeholder — Phase 6 will fill this."""
+        import gi as _gi
+        _gi.require_version("Adw", "1")
+        from gi.repository import Adw
+        status = Adw.StatusPage(
+            title="Extensions",
+            description="Browse and manage extensions to add new features.\nComing in Phase 6.",
+            icon_name="application-x-addon-symbolic",
+            vexpand=True,
+        )
+        return status
 
     def _make_sidebar_row(
         self, page_id: str, title: str, subtitle: str, icon_name: str
@@ -281,11 +293,11 @@ class WorkstationPage(BasePage):
             reset = getattr(w, "reset_subsections", None)
             if callable(reset):
                 reset()
-        self._current_view = "servers"
+        self._current_view = "apps"
 
         def _restore(_a: Any = None) -> bool:
             if self._sidebar.get_first_child():
-                self._goto_workstation_section("servers")
+                self._goto_workstation_section("apps")
             return False
 
         GLib.idle_add(_restore)

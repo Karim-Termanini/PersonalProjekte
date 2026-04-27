@@ -27,12 +27,8 @@ from core.state import AppState  # noqa: E402
 from ui.about import AboutDialog  # noqa: E402
 from ui.pages.base_page import BasePage  # noqa: E402
 from ui.pages.dashboard import DashboardPage  # noqa: E402
-from ui.pages.extensions import ExtensionsPage  # noqa: E402
-from ui.pages.machine_setup import MachineSetupPage  # noqa: E402
-from ui.pages.system_monitor import SystemMonitorPage  # noqa: E402
 from ui.pages.maintenance_hub import MaintenanceHubPage  # noqa: E402
 from ui.pages.utilities import UtilitiesPage  # noqa: E402
-from ui.pages.welcome_dashboard import WelcomeDashboardPage  # noqa: E402
 from ui.pages.workstation import WorkstationPage  # noqa: E402
 from ui.settings import SettingsDialog  # noqa: E402
 from ui.toast_manager import ToastManager  # noqa: E402
@@ -43,17 +39,15 @@ DEFAULT_WIDTH = 1200
 DEFAULT_HEIGHT = 800
 
 # ── Page registry ───────────────────────────────────────
-# Each entry is (id, title, icon_name, PageClass).
+# 4 top-level sections — clean, no duplicates.
+# Monitor data lives in Tools → Servers → Overview.
+# Machine Setup lives inside Tools → Install.
+# Extensions live inside Tools.
 _PAGE_REGISTRY: list[tuple[str, str, str, type[BasePage]]] = [
-    # Welcome = default (new_plan.md Phase 1): wizards + health + servers overview.
-    ("welcome", "Welcome", "user-home-symbolic", WelcomeDashboardPage),
-    ("system", "System Monitor", "utilities-system-monitor-symbolic", SystemMonitorPage),
+    ("dashboard", "Dashboard", "user-home-symbolic", DashboardPage),
     ("workstation", "Tools", "preferences-desktop-apps-symbolic", WorkstationPage),
-    ("dashboard", "Widgets", "view-grid-symbolic", DashboardPage),
-    ("machine-setup", "Machine Setup", "computer-symbolic", MachineSetupPage),
-    ("maintenance", "Maintenance Hub", "security-high-symbolic", MaintenanceHubPage),
-    ("extensions", "Extensions", "application-x-addon-symbolic", ExtensionsPage),
-    ("utilities", "Utilities", "applications-utilities-symbolic", UtilitiesPage),
+    ("maintenance", "Maintenance", "security-high-symbolic", MaintenanceHubPage),
+    ("utilities", "Settings", "applications-utilities-symbolic", UtilitiesPage),
 ]
 
 
@@ -93,11 +87,11 @@ class HypeDevHomeWindow(Adw.ApplicationWindow):
         self.connect("close-request", self._on_close_request)
 
         # ── Navigate to saved page or default ───────────
-        start_page = "welcome"
+        start_page = "dashboard"
         if self.config:
-            start_page = self.config.get("last_page", "welcome")
+            start_page = self.config.get("last_page", "dashboard")
         if start_page not in self._pages:
-            start_page = "welcome"
+            start_page = "dashboard"
         self.navigate_to(start_page)
 
         log.debug("Window initialised (%dx%d)", w, h)
@@ -141,8 +135,7 @@ class HypeDevHomeWindow(Adw.ApplicationWindow):
             self._content_stack.add_named(page, page_id)
 
         # Eager-build primary pages so users never see spinner → full UI swap
-        # (BasePage lazy init) on first open; see new_plan.md Welcome + System Monitor.
-        for _eager_id in ("welcome", "system", "workstation"):
+        for _eager_id in ("dashboard", "workstation"):
             pg = self._pages.get(_eager_id)
             if pg is not None:
                 pg.ensure_built()
@@ -340,14 +333,10 @@ class HypeDevHomeWindow(Adw.ApplicationWindow):
             return
 
         shortcuts = [
-            ("<Control>1", "nav-welcome", lambda: self.navigate_to("welcome")),
-            ("<Control>2", "nav-system", lambda: self.navigate_to("system")),
-            ("<Control>3", "nav-workstation", lambda: self.navigate_to("workstation")),
-            ("<Control>4", "nav-dashboard", lambda: self.navigate_to("dashboard")),
-            ("<Control>5", "nav-setup", lambda: self.navigate_to("machine-setup")),
-            ("<Control>6", "nav-maintenance", lambda: self.navigate_to("maintenance")),
-            ("<Control>7", "nav-extensions", lambda: self.navigate_to("extensions")),
-            ("<Control>8", "nav-utilities", lambda: self.navigate_to("utilities")),
+            ("<Control>1", "nav-dashboard", lambda: self.navigate_to("dashboard")),
+            ("<Control>2", "nav-workstation", lambda: self.navigate_to("workstation")),
+            ("<Control>3", "nav-maintenance", lambda: self.navigate_to("maintenance")),
+            ("<Control>4", "nav-settings", lambda: self.navigate_to("utilities")),
             ("F11", "toggle-fullscreen", self._toggle_fullscreen),
         ]
 
@@ -398,15 +387,11 @@ class HypeDevHomeWindow(Adw.ApplicationWindow):
         nav_group = Gtk.ShortcutsGroup(title="Navigation")
         nav_group.set_visible(True)
         for key, desc in [
-            ("<Control>1", "Go to Welcome"),
-            ("<Control>2", "Go to System Monitor"),
-            ("<Control>3", "Go to Tools"),
-            ("<Control>4", "Go to Widgets"),
-            ("<Control>5", "Go to Machine Setup"),
-            ("<Control>6", "Go to Maintenance Hub"),
-            ("<Control>7", "Go to Extensions"),
-            ("<Control>8", "Go to Utilities"),
-            ("Escape", "Back (nested page or show sidebar)"),
+            ("<Control>1", "Dashboard"),
+            ("<Control>2", "Tools"),
+            ("<Control>3", "Maintenance"),
+            ("<Control>4", "Settings"),
+            ("Escape", "Back (nested page)"),
             ("F11", "Toggle Fullscreen"),
         ]:
             sc = Gtk.ShortcutsShortcut(
