@@ -5,7 +5,7 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 import globals from 'globals'
 
 export default tseslint.config(
-  { ignores: ['**/out/**', '**/dist/**', '**/release/**', '**/node_modules/**'] },
+  { ignores: ['**/out/**', '**/dist/**', '**/release/**', '**/node_modules/**', '**/pack-staging/**'] },
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
   {
@@ -27,9 +27,10 @@ export default tseslint.config(
     },
   },
   {
-    files: ['apps/desktop/scripts/**/*.mjs'],
+    files: ['apps/desktop/scripts/**/*.{mjs,js}'],
     languageOptions: {
       globals: { ...globals.node },
+      sourceType: 'module',
     },
   },
   {

@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "pnpm --filter desktop dev",
     "build": "pnpm --filter desktop build",
+    "pack:linux": "pnpm --filter desktop pack:linux",
     "lint": "eslint .",
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm --filter shared test"

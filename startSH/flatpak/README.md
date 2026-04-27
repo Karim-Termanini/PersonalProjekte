@@ -1,19 +1,23 @@
 # Flatpak packaging
 
-End-user distribution is intended to be **Flatpak-only**. Electron on Flathub typically uses `org.electronjs.Electron2.BaseApp` and a two-stage build (bundle your `asar`, ship launcher script).
+The manifest [`io.github.karimodora.LinuxDevHome.yml`](io.github.karimodora.LinuxDevHome.yml) builds the app **inside** the Flatpak sandbox (Node 20 SDK, network for `pnpm install`, then `pnpm --filter desktop pack:linux`). It ships the **electron-builder** `linux-unpacked` bundle and a **Zypak** launcher from Electron BaseApp.
 
-The file `io.github.karimodora.LinuxDevHome.yml` in this directory is a **starting point**, not a drop-in Flathub submission:
+Prerequisites: `flatpak`, `flatpak-builder`, and Flathub remote for runtimes/BaseApp.
 
-- Replace placeholders with your verified app id.
-- Wire `build-commands` to your real artifacts (`electron-vite build` output in `apps/desktop/out`).
-- Add the Node SDK extension and any extra `finish-args` required for Docker (see `docs/DOCKER_FLATPAK.md`).
-
-Use `docs/FLATHUB_CHECKLIST.md` before opening a Flathub PR.
-
-Recommended local command once the manifest is complete:
+From the **repository root** (`startSH/`):
 
 ```bash
-flatpak-builder --user --install --force-clean ../flatpak-out io.github.karimodora.LinuxDevHome.yml
+flatpak-builder --user --install --force-clean flatpak-build-dir \
+  flatpak/io.github.karimodora.LinuxDevHome.yml \
+  --install-deps-from=flathub
 ```
 
-Run through `docs/INSTALL_TEST.md` after installing the bundle.
+Run the app:
+
+```bash
+flatpak run io.github.karimodora.LinuxDevHome
+```
+
+Flathub submission still needs offline/npm-generated sources or policy review for `--share=network` builds; see [`docs/FLATHUB_CHECKLIST.md`](../docs/FLATHUB_CHECKLIST.md).
+
+For Docker socket access after install, see [`docs/DOCKER_FLATPAK.md`](../docs/DOCKER_FLATPAK.md).

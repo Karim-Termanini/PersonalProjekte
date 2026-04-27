@@ -32,7 +32,18 @@ pnpm test         # shared package unit tests (Zod)
 pnpm typecheck
 pnpm lint
 pnpm build        # electron-vite build + copy compose profiles into out/
+pnpm pack:linux   # pnpm deploy staging + electron-builder → apps/desktop/pack-staging/release/linux-unpacked
 ```
+
+### Local tarball-style run (no Flatpak)
+
+After `pnpm pack:linux`:
+
+```bash
+./apps/desktop/pack-staging/release/linux-unpacked/linux-dev-home
+```
+
+Desktop integration for that binary: install [`data/io.github.karimodora.LinuxDevHome.desktop`](data/io.github.karimodora.LinuxDevHome.desktop) and the icon under `data/icons/` into `~/.local/share` (adjust `Exec=` to the absolute path of `linux-dev-home`), or use the Flatpak below.
 
 ## Docker CI image
 
@@ -55,7 +66,9 @@ See [docs/BRANCHING.md](docs/BRANCHING.md).
 - `apps/desktop` — Electron + React UI
 - `packages/shared` — shared types, IPC channel names, Zod schemas
 - `docker/compose/*` — bundled `docker compose` profiles
-- `flatpak/` — Flatpak manifest template + notes
+- `flatpak/` — Flatpak manifest + build instructions
+- `data/` — `.desktop`, AppStream metainfo, icons
+- `packaging/` — Flatpak launcher (`zypak-wrapper`)
 
 ## License
 
