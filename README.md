@@ -2,31 +2,33 @@
 
 Herzlich willkommen in meinem Repository für persönliche Projekte! Hier sammle ich verschiedene Softwareentwicklungsprojekte, Experimente und Tools, die ich parallel zu meinem Informatikstudium entwickle. Dieses Repository dient als Portfolio und Dokumentation meiner Lernfortschritte außerhalb der universitären Pflichtkurse.
 
-## 🚀 Highlight-Projekt
+## 🚀 Projekte im Überblick
 
 ### [HypeDevHome](hypeHomeDev/)
-**HypeDevHome** ist eine Open-Source-Alternative zu Microsoft Dev Home, speziell entwickelt für das Linux-Ökosystem mit **Python, GTK4 und Libadwaita**.
+Eine Open-Source-Alternative zu Microsoft Dev Home, entwickelt mit **Python, GTK4 und Libadwaita**. Ein universelles Dashboard für Linux-Entwickler.
 
-*   **Kernkonzept:** Eine universelle Anwendung, die dank Flatpak und Docker auf jeder Linux-Distribution (Fedora, Ubuntu, Arch, etc.) reibungslos läuft.
-*   **Features:** 
-    *   Echtzeit-System-Monitoring (CPU, GPU, RAM, Netzwerk).
-    *   Nahtlose GitHub-Integration zur Verwaltung von Issues und Pull Requests.
-    *   Automatisierte Systemkonfiguration für Entwicklerumgebungen.
-    *   Modulare Widget-Architektur.
-*   **Technologien:** Python, GTK4, Libadwaita, Docker, Flatpak.
+### [cross-distro-pomodoro](cross-distro-pomodoro/)
+Ein plattformübergreifender Pomodoro-Timer für Linux, der speziell für die Integration in Waybar und Hyprland optimiert wurde. Geschrieben in Bash.
 
-## 🛠 Weitere Inhalte & Experimente
+### [Html-Css-alten-projekte](Html-Css-alten-projekte/)
+Eine Sammlung meiner ersten Schritte in der Webentwicklung – verschiedene statische Webseiten und Design-Experimente mit reinem HTML und CSS.
 
-Neben großen Projekten enthält dieses Repository auch:
-*   **Automatisierungsscripts:** Bash- und Python-Scripts zur Optimierung des Workflows.
+### [Udemy-Kurse](Udemy-Kurse/)
+Praxisbeispiele, Übungen und Abschlussprojekte aus verschiedenen Udemy-Kursen zu Themen wie JavaScript, Python und Web-Technologien.
+
+### [Zertifikate](Zertifikate/)
+Dieser Ordner enthält meine erworbenen Zertifikate und Nachweise über abgeschlossene IT-Kurse und Weiterbildungen.
+
+### [testo](testo/)
+Ein Spielplatz für schnelle Code-Tests und das Ausprobieren neuer Ideen.
 
 ## 💻 Tech Stack
 
 In meinen Projekten verwende ich unter anderem:
-*   **Sprachen:** Python, Bash, JavaScript.
-*   **UI/UX:** GTK4, Libadwaita, CSS.
+*   **Sprachen:** Python, Bash, JavaScript, HTML, CSS.
+*   **UI/UX:** GTK4, Libadwaita, Waybar Integration.
 *   **Infrastruktur:** Docker, Docker Compose, Flatpak.
-*   **Tools:** Git, GitHub Actions (CI/CD).
+*   **Tools:** Git, GitHub Actions.
 
 ## 📂 Struktur des Repositories
 
