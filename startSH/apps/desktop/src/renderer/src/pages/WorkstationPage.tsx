@@ -1,0 +1,59 @@
+import type { ReactElement } from 'react'
+import { useState } from 'react'
+
+const profiles = ['web-dev', 'data-science', 'ai-ml'] as const
+
+export function WorkstationPage(): ReactElement {
+  const [log, setLog] = useState<string>('')
+
+  async function showLogs(profile: (typeof profiles)[number]): Promise<void> {
+    const text = (await window.dh.composeLogs({ profile })) as string
+    setLog(text)
+  }
+
+  return (
+    <div style={{ maxWidth: 900 }}>
+      <h1 style={{ marginTop: 0 }}>Workstation</h1>
+      <p style={{ color: 'var(--text-muted)' }}>
+        Inspect bundled compose stacks. Use the dashboard cards to run docker compose up, then fetch
+        logs here for troubleshooting.
+      </p>
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 16 }}>
+        {profiles.map((p) => (
+          <button
+            key={p}
+            type="button"
+            onClick={() => void showLogs(p)}
+            style={{
+              background: 'var(--bg-widget)',
+              border: '1px solid var(--border)',
+              color: 'var(--text)',
+              borderRadius: 8,
+              padding: '10px 14px',
+              cursor: 'pointer',
+            }}
+          >
+            Logs: {p}
+          </button>
+        ))}
+      </div>
+      {log ? (
+        <pre
+          className="mono"
+          style={{
+            marginTop: 20,
+            padding: 16,
+            background: '#0a0a0a',
+            border: '1px solid var(--border)',
+            borderRadius: 8,
+            maxHeight: 480,
+            overflow: 'auto',
+            fontSize: 12,
+          }}
+        >
+          {log}
+        </pre>
+      ) : null}
+    </div>
+  )
+}

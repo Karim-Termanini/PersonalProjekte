@@ -1,0 +1,65 @@
+@import '@vscode/codicons/dist/codicon.css';
+
+:root {
+  --bg-app: #0d0d0d;
+  --bg-panel: #121212;
+  --bg-widget: #1a1a1a;
+  --bg-input: #252526;
+  --border: #2d2d30;
+  --text: #e8e8e8;
+  --text-muted: #9d9d9d;
+  --accent: #7c4dff;
+  --accent-dim: rgba(124, 77, 255, 0.35);
+  --orange: #ff8c42;
+  --blue: #56b6f5;
+  --green: #3fb950;
+  --red: #f85149;
+  --yellow: #dcdcaa;
+  --font-ui: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --radius: 8px;
+  --rail-width: 224px;
+  --top-height: 48px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg-app);
+  color: var(--text);
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  height: 100%;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+button {
+  font-family: var(--font-ui);
+}
+
+input,
+textarea {
+  font-family: var(--font-ui);
+}
+
+.codicon {
+  font-size: 18px;
+  vertical-align: middle;
+}
