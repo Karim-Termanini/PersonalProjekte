@@ -117,7 +117,7 @@ class WorkstationPage(BasePage):
             selection_mode=Gtk.SelectionMode.SINGLE,
             css_classes=["navigation-sidebar"],
         )
-        self._sidebar.set_size_request(240, -1)
+        self._sidebar.set_size_request(210, -1)
         self._sidebar.connect("row-selected", self._on_sidebar_row_selected)
 
         for page_id, title, subtitle, icon_name in _SIDEBAR_ITEMS:

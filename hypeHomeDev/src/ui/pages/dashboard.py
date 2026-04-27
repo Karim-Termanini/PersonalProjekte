@@ -68,9 +68,9 @@ class DashboardPage(BasePage):
         top = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
         top.set_hexpand(True)
         top.set_vexpand(False)
-        top.set_margin_top(20)
-        top.set_margin_start(20)
-        top.set_margin_end(20)
+        top.set_margin_top(0)
+        top.set_margin_start(0)
+        top.set_margin_end(0)
         top.set_margin_bottom(0)
 
         top.append(self._build_status_banner())

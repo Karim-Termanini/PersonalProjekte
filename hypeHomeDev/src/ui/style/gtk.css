@@ -1,77 +1,96 @@
 /* ═══════════════════════════════════════════════════════════════════
-   HypeDevHome — Nordic Theme
-   Palette: dark navy/slate background, teal accent, clean typography.
-   Inspired by Nordic Studio reference designs.
-   ═══════════════════════════════════════════════════════════════════
+   HypeDevHome — Premium Dark Theme
+   Inspired by Kinetic Terminal + HypeDev reference designs.
 
-   Color tokens:
-   --bg-0:  #1a1d23  (window background)
-   --bg-1:  #20232b  (sidebar / panel)
-   --bg-2:  #262a35  (cards)
-   --bg-3:  #2e3340  (elevated / header strips)
-   --text-1: #d0d4e0  (primary text)
-   --text-2: #8b92a9  (secondary / dim)
-   --text-3: #55607e  (very dim / labels)
-   --accent:  #5cb8b2  (Nordic teal)
-   --green:   #22c55e
-   --red:     #ef4444
-   --amber:   #f59e0b
-   --blue:    #60a5fa
+   Palette:
+   bg-0 = #0f1117  (window — very dark navy-black)
+   bg-1 = #141820  (sidebar)
+   bg-2 = #1a1e2e  (cards / panels)
+   bg-3 = #222840  (elevated / active states)
+   text-1 = #e4e8f4  (primary text — near white)
+   text-2 = #6e7a95  (secondary / dim)
+   text-3 = #3d4a6a  (very dim / labels)
+   accent = #5cb8b2  (teal)
+   green  = #22c55e
+   red    = #ef4444
+   amber  = #f59e0b
+   blue   = #6b8af0  (info / link)
    ═══════════════════════════════════════════════════════════════════ */
 
-/* ── Global base ─────────────────────────────────────────────────── */
+/* ── Base ───────────────────────────────────────────────────────── */
 
 window.background,
 .background {
-    background-color: #1a1d23;
-    color: #d0d4e0;
+    background-color: #0f1117;
+    color: #e4e8f4;
 }
 
 .view,
 scrolledwindow > viewport {
-    background-color: #1a1d23;
-    color: #d0d4e0;
+    background-color: #0f1117;
+    color: #e4e8f4;
 }
 
-label {
-    color: #d0d4e0;
-}
+label { color: #e4e8f4; }
 
 label.dim-label,
-.dim-label {
-    color: #8b92a9;
+.dim-label { color: #6e7a95; }
+
+/* ── Sidebar rail ───────────────────────────────────────────────── */
+
+.sidebar-rail {
+    background-color: #141820;
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-/* ── Navigation sidebar (left rail) ─────────────────────────────── */
+/* Brand block at top of sidebar */
+.sidebar-brand-box {
+    padding: 20px 14px 12px 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
 
+.sidebar-brand-name {
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    color: #e4e8f4;
+}
+
+.sidebar-brand-sub {
+    font-size: 0.60rem;
+    font-weight: 600;
+    letter-spacing: 0.10em;
+    color: #5cb8b2;
+    text-transform: uppercase;
+}
+
+/* Nav list */
 .navigation-sidebar {
-    background-color: #20232b;
-    border-right: 1px solid rgba(255, 255, 255, 0.07);
-    padding: 8px 0;
+    background-color: transparent;
+    padding: 6px 0;
 }
 
 .navigation-sidebar > row {
     border-radius: 6px;
     margin: 2px 8px;
-    padding: 6px 8px;
-    color: #8b92a9;
+    padding: 0;
+    color: #6e7a95;
     background-color: transparent;
-    /* No transition — avoids Adwaita's opacity flicker */
 }
 
 .navigation-sidebar > row:hover {
-    background-color: #2a2e3a;
-    color: #d0d4e0;
+    background-color: #1e2438;
+    color: #e4e8f4;
 }
 
 .navigation-sidebar > row:active {
-    background-color: #2e3340;
-    color: #d0d4e0;
+    background-color: #252a3d;
+    color: #e4e8f4;
 }
 
 .navigation-sidebar > row:selected,
 .navigation-sidebar > row:selected:hover {
-    background-color: #1e3d3c;
+    background-color: #1c3a38;
     color: #5cb8b2;
 }
 
@@ -80,109 +99,142 @@ label.dim-label,
     color: #5cb8b2;
 }
 
-/* ── Cards (generic .card from Adwaita) ──────────────────────────── */
+/* ── Header bar ─────────────────────────────────────────────────── */
+
+headerbar {
+    background-color: #0f1117;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: none;
+    min-height: 44px;
+}
+
+headerbar windowtitle title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: #e4e8f4;
+}
+
+headerbar windowtitle subtitle {
+    font-size: 0.68rem;
+    color: #6e7a95;
+}
+
+/* ── Page header (in-content title block) ───────────────────────── */
+
+.page-header {
+    padding: 28px 28px 20px 28px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.page-header-title {
+    font-size: 1.9rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: #e4e8f4;
+}
+
+.page-header-subtitle {
+    font-size: 0.9rem;
+    color: #6e7a95;
+    margin-top: 4px;
+}
+
+/* ── Cards ─────────────────────────────────────────────────────── */
 
 .card {
-    background-color: #262a35;
-    border: 1px solid rgba(255, 255, 255, 0.07);
-    border-radius: 8px;
-    color: #d0d4e0;
+    background-color: #1a1e2e;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    color: #e4e8f4;
 }
 
 .card:hover {
-    background-color: #2a2e3a;
-    border-color: rgba(92, 184, 178, 0.2);
+    background-color: #1e2438;
+    border-color: rgba(92, 184, 178, 0.18);
 }
 
-/* ── Dashboard: status banner ────────────────────────────────────── */
+/* ── Dashboard: health banner ───────────────────────────────────── */
 
 .dashboard-banner {
-    background-color: #262a35;
-    border: 1px solid rgba(255, 255, 255, 0.07);
+    background-color: #1a1e2e;
+    border: 1px solid rgba(255, 255, 255, 0.06);
     border-left: 3px solid #5cb8b2;
-    border-radius: 8px;
-    padding: 16px 20px;
+    border-radius: 10px;
+    padding: 18px 24px;
+    margin: 24px 24px 0 24px;
 }
 
 .banner-eyebrow {
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.10em;
-    color: #8b92a9;
-    text-transform: uppercase;
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    color: #6e7a95;
 }
 
 .banner-status {
-    font-size: 1.6rem;
-    font-weight: 800;
-    letter-spacing: 0.06em;
+    font-size: 2.2rem;
+    font-weight: 900;
+    letter-spacing: 0.04em;
     color: #5cb8b2;
 }
 
-.status-dot-healthy {
-    color: #22c55e;
-    font-size: 0.9rem;
-}
+.status-dot-healthy { color: #22c55e; font-size: 0.75rem; }
+.status-dot-warning { color: #f59e0b; font-size: 0.75rem; }
 
-.status-dot-warning {
-    color: #f59e0b;
-    font-size: 0.9rem;
-}
-
-/* ── Dashboard: metric cards ─────────────────────────────────────── */
+/* ── Dashboard: metric cards ────────────────────────────────────── */
 
 .metric-card {
-    background-color: #262a35;
-    border: 1px solid rgba(255, 255, 255, 0.07);
-    border-radius: 8px;
-    padding: 14px 16px;
+    background-color: #1a1e2e;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin: 12px 24px;
 }
 
 .metric-card-title {
-    font-size: 0.68rem;
-    font-weight: 700;
-    letter-spacing: 0.10em;
-    color: #55607e;
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    color: #3d4a6a;
     text-transform: uppercase;
 }
 
 .metric-card-value {
     font-family: "JetBrains Mono", "Roboto Mono", monospace;
-    font-size: 1.35rem;
+    font-size: 1.5rem;
     font-weight: 700;
-    color: #d0d4e0;
-    margin-top: 2px;
+    color: #e4e8f4;
+    margin-top: 4px;
 }
 
-/* ── Dashboard: quick-link buttons ───────────────────────────────── */
+/* ── Dashboard: quick-link buttons ─────────────────────────────── */
 
 .quick-link-btn {
-    background-color: #262a35;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background-color: #1a1e2e;
+    border: 1px solid rgba(255, 255, 255, 0.07);
     border-radius: 8px;
-    color: #d0d4e0;
+    color: #e4e8f4;
 }
 
 .quick-link-btn:hover {
-    background-color: #2e3340;
+    background-color: #222840;
     border-color: rgba(92, 184, 178, 0.3);
     color: #5cb8b2;
 }
 
-.quick-link-btn:hover image {
-    color: #5cb8b2;
-}
+.quick-link-btn:hover image { color: #5cb8b2; }
 
-/* ── Section labels (UPPERCASE dividers) ─────────────────────────── */
+/* ── Section labels ─────────────────────────────────────────────── */
 
 .section-title {
-    font-size: 0.68rem;
-    font-weight: 700;
-    letter-spacing: 0.10em;
-    color: #55607e;
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    color: #3d4a6a;
 }
 
-/* ── Status indicators ───────────────────────────────────────────── */
+/* ── Status indicators ──────────────────────────────────────────── */
 
 .status-running  { color: #22c55e; }
 .status-stopped,
@@ -191,49 +243,49 @@ label.dim-label,
 .status-warning  { color: #f59e0b; }
 
 .status-badge {
-    font-size: 0.70rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
+    font-size: 0.66rem;
+    font-weight: 800;
+    letter-spacing: 0.07em;
     padding: 2px 8px;
-    border-radius: 4px;
+    border-radius: 5px;
 }
 
 .status-badge-running {
     background-color: rgba(34, 197, 94, 0.12);
     color: #22c55e;
-    border: 1px solid rgba(34, 197, 94, 0.28);
+    border: 1px solid rgba(34, 197, 94, 0.25);
 }
 
 .status-badge-stopped {
     background-color: rgba(239, 68, 68, 0.12);
     color: #ef4444;
-    border: 1px solid rgba(239, 68, 68, 0.28);
+    border: 1px solid rgba(239, 68, 68, 0.25);
 }
 
 .status-badge-starting {
     background-color: rgba(245, 158, 11, 0.12);
     color: #f59e0b;
-    border: 1px solid rgba(245, 158, 11, 0.28);
+    border: 1px solid rgba(245, 158, 11, 0.25);
 }
 
-/* ── Numeric / monospace ─────────────────────────────────────────── */
+/* ── Monospace numeric values ───────────────────────────────────── */
 
 .numeric {
     font-family: "JetBrains Mono", "Roboto Mono", monospace;
     font-weight: 700;
 }
 
-/* ── Progress bars ───────────────────────────────────────────────── */
+/* ── Progress bars ──────────────────────────────────────────────── */
 
 progressbar.os-bar trough {
-    min-height: 5px;
+    min-height: 4px;
     border-radius: 4px;
-    background-color: rgba(255, 255, 255, 0.08);
+    background-color: rgba(255, 255, 255, 0.06);
 }
 
 progressbar.os-bar progress {
     border-radius: 4px;
-    min-height: 5px;
+    min-height: 4px;
     background-color: #5cb8b2;
 }
 
@@ -241,57 +293,54 @@ progressbar.os-bar-success progress { background-color: #22c55e; }
 progressbar.os-bar-warning progress { background-color: #f59e0b; }
 progressbar.os-bar-error   progress { background-color: #ef4444; }
 
-/* ── Level bars (servers overview) ──────────────────────────────── */
+/* ── Level bars ─────────────────────────────────────────────────── */
 
 levelbar.servers-level-bar trough {
-    min-height: 5px;
+    min-height: 4px;
     border-radius: 4px;
-    background-color: rgba(255, 255, 255, 0.08);
+    background-color: rgba(255, 255, 255, 0.06);
 }
 
 levelbar.servers-level-bar block.low,
 levelbar.servers-level-bar block.high,
-levelbar.servers-level-bar block.full {
-    border-radius: 4px;
-    background-color: #5cb8b2;
-}
+levelbar.servers-level-bar block.full  { border-radius: 4px; background-color: #5cb8b2; }
 levelbar.servers-level-bar-mem block.low,
 levelbar.servers-level-bar-mem block.high,
-levelbar.servers-level-bar-mem block.full   { background-color: #60a5fa; }
+levelbar.servers-level-bar-mem block.full { background-color: #6b8af0; }
 levelbar.servers-level-bar-in block.low,
 levelbar.servers-level-bar-in block.high,
-levelbar.servers-level-bar-in block.full    { background-color: #22c55e; }
+levelbar.servers-level-bar-in block.full  { background-color: #22c55e; }
 levelbar.servers-level-bar-out block.low,
 levelbar.servers-level-bar-out block.high,
-levelbar.servers-level-bar-out block.full   { background-color: #5cb8b2; }
+levelbar.servers-level-bar-out block.full { background-color: #5cb8b2; }
 levelbar.servers-level-bar-disk block.low,
 levelbar.servers-level-bar-disk block.high,
-levelbar.servers-level-bar-disk block.full  { background-color: #f59e0b; }
+levelbar.servers-level-bar-disk block.full { background-color: #f59e0b; }
 levelbar.servers-level-bar-table block.low,
 levelbar.servers-level-bar-table block.high,
 levelbar.servers-level-bar-table block.full { background-color: #22c55e; }
 
-/* ── Servers / Monitor dashboard cards ───────────────────────────── */
+/* ── Servers / Monitor cards ────────────────────────────────────── */
 
 .servers-dashboard-card {
-    background-color: #262a35;
-    border: 1px solid rgba(255, 255, 255, 0.07);
-    border-radius: 8px;
-    padding: 10px 14px;
+    background-color: #1a1e2e;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    padding: 12px 16px;
 }
 
 .servers-dashboard-card-title {
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    color: #55607e;
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.10em;
+    color: #3d4a6a;
     text-transform: uppercase;
 }
 
 .servers-dashboard-stat {
     font-size: 1rem;
     font-weight: 500;
-    color: #d0d4e0;
+    color: #e4e8f4;
 }
 
 .servers-status-led { color: #22c55e; font-size: 1.4rem; }
@@ -299,25 +348,25 @@ levelbar.servers-level-bar-table block.full { background-color: #22c55e; }
 
 .servers-table-header {
     padding: 4px 8px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.10);
-    font-weight: 700;
-    color: #55607e;
-    font-size: 0.72rem;
-    letter-spacing: 0.07em;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    font-weight: 800;
+    color: #3d4a6a;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
 }
 
 label.servers-table-header-cell {
-    font-weight: 700;
+    font-weight: 800;
     padding: 6px 2px 8px 2px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.10);
-    color: #55607e;
-    font-size: 0.72rem;
-    letter-spacing: 0.07em;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    color: #3d4a6a;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
 }
 
 .servers-table-body {
-    border-radius: 0 0 6px 6px;
-    background-color: rgba(0, 0, 0, 0.15);
+    border-radius: 0 0 8px 8px;
+    background-color: rgba(0, 0, 0, 0.20);
 }
 
 .servers-table-row {
@@ -325,7 +374,7 @@ label.servers-table-header-cell {
     border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
-.servers-table-row:hover { background-color: #252932; }
+.servers-table-row:hover { background-color: #1e2438; }
 
 .servers-table-cell {
     padding: 6px 2px;
@@ -339,29 +388,59 @@ label.servers-table-header-cell {
     border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
-/* ── Workstation sub-sidebar ─────────────────────────────────────── */
+/* ── Tools sub-sidebar (workstation) ────────────────────────────── */
 
 .workstation-subsection-switcher {
-    background-color: #20232b;
-    border-right: 1px solid rgba(255, 255, 255, 0.07);
+    background-color: #141820;
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
     padding: 8px 0;
 }
 
-/* ── Bash/Learn cheatsheets ──────────────────────────────────────── */
+/* ── Stack switcher (pill tabs) ─────────────────────────────────── */
+
+stackswitcher button {
+    border-radius: 8px;
+    padding: 5px 16px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #6e7a95;
+    background-color: transparent;
+    border: none;
+    transition: none;
+}
+
+stackswitcher button:hover {
+    background-color: #1a1e2e;
+    color: #e4e8f4;
+}
+
+stackswitcher button:checked,
+stackswitcher button.active {
+    background-color: #222840;
+    color: #e4e8f4;
+    font-weight: 700;
+}
+
+stackswitcher {
+    background-color: #141820;
+    border-radius: 10px;
+    padding: 4px;
+}
+
+/* ── Bash/learn cheatsheets ─────────────────────────────────────── */
 
 .bash-cheatsheet-group              { background-color: transparent; }
 .bash-cheatsheet-group preferencesgroup { background-color: transparent; }
 
 .bash-cheatsheet-text {
-    font-family: "Inter", system-ui, sans-serif;
     font-size: 14px;
-    color: #d0d4e0;
+    color: #e4e8f4;
     line-height: 1.6;
 }
 
 .bash-code-block {
     font-family: "JetBrains Mono", "Roboto Mono", monospace;
-    background-color: rgba(0, 0, 0, 0.25);
+    background-color: rgba(0, 0, 0, 0.30);
     border-left: 2px solid #5cb8b2;
     border-radius: 4px;
     margin-bottom: 8px;
@@ -376,11 +455,10 @@ label.servers-table-header-cell {
 
 .bash-table-card,
 .bash-link-card {
-    background-color: rgba(0, 0, 0, 0.15);
+    background-color: rgba(0, 0, 0, 0.20);
     border-left: 2px solid #5cb8b2;
     border-radius: 4px;
     margin-bottom: 8px;
-    margin-top: 4px;
 }
 
 .bash-table-key {
@@ -392,88 +470,70 @@ label.servers-table-header-cell {
 
 .bash-table-value {
     font-size: 13px;
-    color: #d0d4e0;
+    color: #e4e8f4;
 }
 
-.bash-link-title {
-    font-weight: 600;
-    color: #5cb8b2;
-    font-size: 13px;
-}
+.bash-link-title { font-weight: 600; color: #5cb8b2; font-size: 13px; }
+.bash-link-url { font-family: "JetBrains Mono", monospace; font-size: 12px; color: #3d4a6a; }
 
-.bash-link-url {
-    font-family: "JetBrains Mono", "Roboto Mono", monospace;
-    font-size: 12px;
-    color: #55607e;
-}
+/* ── Drag and drop ──────────────────────────────────────────────── */
 
-/* ── Drag and drop (widget grid) ─────────────────────────────────── */
-
-.dragging         { opacity: 0.85; }
+.dragging { opacity: 0.85; }
 .drop-placeholder {
-    background-color: rgba(92, 184, 178, 0.10);
-    border: 2px dashed rgba(92, 184, 178, 0.4);
-    border-radius: 8px;
+    background-color: rgba(92, 184, 178, 0.08);
+    border: 2px dashed rgba(92, 184, 178, 0.35);
+    border-radius: 10px;
 }
 
-/* ── Widget header ───────────────────────────────────────────────── */
+/* ── Widget header ──────────────────────────────────────────────── */
 
-.widget-header > image {
-    min-width: 20px;
-    min-height: 20px;
-}
+.widget-header > image { min-width: 20px; min-height: 20px; }
 
-/* ── GitHub rows ─────────────────────────────────────────────────── */
+/* ── GitHub rows ────────────────────────────────────────────────── */
 
-.github-repo-row {
-    border-radius: 6px;
-}
+.github-repo-row { border-radius: 6px; }
+.github-repo-row:hover { background-color: #1e2438; }
 
-.github-repo-row:hover { background-color: #2a2e3a; }
+/* ── Workstation package source labels ──────────────────────────── */
 
-/* ── Workstation source labels ───────────────────────────────────── */
-
-.workstation-source-label  { font-weight: 600; font-size: 0.8rem; }
+.workstation-source-label  { font-weight: 700; font-size: 0.78rem; }
 .workstation-source-apt    { color: #f87171; }
-.workstation-source-dnf    { color: #60a5fa; }
+.workstation-source-dnf    { color: #6b8af0; }
 .workstation-source-pacman { color: #34d399; }
 .workstation-source-zypper { color: #4ade80; }
 .workstation-source-apk    { color: #c084fc; }
 .workstation-source-flatpak{ color: #fbbf24; }
 .workstation-source-aur    { color: #fb923c; }
 .workstation-source-manual { color: #f472b6; }
-.workstation-source-system { color: #55607e; }
+.workstation-source-system { color: #3d4a6a; }
 
-/* ── Linux FHS tree ──────────────────────────────────────────────── */
+/* ── FHS tree ───────────────────────────────────────────────────── */
 
 treeview.workstation-fhs-tree {
     font-family: "JetBrains Mono", "Roboto Mono", monospace;
     font-size: 13px;
-    background-color: #1a1d23;
-    color: #d0d4e0;
+    background-color: #0f1117;
+    color: #e4e8f4;
 }
 
 treeview.workstation-fhs-tree header button {
-    font-family: "Inter", system-ui, sans-serif;
     font-size: 12px;
-    font-weight: 700;
-    background-color: #20232b;
-    color: #55607e;
-    letter-spacing: 0.05em;
+    font-weight: 800;
+    background-color: #141820;
+    color: #3d4a6a;
+    letter-spacing: 0.06em;
 }
 
-/* ── Preferences dialogs ─────────────────────────────────────────── */
-
-preferencesdialog switch { min-height: 22px; }
-
-/* ── Tools sidebar group headers ─────────────────────────────────── */
+/* ── Tools sidebar group headers ────────────────────────────────── */
 
 .sidebar-group-header {
-    font-size: 0.65rem;
-    font-weight: 800;
-    letter-spacing: 0.12em;
-    color: #3d4560;
+    font-size: 0.58rem;
+    font-weight: 900;
+    letter-spacing: 0.16em;
+    color: #2d3650;
     text-transform: uppercase;
 }
 
-/* Header rows are non-activatable — solid hover for regular rows only. */
+/* ── Adwaita preferences dialog overrides ───────────────────────── */
+
+preferencesdialog switch { min-height: 22px; }

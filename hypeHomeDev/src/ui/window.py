@@ -140,10 +140,13 @@ class HypeDevHomeWindow(Adw.ApplicationWindow):
             if pg is not None:
                 pg.ensure_built()
 
-        # ── Sidebar rail ────────────────────────────────
+        # ── Sidebar rail ────────────────────────────────────────────
         sidebar_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        sidebar_box.set_size_request(68, -1)
+        sidebar_box.set_size_request(200, -1)
         sidebar_box.add_css_class("sidebar-rail")
+
+        # Brand block at top
+        sidebar_box.append(self._build_sidebar_brand())
 
         sidebar_scroll = Gtk.ScrolledWindow(
             hscrollbar_policy=Gtk.PolicyType.NEVER,
@@ -175,19 +178,47 @@ class HypeDevHomeWindow(Adw.ApplicationWindow):
         """Helper to show a toast in this window."""
         self._toast_overlay.add_toast(toast)
 
+    def _build_sidebar_brand(self) -> Gtk.Widget:
+        """App brand block shown at the top of the sidebar rail."""
+        import platform
+        kernel = platform.release()
+        # Trim kernel to first part only: '6.5.0-1024...' → '6.5.0'
+        short_kernel = kernel.split("-")[0] if "-" in kernel else kernel[:8]
+
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
+        box.add_css_class("sidebar-brand-box")
+
+        name_lbl = Gtk.Label(label="HypeDevHome")
+        name_lbl.set_halign(Gtk.Align.START)
+        name_lbl.add_css_class("sidebar-brand-name")
+
+        sub_lbl = Gtk.Label(label=f"LINUX {short_kernel}")
+        sub_lbl.set_halign(Gtk.Align.START)
+        sub_lbl.add_css_class("sidebar-brand-sub")
+
+        box.append(name_lbl)
+        box.append(sub_lbl)
+        return box
+
     def _make_sidebar_row(self, page_id: str, title: str, icon_name: str) -> Gtk.ListBoxRow:
-        """Create a compact sidebar row with icon + tooltip."""
-        box = Gtk.Box(
-            orientation=Gtk.Orientation.HORIZONTAL,
-            spacing=0,
-        )
-        box.set_margin_top(12)
-        box.set_margin_bottom(12)
-        box.set_halign(Gtk.Align.CENTER)
+        """Sidebar row: icon + label (wider rail)."""
+        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+        box.set_margin_top(10)
+        box.set_margin_bottom(10)
+        box.set_margin_start(14)
+        box.set_margin_end(14)
 
         icon = Gtk.Image(icon_name=icon_name)
-        icon.set_pixel_size(20)
+        icon.set_pixel_size(17)
+        icon.set_valign(Gtk.Align.CENTER)
+
+        lbl = Gtk.Label(label=title)
+        lbl.set_halign(Gtk.Align.START)
+        lbl.set_hexpand(True)
+        lbl.add_css_class("body")
+
         box.append(icon)
+        box.append(lbl)
 
         row = Gtk.ListBoxRow(child=box, name=page_id)
         row.set_tooltip_text(title)
