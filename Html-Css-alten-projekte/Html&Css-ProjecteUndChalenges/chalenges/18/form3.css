@@ -1,0 +1,167 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+body {
+    height: 100vh;
+    color: #815A72;
+    background-color: #4B4453;
+}
+
+section {
+    width: 40%;
+    margin: auto;
+    background-color: #EE9176;
+    padding: 10px 20px;
+    position: relative;
+    display: block;
+}
+
+form {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 1em;
+    box-sizing: border-box;
+}
+
+input {
+    width: 100%;
+    height: 30px;
+    display: block;
+    border-radius: 6px;
+    padding-top: 5px;
+}
+
+textarea {
+    width: 100%;
+    height: 130px;
+    display: block;
+    border-radius: 6px;
+    padding-top: 5px;
+    margin-bottom: 5px;
+}
+
+label {
+    color: #4B4453;
+    font-weight: bold;
+}
+
+button {
+    padding: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #BD717D;
+    color: white;
+    width: 20%;
+}
+
+select {
+    background-color: #BD717D;
+    cursor: pointer;
+    color: white;
+    margin-top: 15px;
+}
+
+button:hover, select:hover {
+    background-color: #72B8AA;
+    color: black;
+    font-weight: bold;
+}
+
+@media (max-width:1024px) {
+    section {
+        width: 50%;
+    }
+    form {
+        width: 100%;
+        gap: 1em;
+        height: 100%;
+    }
+    input {
+        width: 100%;
+        height: 40px
+    }
+}
+
+@media (max-width:920px) {
+    section {
+        width: 60%;
+    }
+    form {
+        width: 100%;
+        gap: 1em;
+        height: 100%;
+    }
+    input {
+        width: 100%;
+        height: 50px
+    }
+}
+
+@media (max-width:768px) {
+    section {
+        width: 70%;
+    }
+    form {
+        width: 100%;
+        gap: 1em;
+        height: 100%;
+    }
+    input {
+        width: 100%;
+        height: 50px
+    }
+}
+
+@media (max-width:585px) {
+    section {
+        width: 80%;
+    }
+    form {
+        width: 100%;
+        gap: 0;
+        height: 100%;
+    }
+    input {
+        width: 100%;
+        height: 50px
+    }
+    h1, p, label, span {
+        font-size: 25px;
+    }
+    button {
+        margin-top: 3px;
+    }
+}
+
+@media (max-width:585px){
+    body {
+        background-color: #EE9176;
+    }
+    section {
+        width: 100%;
+    }
+    form {
+        width: 100%;
+        gap: 0;
+        height: 100%;
+    }
+    input {
+        width: 100%;
+        height: 60px
+    }
+    h1, p, label, span {
+        font-size: 20px;
+    }
+    button {
+        width: 30%;
+        margin-top: 3px;
+        font-size: 15px;
+    }
+}

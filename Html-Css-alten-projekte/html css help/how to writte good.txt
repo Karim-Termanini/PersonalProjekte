@@ -1,0 +1,32 @@
+/* Good */
+.class-one {
+  /* Font */
+  font-family: Tahoma, Arial;
+  font-weight: bold;
+  font-size: 20px;
+  /* Position */
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 2;
+  /* Dimensions */
+  width: 200px;
+  height: 200px;
+  /* Color */
+  background-color: #333;
+  color: #FFF;
+}
+/* Bad */
+.class-one {
+  position: absolute;
+  font-weight: bold;
+  font-size: 20px;
+  left: 0;
+  width: 200px;
+  top: 0;
+  background-color: #333;
+  z-index: 2;
+  height: 200px;
+  font-family: Tahoma, Arial;
+  color: #FFF;
+}

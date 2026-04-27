@@ -1,0 +1,400 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  line-height: 1.5;
+}
+
+ul {
+  list-style-type: none;
+}
+
+.container {
+  width: 70%;
+  min-height: 100vh;
+  background-color: #fff;
+  margin: 50px auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  font-family: Arial, sans-serif;
+  border: 2px solid orange;
+}
+
+.cards {
+  width: 40%;
+  line-height: 2;
+}
+
+.cards h3 {
+  font-size: 30px;
+  padding: 0 0 10px;
+}
+
+.cards li {
+  font-size: 24px;
+  font-weight: bold;
+  padding: 10px 0;
+  position: relative;
+  border-bottom: 3px solid #DDD;
+  margin: 10px 0 0;
+}
+
+.blue-title, .blue2-title, .blue3-title, .blue4-title {
+  color: #0075ff;
+}
+
+.red-title, .red2-title, .red3-title, .red4-title {
+  color: #e91e63;
+}
+
+.green-title, .green2-title, .green3-title, .green4-title {
+  color: #27ae60;
+}
+
+.orange-title, .orange2-title, .orange3-title, .orange4-title {
+  color: orange;
+}
+
+/*orange*/
+
+.orange-title::after {
+  position: absolute;
+  content: "";
+  width: 50%;
+  height: 3px;
+  background-color: orange;
+  bottom: -3px;
+  left: 0;
+}
+
+.orange2-title::after {
+  position: absolute;
+  content: "";
+  width: 50%;
+  height: 3px;
+  background-color: orange;
+  bottom: -3px;
+  left: 0;
+}
+
+.orange3-title::after {
+  position: absolute;
+  content: "";
+  width: 50%;
+  height: 3px;
+  background-color: orange;
+  bottom: -3px;
+  left: 0;
+}
+
+.orange4-title::after {
+  position: absolute;
+  content: "";
+  width: 50%;
+  height: 3px;
+  background-color: orange;
+  bottom: -3px;
+  left: 0;
+}
+
+.orange-title::before {
+  position: absolute;
+  content: "";
+  width: 15px;
+  height: 15px;
+  background-color: orange;
+  bottom: -9px;
+  left: -10px;
+  border-radius: 50%;
+}
+
+.orange2-title::before {
+  position: absolute;
+  content: "";
+  width: 15px;
+  height: 15px;
+  background-color: orange;
+  bottom: -9px;
+  left: -10px;
+}
+
+.orange3-title::before {
+  position: absolute;
+  content: "";
+  bottom: -3px;
+  left: -10px;
+  border: 13px solid;
+  border-color: transparent transparent orange transparent;
+}
+
+.orange4-title::before {
+  position: absolute;
+  content: "";
+  bottom: -26px;
+  left: -10px;
+  border: 13px solid;
+  border-color: orange transparent transparent transparent;
+}
+
+/*orange*/
+
+/*red*/
+
+.red-title::after {
+  position: absolute;
+  content: "";
+  width: 50%;
+  height: 3px;
+  background-color: #e91e63;
+  bottom: -3px;
+  left: 0;
+}
+
+.red2-title::after {
+  position: absolute;
+  content: "";
+  width: 50%;
+  height: 3px;
+  background-color: #e91e63;
+  bottom: -3px;
+  left: 0;
+}
+
+.red3-title::after {
+  position: absolute;
+  content: "";
+  width: 50%;
+  height: 3px;
+  background-color: #e91e63;
+  bottom: -3px;
+  left: 0;
+}
+
+.red4-title::after {
+  position: absolute;
+  content: "";
+  width: 50%;
+  height: 3px;
+  background-color: #e91e63;
+  bottom: -3px;
+  left: 0;
+}
+
+.red-title::before {
+  position: absolute;
+  content: "";
+  width: 15px;
+  height: 15px;
+  background-color: #e91e63;
+  bottom: -9px;
+  left: -10px;
+  border-radius: 50%;
+}
+
+.red2-title::before {
+  position: absolute;
+  content: "";
+  width: 15px;
+  height: 15px;
+  background-color: #e91e63;
+  bottom: -9px;
+  left: -10px;
+}
+
+.red3-title::before {
+  position: absolute;
+  content: "";
+  bottom: -3px;
+  left: -10px;
+  border: 13px solid;
+  border-color: transparent transparent #e91e63 transparent;
+}
+
+.red4-title::before {
+  position: absolute;
+  content: "";
+  bottom: -26px;
+  left: -10px;
+  border: 13px solid;
+  border-color: #e91e63 transparent transparent transparent;
+}
+
+/*red*/
+
+/*blue*/
+
+.blue-title::after {
+  position: absolute;
+  content: "";
+  width: 50%;
+  height: 3px;
+  background-color: #0075ff;
+  bottom: -3px;
+  left: 0;
+}
+
+.blue2-title::after {
+  position: absolute;
+  content: "";
+  width: 50%;
+  height: 3px;
+  background-color: #0075ff;
+  bottom: -3px;
+  left: 0;
+}
+
+.blue3-title::after {
+  position: absolute;
+  content: "";
+  width: 50%;
+  height: 3px;
+  background-color: #0075ff;
+  bottom: -3px;
+  left: 0;
+}
+
+.blue4-title::after {
+  position: absolute;
+  content: "";
+  width: 50%;
+  height: 3px;
+  background-color: #0075ff;
+  bottom: -3px;
+  left: 0;
+}
+
+.blue-title::before {
+  position: absolute;
+  content: "";
+  width: 15px;
+  height: 15px;
+  background-color: #0075ff;
+  bottom: -9px;
+  left: -10px;
+  border-radius: 50%;
+}
+
+.blue2-title::before {
+  position: absolute;
+  content: "";
+  width: 15px;
+  height: 15px;
+  background-color: #0075ff;
+  bottom: -9px;
+  left: -10px;
+}
+
+.blue3-title::before {
+  position: absolute;
+  content: "";
+  bottom: -3px;
+  left: -10px;
+  border: 13px solid;
+  border-color: transparent transparent #0075ff transparent;
+}
+
+.blue4-title::before {
+  position: absolute;
+  content: "";
+  bottom: -26px;
+  left: -10px;
+  border: 13px solid;
+  border-color: #0075ff transparent transparent transparent;
+}
+
+/*blue*/
+
+/*green*/
+
+.green-title::after {
+  position: absolute;
+  content: "";
+  width: 50%;
+  height: 3px;
+  background-color: #27ae60;
+  bottom: -3px;
+  left: 0;
+}
+
+.green2-title::after {
+  position: absolute;
+  content: "";
+  width: 50%;
+  height: 3px;
+  background-color: #27ae60;
+  bottom: -3px;
+  left: 0;
+}
+
+.green3-title::after {
+  position: absolute;
+  content: "";
+  width: 50%;
+  height: 3px;
+  background-color: #27ae60;
+  bottom: -3px;
+  left: 0;
+}
+
+.green4-title::after {
+  position: absolute;
+  content: "";
+  width: 50%;
+  height: 3px;
+  background-color: #27ae60;
+  bottom: -3px;
+  left: 0;
+}
+
+.green-title::before {
+  position: absolute;
+  content: "";
+  width: 15px;
+  height: 15px;
+  background-color: #27ae60;
+  bottom: -9px;
+  left: -10px;
+  border-radius: 50%;
+}
+
+.green2-title::before {
+  position: absolute;
+  content: "";
+  width: 15px;
+  height: 15px;
+  background-color: #27ae60;
+  bottom: -9px;
+  left: -10px;
+}
+
+.green3-title::before {
+  position: absolute;
+  content: "";
+  bottom: -3px;
+  left: -10px;
+  border: 13px solid;
+  border-color: transparent transparent #27ae60 transparent;
+}
+
+.green4-title::before {
+  position: absolute;
+  content: "";
+  bottom: -26px;
+  left: -10px;
+  border: 13px solid;
+  border-color: #27ae60 transparent transparent transparent;
+}
+
+/*green*/
+
+/*hover all*/
+
+.blue-title:hover::after, .blue2-title:hover::after, .blue3-title:hover::after, .blue4-title:hover::after, .red-title:hover::after, .red2-title:hover::after, .red3-title:hover::after, .red4-title:hover::after, .green-title:hover::after, .green2-title:hover::after, .green3-title:hover::after, .green4-title:hover::after, .orange-title:hover::after, .orange2-title:hover::after, .orange3-title:hover::after, .orange4-title:hover::after {
+  width: 100%;
+  opacity: .3;
+  transition: 1s;
+}
+
+/*hover all*/

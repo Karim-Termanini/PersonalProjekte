@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      table,tr,th,td,li{
+        border: 1px rgb(71, 71, 45) solid;
+        border-spacing: 5px;
+            }
+      th,td{
+        padding: 22px;
+        text-align: center;
+      }
+
+      .form2{
+        width: 20%;
+        background-color: rgb(85, 20, 20);
+        text-align: left;
+      }
+      .form3{
+        width: 50%;
+        background-color: rgb(34, 34, 34);
+      }
+      .form4{
+        width: 50%;
+        background-color: rgb(40, 104, 72);
+      }
+
+    </style>
+  </head>
+  <body>
+    <form action="file.php" method="POST" class="form1">
+      <table class="form1_h1_tr_td">
+        <h1>Create your account</h1>
+        <tr>
+          <td>
+            <label for="">Name<span style="color: red">*</span></label>
+          </td>
+          <td>
+            <input type="text" name="name" id="" placeholder="name" required />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="">nachName<span style="color: red">*</span></label>
+          </td>
+          <td>
+            <input
+              type="text"
+              name="name"
+              id=""
+              placeholder="nachName"
+              required
+            />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for=""
+              >Email address <span style="color: red">*</span></label
+            >
+          </td>
+          <td>
+            <input
+              type="email"
+              name="email"
+              id=""
+              placeholder="email@gmail,hotmail,yahho,outlock"
+              required
+            />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for=""
+              >Email address Wiederholen<span style="color: red">*</span></label
+            >
+          </td>
+          <td>
+            <input type="email" name="email" id=""
+            placeholder="email@gmail,hotmail,yahho,outlock" required/ >
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="">Password<span style="color: red">*</span></label>
+          </td>
+          <td>
+            <input
+              type="password"
+              name="password"
+              id=""
+              value=""
+              placeholder="Password"
+              required
+            />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for=""
+              >Passwordrepeat<span style="color: red">*</span></label
+            >
+          </td>
+          <td>
+            <input
+              type="passwordrepeat"
+              name="passwordrepeat"
+              id=""
+              value=""
+              placeholder="repeat"
+              required
+            />
+          </td>
+        </tr>
+        <tr>
+          <td><label for="">Tel:</label></td>
+          <td>
+            <input type="tel" name="telefone" id="telefone" placeholder="+49" />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label>Gr:datum<span style="color: red">*</span></label>
+          </td>
+          <td><input type="date" value="01.01.2021" /></td>
+        </tr>
+        <tr>
+          <td><label for="">webSite</label></td>
+          <td>
+            <input type="url" name="utl" placeholder="https://webSite.come" />
+          </td>
+        </tr>
+        <tr>
+          <td>gender<span style="color: red">*</span></td>
+          <td>
+            <select name="gender" id="" autofocus required>
+              <option value=""></option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="xgender">xgender</option>
+            </select>
+          </td>
+        </tr>
+      </table>
+      <tr>
+        <td>
+          <button type="reset">Reast</button>
+        </td>
+        <td>
+          <a href="#">
+            <button type="submit" onclick="Welcome-ther">Sign in</button>
+          </a>
+        </td>
+      </tr>
+    </form>
+    -------------------------------------------------------------------
+    <form action="file.php" class="form2" method="POST"> //*ul-li*//
+      <h1>Create your account</h1>
+        <ul>
+          <li>
+            <label for="">Name<span style="color: red">*</span></label>
+          </li>
+          <li>
+            <input type="text" name="name" id="" placeholder="name" required />
+          </li>
+        </ul>
+        <ul>
+          <li>
+            <label for="">nachName<span style="color: red">*</span></label>
+          </li>
+          <li>
+            <input
+              type="text"
+              name="name"
+              id=""
+              placeholder="nachName"
+              required
+            />
+          </li>
+        </ul>
+        <ul>
+          <li>
+            <label for=""
+              >Email address <span style="color: red">*</span></label
+            >
+          </li>
+          <li>
+            <input
+              type="email"
+              name="email"
+              id=""
+              placeholder="email@gmail,hotmail,yahho,outlock"
+              required
+            />
+          </li>
+        </ul>
+        <ul>
+          <li>
+            <label for=""
+              >Email address Wiederholen<span style="color: red">*</span></label
+            >
+          </li>
+          <li>
+            <input type="email" name="email" id=""
+            placeholder="email@gmail,hotmail,yahho,outlock" required/ >
+          </li>
+        </ul>
+        <ul>
+          <li>
+            <label for="">Password<span style="color: red">*</span></label>
+          </li>
+          <li>
+            <input
+              type="password"
+              name="password"
+              id=""
+              value=""
+              placeholder="Password"
+              required
+            />
+          </li>
+        </ul>
+        <ul>
+          <li>
+            <label for=""
+              >Passwordrepeat<span style="color: red">*</span></label
+            >
+          </li>
+          <li>
+            <input
+              type="passwordrepeat"
+              name="passwordrepeat"
+              id=""
+              value=""
+              placeholder="repeat"
+              required
+            />
+          </li>
+        </ul>
+        <ul>
+          <li><label for="">Tel:</label></li>
+          <li>
+            <input type="tel" name="telefone" id="telefone" placeholder="+49" />
+          </li>
+        </ul>
+        <ul>
+          <li>
+            <label>Gr:datum<span style="color: red">*</span></label>
+          </li>
+          <li><input type="date" value="01.01.2021" /></li>
+        </ul>
+        <ul>
+          <li><label for="">webSite</label></li>
+          <li>
+            <input type="url" name="utl" placeholder="https://webSite.come" />
+          </li>
+        </ul>
+        <ul>
+          <li>gender<span style="color: red">*</span></li>
+          <li>
+            <select name="gender" id="" autofocus required>
+              <option value=""></option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="xgender">xgender</option>
+            </select>
+          </li>
+        </ul>
+
+      <ul>
+        <li>
+          <button type="reset">Reast</button>
+        </li>
+        <li>
+          <a href="#">
+            <button type="submit" onclick="Welcome-ther">Sign in</button>
+          </a>
+        </li>
+      </ul>
+      </table>
+    </form>
+    -------------------------------------------------------------------
+    <form action="sign-in.php" class="form3" method="POST">
+      <table>
+        <caption>Rahmas Geld</caption>
+        <tr>
+          <th><label for="Username">Username</label></th>
+          <th><input type="text" placeholder="Name" required></th>
+        </tr>
+        <tr>
+          <th><label for="passowrd">Passowrd</label></th>
+          <td><input type="password" name="Passowrd" id="" placeholder="Passowrd" required></td>
+        </tr>
+      </table>
+      <br>
+      <hr>
+      <br>
+      <table>
+        <caption>or Sign up</caption>
+        <tr>
+          <th><label for="Name">Name</label><span style="color: red;">*</span></th>
+          <th><label for="nachname">Nach Name</label><span style="color: red;">*</span></th>
+          <th><label for="Email">Email</label><span style="color: red;">*</span></th>
+        </tr>
+        <tr>
+          <td><input type="text" name="name" id="" placeholder="name" required></td>
+          <td><input type="text" name="name" id="" placeholder="familyname,nachname" required></td>
+          <td><input type="email" name="email" id="" placeholder="email@...com" required></td>
+        </tr>
+        <tr>
+          <th><label for="Emailrepeat">Emailrepeat</label><span style="color: red;">*</span></th>
+          <th><label for="GeborenDatum">GeborenDatum</label><span style="color: red;">*</span></th>
+          <th><label for="Telfeone-nummer">Telfeone-nummer</label></th>
+        </tr>
+        <tr>
+          <td><input type="email" name="name" id="" placeholder="email@...com" required></td>
+          <td><input type="date" value="01-01-2021" required></td>
+          <td><input type="tel" name="tel" id="" placeholder="+49" required></td>
+        </tr>
+        <tr>
+          <th><label for="sprachen-wählen">Wählen Sie ,Wieviel <br>Sprachen Sie sprechen ?</label><span style="color: red;">*</span></th>
+         </tr>
+         <tr>
+           <td><input type="checkbox" name="" id=""  autofocus>Deutsch</td>
+           <td><input type="checkbox" name="" id=""  checked>Englisch</td>
+           <td><input type="checkbox" name="" id="" >Arabisch</td>
+           <td><input type="checkbox" name="" id="" >Türkisch</td>
+
+         </tr>
+         <tr>
+       <th><label for="Jahreszeit">Welchen <br> Jahrenzeit mochten Sie?</label></th>
+         </tr>
+         <tr>
+          <td><input type="radio" name="Jahreszeit" id="" value="Winter"  autofocus>Winter</td>
+          <td><input type="radio" name="Jahreszeit" id="" value="Somer" >Somer</td>
+          <td><input type="radio" name="Jahreszeit" id="" value="Frühling"  checked>Frühling</td>
+          <td><input type="radio" name="Jahreszeit" id="" value="Herbst" >Herbst</td>
+         </tr>
+        <tr>
+          <th><label for="Password">Passowrd</label><span style="color: red;">*</span></th>
+          <th><label for="Passowrdrepeat">Passowrdrepeat</label><span style="color: red;">*</span></th>
+        </tr>
+        <tr>
+          <td><input type="password" name="name" id="" placeholder="password" value="" required></td>
+          <td><input type="password" name="name" id="" placeholder="password" value="" required></td>
+          <td colspan="2"><button type="submit" >Create Account</button></td>
+        </tr>
+      </table>
+      <button type="reset">Reast</button>
+    </form>
+    -------------------------------------------------------------------
+    <form action="file.php" method="POST" class="form4" >
+      <table >
+        <p>Wählen Sie welchen Farbe mochten Sie:</p>
+      <label for="Farbe">rot</label>
+      <input type="radio" name="Farbe" id="" value="rot">
+
+      <label for="">blau</label>
+      <input type="radio" name="Farbe" id="" value="blau">
+      
+            <label for="">schwarz</label>
+      <input type="radio" name="Farbe" id="" value="schwarz">
+
+      <label for="">weiß</label>
+      <input type="radio" name="Farbe" id="" value="weiß">
+
+            <label for="">pink</label>
+      <input type="radio" name="Farbe" id="" value="pink">
+
+      <label for="">grün</label>
+      <input type="radio" name="Farbe" id="" value="grün">
+
+      <label for="">gelb</label>
+      <input type="radio" name="Farbe" id="" value="gelb" checked>
+
+      <label for="" >braun</label>
+      <input type="radio" name="Farbe" id="" value="braun">
+      <br><br>
+      <label for="lebenslauf">Lebenslauf</label>
+      <input type="file" accept=".pdf,doc,image/*" name="lebenslauf" autofocus required >
+      <button type="submit">ok</button>
+      <button type="reset">Reast</button>
+      </table>
+    </form>
+    
+  </body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css" integrity="sha384-SZXxX4whJ79/gErwcOYf+zWLeJdY/qpuqC4cAa9rOGUstPomtqpuNWT9wdPEn2fk" crossorigin="anonymous">
+    <link rel="stylesheet" href="../style.css" />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.15.3/css/all.css"
+      integrity="sha384-SZXxX4whJ79/gErwcOYf+zWLeJdY/qpuqC4cAa9rOGUstPomtqpuNWT9wdPEn2fk"
+      crossorigin="anonymous"
+    />
+    <link rel="icon" href="../icon/raado-logo.jpeg" />
+    <link rel="shortcut" href="../icon/raado-logo.jpeg" />
+    <link rel="apple-touch-icon" href="../icon/raado-logo.jpeg" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/fontawesome.min.css"
+    />
+    <title>RAADO-About</title>
+  </head>
+
+  <body>
+    <section class="sub2-header">
+      <nav>
+        <a href="../index.html"><img src="../icon/raado-logo.jpeg" alt="" /></a>
+        <div class="nav-links" id="navLinkss">
+            <i class="fas fa-bars" onclick="hideMenu"></i>
+          
+          <ul>
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="index.html">About</a></li>
+            <li><a href="../VIP/index.html">VIP-services</a></li>
+            <li><a href="../blog/index.html">Blog</a></li>
+            <li><a href="../Contact/index.html">Contact</a></li>
+          </ul>
+        </div>
+        <i class="fas fa-bars" onclick="showMenu"></i>
+      </nav>
+      <h1>About US</h1>
+    </section>
+
+    <!--about us (content)-->
+
+    <section class="about-us">
+        <div class="row">
+            <div class="about-col">
+                <h1>We are a Website Specialized in developing Webpages</h1>
+                <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eos aperiam enim repudiandae quisquam, minima dolores. Sunt quibusdam, deserunt delectus magnam esse ea voluptatibus in non maiores ex at expedita quod?</p>
+                <a href="" class="hero-btn red-btn">EXPLORE NOW</a>
+            </div>
+            <div class="about-col">
+                <img src="../imag/about-us.jpg" alt="">
+            </div>
+        </div>
+    </section>
+  
+    <!--footer-->
+    <section class="footer">
+      <h4>About Us</h4>
+      <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Neque, facere, aut illo eaque quasi eum optio labore nobis <br> unde quam eos reiciendis facilis necessitatibus impedit. Deserunt suscipit facere maiores recusandae.</p>
+      <div class="icons">
+        <a href="https://facebook.com" target="_blank"><i class="fab fa-facebook-f"></i></a>
+         <a href="https://twitter.com" target="_blank"><i class="fab fa-twitter"></i></a>
+         <a href="https://instagram.com" target="_blank"><i class="fab fa-instagram"></i></a>
+         <a href="https://github.com" target="_blank"><i class="fab fa-github"></i></a>
+         <a href="https://linkedin.com" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+      </div>
+      <p>Mad With <i class="far fa-heart"></i></i> ABDULKARIM BASHIR TERMANINI </p>
+    </section>
+
+
+
+
+
+
+    <!--javaScript for Toggle Menu-->
+    <script>
+      var navLinkss = document.getElementById(navLinkss);
+
+      function showMenu() {
+        navLinks.style.right = "0";
+      }
+
+      function hideMenu() {
+        navLinks.style.right = "-200px";
+      }
+    </script>
+  </body>
+</html>

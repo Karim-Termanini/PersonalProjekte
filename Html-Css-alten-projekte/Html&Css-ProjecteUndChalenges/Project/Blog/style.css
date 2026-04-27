@@ -1,0 +1,152 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/*color*/
+
+:root {
+  --main-color: #000;
+  --w-color: #fff;
+  --d-color: #403f3f;
+  --dw-color: rgb(221, 221, 221);
+  --r-color: #e91e63;
+  --r2-color: #ff5722;
+  --g-color: #009688;
+  --l-color: #607d8b;
+  --gray-color: #afaeae;
+}
+
+:root {
+  --pad: 20px;
+}
+
+/*----Start Container-----*/
+
+.container {
+  background-color: var(--dw-color);
+  padding: var(--pad);
+  width: 100%;
+  gap: 10px 10px;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+}
+
+/*----End Container-----*/
+
+/*----Start Work-----*/
+
+.p-gray {
+  color: var(--gray-color);
+}
+
+.p-bold {
+  font-weight: bold;
+}
+
+.p-content {
+  color: var(--d-color);
+}
+
+.p-content1 {
+  color: var(--gray-color);
+}
+
+.p-color {
+  color: var(--w-color);
+}
+
+/*----End Work-----*/
+
+/*----Start header-----*/
+
+.header-left {
+  background-color: var(--w-color);
+  grid-area: 2 / 2 / 2 / 4;
+  padding: var(--pad);
+}
+
+.header-right {
+  background-color: var(--w-color);
+  grid-area: 2 / 4 / 2 / 5;
+  padding: var(--pad);
+}
+
+.header-sidebar {
+  background-color: var(--main-color);
+  grid-area: 2 / 5 / 8 /6;
+  padding: var(--pad);
+}
+
+/*----End header-----*/
+
+/*----Start Main-----*/
+
+.main-sidebar {
+  background-color: var(--w-color);
+  grid-area: 3 / 2 / 8 / 3;
+  padding: var(--pad);
+}
+
+.main-top {
+  background-color: var(--main-color);
+  grid-area: 3 / 3 / 6 / 5;
+  padding: var(--pad);
+}
+
+.main-bottom {
+  background-color: var(--w-color);
+  grid-area: 6 / 3 / 8 / 5;
+  padding: var(--pad);
+}
+
+/*----End Main-----*/
+
+/*----Start Footer-----*/
+
+.fotter1 {
+  background-color: var(--w-color);
+  grid-area: 8 / 2 / 9 / 3;
+  padding: var(--pad);
+}
+
+.fotter2 {
+  background-color: var(--main-color);
+  grid-area: 8 / 3 / 9 / 4;
+  padding: var(--pad);
+}
+
+.fotter3 {
+  background-color: var(--w-color);
+  grid-area: 8 / 4 / 9 / 5;
+  padding: var(--pad);
+}
+
+.fotter4 {
+  background-color: var(--w-color);
+  grid-area: 8 / 5 / 9 / 6;
+  padding: var(--pad);
+}
+
+/*----End Footer-----*/
+
+.container div{
+  position: relative;
+}
+.container div::before{
+  content: "";
+  position: absolute;
+  background-color: var(--r-color);
+  width: 100%;
+  height: 3px;
+  bottom: 0;
+  right: 0;
+}
+.container div span{
+  position: absolute;
+  font-size: 50px;
+  color: var(--gray-color);
+  right: 5px;
+  bottom: -15px;
+}

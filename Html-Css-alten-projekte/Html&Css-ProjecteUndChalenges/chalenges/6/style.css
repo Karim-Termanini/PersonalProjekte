@@ -1,0 +1,112 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.shadow-circle {
+  width: 100px;
+  height: 100px;
+  background-color: #EEE;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 30px auto;
+  box-shadow: -7px 0px 1px 0px rgb(207, 110, 110), 7px 0px 1px 0px rgb(110, 110, 207);
+}
+
+.parent {
+  width: 600px;
+  height: 300px;
+  margin: 10px auto;
+  padding: 10px;
+  background-color: #eee;
+  display: flex;
+  justify-content: space-between;
+  align-content: space-between;
+  flex-flow: row wrap;
+}
+
+.parent div {
+  background-color: red;
+  color: white;
+  width: calc(600px / 4);
+  padding: 10px 20px;
+  text-align: center;
+  box-shadow: -3px -5px rgb(85, 79, 79);
+  font-weight: bold;
+}
+
+.parent2 {
+  background-color: #eee;
+  width: 600px;
+  height: 300px;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  align-items: flex-start;
+  align-content: flex-end;
+}
+
+.parent2 div {
+  background-color: rgb(49, 114, 49);
+  color: white;
+  text-align: center;
+}
+
+.parent2 .one {
+  align-self: flex-end;
+  padding: 10px 5px;
+}
+
+.parent2 .two {
+  width: 50%;
+  padding: 30px;
+}
+
+.parent2 .three {
+  align-self: flex-end;
+  padding: 10px 5px;
+}
+
+.parent3 {
+  background-color: #eee;
+  width: 600px;
+  height: 300px;
+  margin: 20px auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.parent3 div {
+  color: white;
+  width: 120px;
+  height: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.parent3 .one {
+  order: 2;
+  background-color: #ff9800;
+}
+
+.parent3 .two {
+  order: 3;
+  background-color: #8bc34a;
+  align-self: flex-end;
+}
+
+.parent3 .three {
+  order: 4;
+  background-color: #795548;
+}
+
+.parent3 .four {
+  order: 1;
+  background-color: #673ab7;
+  align-self: flex-end;
+}

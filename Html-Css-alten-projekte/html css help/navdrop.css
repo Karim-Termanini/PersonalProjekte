@@ -1,0 +1,60 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-image: linear-gradient(to left, black, rgb(24, 23, 23));
+}
+
+nav {
+    background-image: linear-gradient(to left, black, rgb(24, 23, 23));
+    height: 10%;
+}
+
+nav ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+nav li {
+    float: left;
+    margin: 20px;
+    padding: 5px;
+}
+
+nav li a {
+    color: red;
+    display: inline-block;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 20px;
+    line-height: 20px;
+    transition: 1s;
+}
+
+nav li a:hover {
+    color: white;
+    background: red;
+}
+
+.navDrop {
+    position: absolute;
+    z-index: 1;
+    display: none;
+}
+
+.navDrop a {
+    color: black;
+    display: block;
+    background: white;
+    border: 1px solid red;
+    border-bottom-right-radius: 12px;
+    border-bottom-left-radius: 12px;
+}
+
+.linavdown:hover .navDrop {
+    display: block;
+}

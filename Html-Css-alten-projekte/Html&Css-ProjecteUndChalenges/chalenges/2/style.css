@@ -1,0 +1,36 @@
+.container {
+    position: relative;
+    width: 30%;
+    margin: auto;
+    border: 1px solid;
+    padding: 0px 20px 0px 50px;
+    background-color: #2d2d2d;
+}
+
+.container p {
+    background-color: #EEE;
+    padding: 10px 20px;
+    counter-increment: members-ships;
+    position: relative;
+}
+
+.container p::before {
+    content: counter(members-ships);
+    background-color: red;
+    color: white;
+    padding: 10px 15px;
+    position: absolute;
+    top: 0;
+    left: -30px;
+}
+
+.container p::after {
+    content: '';
+    background-color: red;
+    color: white;
+    position: absolute;
+    width: 4px;
+    height: 100%;
+    top: 0;
+    right: 0;
+}

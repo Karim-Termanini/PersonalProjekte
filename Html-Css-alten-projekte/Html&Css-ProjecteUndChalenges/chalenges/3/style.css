@@ -1,0 +1,258 @@
+.container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container-contetn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px;
+    width: 100px;
+    height: 100px;
+    text-align: center;
+    background: #eee;
+    border: 2px solid black;
+    border-radius: 50%;
+    box-shadow: -4px -4px 0px 0 #e91e63, 4px 4px 0px 0 #2196f3;
+    counter-increment: member-shps;
+    position: relative;
+}
+
+.container-contetn:hover::after {
+    position: absolute;
+    content: counter(member-shps);
+    width: 20px;
+    height: 20px;
+    top: -10px;
+    background-color: #000000;
+    color: white;
+    border-radius: 50%;
+}
+
+.shadow {
+    width: 100px;
+    height: 100px;
+    background-color: #EEE;
+    margin: auto;
+    border-top-right-radius: 40px;
+    border-bottom-left-radius: 40px;
+    border-top-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    box-shadow: 0 0 10px 5px rgb(163, 162, 162) inset;
+}
+
+.container-bg {
+    width: 50%;
+    margin: 10px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.container-bg .secound-card {
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    position: relative;
+}
+
+.container-bg .secound-card::after {
+    content: 'or';
+    background-color: #03a9f4;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px 4px;
+    font-size: 30px;
+}
+
+.container-bg::before {
+    content: '';
+    position: absolute;
+    background-color: #03a9f4;
+    width: 2px;
+    top: 0;
+    height: 100%;
+}
+
+.first-card, .therd-card {
+    background-color: #EEE;
+    text-align: center;
+    width: 200px;
+    height: 100%;
+    padding: 50px;
+}
+
+.container-bg .first-card .p-1, .therd-card .p-1 {
+    background-color: #03a9f4;
+    color: white;
+    margin: auto;
+    padding: 5px 70px;
+    border-radius: 5px;
+    margin-top: -40px;
+    margin-bottom: 10px;
+    font-size: 30px;
+}
+
+.container-bg .first-card .p-2, .therd-card .p-2 {
+    background-color: rgb(201, 199, 199);
+    margin: auto;
+    padding: 70px 40px;
+    border-radius: 50%;
+    font-size: 40px;
+}
+
+.elzero-shadow {
+    width: 100px;
+    height: 100px;
+    margin: 22px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(15, 15, 15);
+    color: yellow;
+    border: 1px solid yellow;
+    border-radius: 50%;
+    box-shadow: -5px 0 2px 0 red, 5px 0 2px 0 blue;
+}
+
+.parent {
+    width: 600px;
+    height: 300px;
+    margin: 20px auto;
+    display: flex;
+    justify-content: space-between;
+    align-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.parent div {
+    width: 25%;
+    padding: 10px 20px;
+    background-color: red;
+    color: white;
+    text-align: center;
+}
+
+.parent2 {
+    width: 600px;
+    height: 300px;
+    margin: 20px auto;
+    padding: 10px;
+    background-color: #EEE;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.parent2 div {
+    background-color: turquoise;
+    padding: 10px;
+    width: 25%;
+    color: white;
+    text-align: center;
+}
+
+.one {
+    order: 6;
+    height: 10%;
+    margin-top: 89px;
+}
+
+.two {
+    order: 5;
+    height: 40%;
+}
+
+.three {
+    order: 2;
+    height: 10%;
+}
+
+.four {
+    order: 3;
+    height: 40%;
+}
+
+.five {
+    order: 4;
+    height: 40%;
+}
+
+.six {
+    order: 1;
+    height: 40%;
+}
+
+.parent3 {
+    width: 600px;
+    height: 300px;
+    margin: 20px auto;
+    background-color: #EEE;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+.parent3 div {
+    background-color: blue;
+    padding: 20px;
+}
+
+.one1 {
+    width: 5px;
+    align-self: flex-end;
+}
+
+.two2 {
+    width: 50%;
+}
+
+.three3 {
+    width: 5px;
+    align-self: flex-end;
+}
+
+.parent4 {
+    width: 600px;
+    height: 300px;
+    background-color: #EEE;
+    margin: 20px auto;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.parent4 div {
+    width: 20%;
+    height: 50%;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.one3 {
+    background-color: red;
+    align-self: flex-end;
+}
+
+.two3 {
+    background-color: black;
+}
+
+.three4 {
+    background-color: blue;
+    align-self: flex-end;
+}
+
+.four3 {
+    background-color: yellow;
+}

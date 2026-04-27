@@ -1,0 +1,119 @@
+img {
+    width: 70px;
+}
+
+body {
+    text-align: center;
+}
+
+.container {
+    border: 1px solid red;
+    margin: auto;
+    width: 700px;
+    padding: 20px 10px 10px;
+}
+
+table {
+    width: 700px;
+    margin: auto;
+    text-align: center;
+    border-bottom: 1px solid green;
+    padding: 10px 0 0px;
+    position: relative;
+}
+
+tbody tr {
+    counter-increment: members-counter;
+    position: relative;
+}
+
+.title::after {
+    content: counter(members-counter);
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: rgb(129, 129, 252);
+    color: white;
+    align-items: center;
+    top: 20;
+    left: 390px;
+    border-radius: 5px;
+    display: none;
+}
+
+.title:hover::after {
+    display: inline-block;
+}
+
+table td {
+    background-color: #EEE;
+    padding: 10px 15px;
+}
+
+.th {
+    background-color: #404040;
+    color: white;
+}
+
+.btn-1, .btn-2 {
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.btn-1 {
+    background: #03a9f4;
+}
+
+.btn-2 {
+    background: #e91e63;
+}
+
+span {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.btn-f-b {
+    position: relative;
+}
+
+.btn-2::after {
+    content: "";
+    width: 3px;
+    height: 100%;
+    position: absolute;
+    background-color: sandybrown;
+    top: 0;
+    right: -3px;
+}
+
+.btn-2::before {
+    content: "";
+    width: 0;
+    height: 0;
+    position: absolute;
+    top: 50%;
+    margin-top: -10px;
+    left: -13px;
+    border-width: 7px;
+    border-style: solid;
+    border-color: transparent sandybrown transparent transparent;
+    display: none;
+}
+
+.btn-2:hover::before {
+    display: block;
+}
+
+.btn-1:hover::before {
+    content: attr(data-text);
+    position: absolute;
+    background-color: #404040;
+    color: white;
+    padding: 5px 10px;
+    top: 0;
+    left: 1px;
+}

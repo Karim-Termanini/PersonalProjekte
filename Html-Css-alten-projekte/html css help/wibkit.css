@@ -1,0 +1,36 @@
+body {
+    background: black;
+}
+
+h1 {
+    color: transparent;
+    font-size: 50px;
+    -webkit-text-stroke: thin red;
+}
+
+.btn {
+    background: red;
+    width: 200px;
+    height: 50px;
+    padding: 2px 3px;
+    border: 0;
+    margin-left: 10%;
+}
+
+.btn:hover {
+    background: white;
+    transition: 1s;
+    transform: scale(1.1);
+    border-radius: 12px;
+}
+
+.btn a {
+    text-decoration: none;
+    color: black;
+    font-size: 25px;
+}
+
+.btn a:hover {
+    transition: 1s;
+    color: red;
+}

@@ -1,0 +1,23 @@
+/* Pomodoro Timer Styles */
+#custom-pomodoro.work {
+    color: #ff5e5e; /* Vibrant Red */
+}
+
+#custom-pomodoro.break {
+    color: #5eff5e; /* Vibrant Green */
+}
+
+#custom-pomodoro.long-break {
+    color: #5eacff; /* Vibrant Blue */
+}
+
+#custom-pomodoro.work-paused,
+#custom-pomodoro.break-paused,
+#custom-pomodoro.long-break-paused {
+    color: #efea5a; /* Yellow */
+}
+
+#custom-pomodoro.idle {
+    color: @foreground;
+    opacity: 0.7;
+}

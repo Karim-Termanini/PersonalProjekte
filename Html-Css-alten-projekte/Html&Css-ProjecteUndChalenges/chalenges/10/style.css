@@ -1,0 +1,183 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  line-height: 1.5;
+}
+
+.container {
+  width: 60%;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #ddd;
+  display: flex;
+  justify-content: space-evenly;
+  flex-direction: column;
+}
+
+.content {
+  background-color: white;
+  padding: 20px;
+}
+
+.green-number {
+  color: green;
+  font-weight: bold;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.green-number:hover {
+  transition: 0.5s;
+  background-color: green;
+  color: white;
+  border-radius: 10px;
+}
+
+.red-title {
+  color: red;
+  font-weight: bold;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.red-title:hover {
+  transition: 0.5s;
+  background-color: red;
+  color: white;
+  border-radius: 10px;
+}
+
+.blue-title {
+  color: blue;
+  font-weight: bold;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.blue-title:hover {
+  transition: 0.5s;
+  background-color: blue;
+  color: white;
+  border-radius: 10px;
+}
+
+hr {
+  margin: 20px;
+  opacity: 0.6;
+}
+
+h2 {
+  font-size: 30px;
+}
+
+h3 {
+  width: 150px;
+  padding: 10px 20px;
+  background-color: #607d8b;
+  color: white;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+p {
+  font-size: 20px;
+  color: gray;
+}
+
+.main-profile {
+  padding: 0;
+  margin: auto;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  background-color: #ddd;
+}
+
+.card-container {
+  width: 260px;
+  height: 300px;
+  background-color: white;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-direction: column;
+  padding: 10px;
+  text-align: center;
+}
+
+.card-container .image {
+  background-image: url(k-3.png);
+  background-size: cover;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: 3px solid gray;
+  margin-bottom: 5px;
+}
+
+.card-container .cards-title p {
+  margin-top: 5px;
+}
+
+.card-container .gray-one {
+  background-color: #ddd;
+  width: 100%;
+  height: 20px;
+  border-radius: 10px;
+}
+
+.card-container .gray-one .green-one {
+  background-color: green;
+  width: 80%;
+  height: 20px;
+  border-radius: 5px 0 0 5px;
+}
+
+.profile-title {
+  width: 910px;
+  min-height: 300px;
+  padding: 20px 20px 5px;
+  background-color: white;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.profile-title .days {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.profile-title .days p {
+  color: rgb(10, 112, 41);
+}
+
+.profile-title h2 {
+  margin-bottom: 10px;
+}
+
+.profile-title p {
+  margin-bottom: 10px;
+}
+
+.powers-title {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.photos-container {
+  width: 100%;
+}
+
+.photos-container img {
+  width: 90px;
+  height: 110px;
+}
+
+.image-opacity {
+  opacity: 0.1;
+}

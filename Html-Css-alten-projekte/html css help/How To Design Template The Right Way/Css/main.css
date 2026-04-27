@@ -1,0 +1,129 @@
+/* start Font-family */
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+/* End Font-family  */
+
+/*============================================================*/
+
+/* Start golbale variables */
+
+/* start color */
+
+:root {}
+
+/* End color */
+
+/*-----------------*/
+
+/* start Fonts */
+
+:root {
+  --ff-main: 'Montserrat', sans-serif;
+}
+
+/* End Fonts */
+
+/*-----------------*/
+
+/* start Size */
+
+:root {}
+
+/* End Size */
+
+/*-----------------*/
+
+/* start Position */
+
+:root {}
+
+/* End Position */
+
+/* Start golbale variables */
+
+/*============================================================*/
+
+/* Start  main rules */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--ff-main);
+  line-height: 1.6;
+  min-height: 100vh;
+  background-color: #DDD;
+}
+
+a {
+  text-decoration: none;
+}
+
+ul {
+  list-style-type: none;
+}
+
+.Container {
+  width: 940px;
+  background-color: #FFF;
+}
+
+/*  End Main Rules  */
+
+/*============================================================*/
+
+/* Start Header */
+
+header {
+  min-height: 100px;
+  background-color: #AAA;
+}
+
+header .logo {}
+
+header nav {}
+
+nav li {
+  display: inline-block;
+}
+
+/*  End Header  */
+
+/*============================================================*/
+
+/* Start Centent */
+
+/* section or article or main or aside or divs*/
+
+.content {
+  min-height: 800px;
+  background-color: #BBB;
+}
+
+/*  End centent  */
+
+/*============================================================*/
+
+/* Start Footer */
+
+footer {
+  min-height: 100px;
+  background-color: #AAA;
+}
+
+footer .info {}
+
+footer .copyright {}
+
+/*  End Footer  */
+
+/*============================================================*/
+
+/*  Start Media Queries  */
+
+@media screen {}
+
+/*  End Media Queries  */

@@ -1,0 +1,13 @@
+{
+  "custom/pomodoro": {
+    "format": "{}",
+    "return-type": "json",
+    "interval": 1,
+    "exec": "$HOME/Documents/GitHub/cross-distro-pomodoro/pomodoro.sh status",
+    "on-click": "$HOME/Documents/GitHub/cross-distro-pomodoro/pomodoro.sh toggle",
+    "on-click-right": "$HOME/Documents/GitHub/cross-distro-pomodoro/pomodoro.sh reset",
+    "on-click-middle": "$HOME/Documents/GitHub/cross-distro-pomodoro/pomodoro.sh start",
+    "tooltip": true,
+    "escape": true
+  }
+}

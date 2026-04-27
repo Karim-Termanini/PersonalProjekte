@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="form2.css" />
+    <title>Form2</title>
+  </head>
+  <body>
+    <div class="container">
+      <form action="page.php" method="POST">
+        <h1>Advertising Estimate</h1>
+        <div class="nameEmail">
+          <label for="name">Name <span style="color: red">*</span></label>
+          <input
+            type="text"
+            name="name"
+            id="name"
+            autocomplete="off"
+            autofocus
+            required
+          />
+
+          <label for="email">Email <span style="color: red">*</span></label>
+          <input
+            type="email"
+            id="name"
+            required
+          />
+        </div>
+        <div class="date">
+          <label for="fdatum"
+            >Ad Start Date <span style="color: rebeccapurple">*</span></label
+          >
+          <input type="date" name="fdatum" id="fdatum" required />
+
+          <label for="edatum"
+            >Ad End Date <span style="color: rebeccapurple">*</span></label
+          >
+          <input type="date" name="edatum" id="edatum" required />
+        </div>
+        <div class="checkradio">
+          <label for="radio"
+            >Advertising Size (pixels) <span style="color: red">*</span></label
+          >
+          <span><input type="radio" name="radio" id="Option1" />Option1</span>
+          <span><input type="radio" name="radio" id="Option2" />Option2</span>
+          <span><input type="radio" name="radio" id="Option3" />Option3</span>
+          <br />
+          <label for="checkbox"
+            >Which sites would you like to advertise on?
+            <span style="color: red">*</span></label
+          >
+          <span
+            ><input type="checkbox" name="radio" id="Option1" />Option1</span
+          >
+          <span
+            ><input type="checkbox" name="radio" id="Option2" />Option2</span
+          >
+          <span
+            ><input type="checkbox" name="radio" id="Option3" />Option3</span
+          >
+        </div>
+        <div class="Website">
+          <label for="Website"
+            >Website to be advertised<span style="color: red">*</span></label
+          >
+          <input type="url" name="Website" id="Website" required />
+        </div>
+        
+        <div class="comments">
+          <label for="comments">Comments</label>
+          <textarea name="" id="" cols="30" rows="5"></textarea>
+        </div>
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  </body>
+</html>

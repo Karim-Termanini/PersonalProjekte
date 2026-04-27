@@ -1,0 +1,8 @@
+---- Animation-Pages ----
+https://animista.net/
+
+https://bennettfeely.com/
+
+https://flexboxpatterns.com/
+
+https://css-tricks.com/snippets/css/a-guide-to-flexbox/

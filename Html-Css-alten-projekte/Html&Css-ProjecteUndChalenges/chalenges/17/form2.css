@@ -1,0 +1,174 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+body {
+    width: 100%;
+    min-width: 410px;
+    background: hsla(333, 100%, 53%, 1);
+    background: linear-gradient(90deg, hsla(333, 100%, 53%, 1) 0%, hsla(33, 94%, 57%, 1) 100%);
+    background: -moz-linear-gradient(90deg, hsla(333, 100%, 53%, 1) 0%, hsla(33, 94%, 57%, 1) 100%);
+    background: -webkit-linear-gradient(90deg, hsla(333, 100%, 53%, 1) 0%, hsla(33, 94%, 57%, 1) 100%);
+    filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#FF0F7B", endColorstr="#F89B29", GradientType=1);
+}
+
+.container {
+    width: 50%;
+    margin: auto;
+    padding: 20px;
+}
+
+input, textarea {
+    border: none;
+    border-radius: 5px;
+    outline: none;
+    padding: 5px 3px 0;
+    font-size: 15px;
+    margin: 5px 0;
+}
+
+input:hover, textarea:hover {
+    font-weight: bold;
+    background-color: #34495e;
+    color: orange;
+    transition: 1s;
+}
+
+label {
+    margin: 5px 0;
+}
+
+form {
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+
+h1 {
+    font-family: cursive;
+    color: #433261;
+}
+
+.nameEmail, .date, .checkradio, .Website, .comments {
+    display: flex;
+    max-width: 650px;
+    flex-direction: column;
+}
+
+.nameEmail input {
+    width: 80%;
+    height: 30px;
+    margin: 5px 0;
+}
+
+.date input {
+    width: 50%;
+    height: 30px;
+    margin: 5px 0;
+}
+
+.checkradio {
+    width: 50%;
+    padding: 10px 0;
+}
+
+.Website {
+    width: 100%;
+    margin: 0 0 15px;
+}
+
+.Website input {
+    width: 80%;
+    height: 30px;
+    margin: 5px 0;
+}
+
+.comments {
+    width: 100%;
+}
+
+.comments textarea {
+    width: 80%;
+}
+
+button {
+    font-size: 15px;
+    color: pink;
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #433261;
+    border: none;
+    cursor: pointer;
+}
+
+@media (max-width:920px) {
+    .container {
+        width: 60%;
+    }
+    form {
+        width: 100%;
+        gap: 1em;
+        height: 100%;
+    }
+    input {
+        width: 100%;
+    }
+}
+
+@media (max-width:768px) {
+    .container {
+        width: 70%;
+    }
+    form {
+        width: 100%;
+        gap: 1em;
+        height: 100%;
+    }
+    input {
+        width: 100%;
+    }
+}
+
+@media (max-width:585px) {
+    .container {
+        width: 80%;
+    }
+    form {
+        width: 100%;
+        gap: 0;
+        height: 100%;
+    }
+    input {
+        width: 100%;
+    }
+    h1, p, label, span {
+        font-size: 25px;
+    }
+    button {
+        margin-top: 3px;
+    }
+}
+
+@media (max-width:585px) {
+    .container {
+        width: 100%;
+    }
+    form {
+        width: 100%;
+        gap: 0;
+        height: 100%;
+    }
+    input {
+        width: 100%;
+    }
+    h1, p, label, span {
+        font-size: 20px;
+    }
+    button {
+        width: 30%;
+        margin-top: 3px;
+        font-size: 15px;
+    }
+}

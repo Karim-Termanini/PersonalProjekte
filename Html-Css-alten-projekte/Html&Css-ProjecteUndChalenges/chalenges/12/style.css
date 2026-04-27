@@ -1,0 +1,136 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  line-height: 1.6;
+  font-family: sans-serif;
+}
+
+.container {
+  width: 70%;
+  min-height: 100vh;
+  background-color: #eee;
+  margin: 30px auto;
+  padding: 100px 75px;
+  display: flex;
+  justify-content: space-between;
+  border: 2px solid red;
+}
+
+.red-content {
+  background-color: white;
+  padding: 0 0 20px;
+  width: 50%;
+  border-radius: 10px;
+  margin-right: 10px;
+  border-radius: 15px 15px 0 0;
+}
+
+.blue-content {
+  background-color: white;
+  padding: 0 0 20px;
+  width: 50%;
+  margin-left: 10px;
+  position: relative;
+  border-radius: 15px 15px 0 0;
+}
+
+.blue-content::after {
+  position: absolute;
+  content: "Save 50%";
+  width: 130px;
+  height: 50px;
+  padding-right: 30px;
+  top: -70px;
+  right: 0;
+  background-color: #2196f3;
+  clip-path: polygon(100% 0%, 81% 50%, 100% 100%, 0 100%, 0% 50%, 0 0);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+}
+
+h3 {
+  padding: 15px;
+  color: white;
+  font-weight: bold;
+  font-size: 25px;
+}
+
+.red-title {
+  background-color: #f44336;
+  width: 100%;
+  border-radius: 15px 15px 0 0;
+}
+
+.blue-title {
+  background-color: #2196f3;
+  width: 100%;
+  border-radius: 15px 15px 0 0;
+}
+
+p {
+  padding: 20px 70px;
+  font-size: 20px;
+}
+
+.green-par {
+  position: relative;
+}
+
+.green-par::before {
+  position: absolute;
+  content: "Y";
+  font-size: 15px;
+  width: 30px;
+  height: 30px;
+  background-color: #009688;
+  color: white;
+  left: 20px;
+  top: 20px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.red-par {
+  position: relative;
+}
+
+.red-par::after {
+  position: absolute;
+  content: "N";
+  font-size: 15px;
+  width: 30px;
+  height: 30px;
+  background-color: #e91e63;
+  color: white;
+  left: 20px;
+  top: 20px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.infor {
+  position: relative;
+}
+
+.infor::after {
+  position: absolute;
+  content: "?";
+  width: 25px;
+  height: 25px;
+  background-color: gray;
+  color: white;
+  right: 10px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}

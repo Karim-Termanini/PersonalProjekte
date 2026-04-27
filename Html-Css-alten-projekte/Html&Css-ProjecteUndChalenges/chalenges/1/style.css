@@ -1,0 +1,99 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  width: 100%;
+  min-height: 100vh;
+  line-height: 1.6;
+  background-color: #EEE;
+}
+
+fieldset {
+  width: 70%;
+  height: auto;
+  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+}
+
+legend {
+  font-size: 30px;
+  font-weight: bold;
+  padding: 10px 20px;
+  color: white;
+  background-color: green;
+}
+
+.cards-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.cards {
+  flex: 1 1 280px;
+  border: 2px solid;
+  background-color: #ddd;
+  margin: 10px;
+  text-align: center;
+  position: relative;
+}
+
+img {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+}
+
+.cards-title {
+  padding: 10px;
+  font-size: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.cards-title p {
+  font-size: 25px;
+  font-weight: bold;
+  padding: 10px;
+  color: #195e83;
+  position: relative;
+}
+
+.cards-title p::before {
+  position: absolute;
+  content: "";
+  left: 5px;
+  top: 30px;
+  width: 35%;
+  height: 3px;
+  background-color: #195e839c;
+}
+
+.cards-title p::after {
+  position: absolute;
+  content: "";
+  right: 5px;
+  top: 30px;
+  width: 35%;
+  height: 3px;
+  background-color: #195e839c;
+}
+
+.sale::before{
+  position: absolute;
+  content: "Sale!";
+  top: -20px;
+  left: -20px;
+  text-align: center;
+  width: 50px;
+  height: 50px;
+  color: white;
+  background-color: red;
+  border-radius: 50%;
+  line-height:3 ;
+}

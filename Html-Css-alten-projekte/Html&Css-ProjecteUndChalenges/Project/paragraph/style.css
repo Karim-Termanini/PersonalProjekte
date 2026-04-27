@@ -1,0 +1,294 @@
+
+/*
+Menu:
+
+(1) Global Rules.
+
+(2) Root.
+
+(3) Header.
+
+(4) Main.
+
+(5) section 1.
+
+(6) section 2.
+
+(7) Footer.
+
+(8) Icons.
+
+*/
+
+/*############################################*/
+
+/*---Start Global Rules---*/
+*{
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+body{
+  font-family: var(--ff-main);
+  line-height: 1.6;
+  height: 100vh;
+}
+
+ul{
+  list-style: none;
+}
+
+nav li{
+  display: inline-block;
+}
+
+a{
+  text-decoration: none;
+  color: var(--font);
+}
+
+img{
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+p{
+  font-size: var(--f-small);
+  color: var(--font);
+}
+
+/*---End Global Rules---*/
+
+
+/*############################################*/
+
+ 
+/*---Start Root---*/
+/*== Font ==*/
+:root{
+  --ff-main: 'Montserrat','sans-serif';
+  --f-big: 76px;
+  --f-medium: 24px;
+  --f-small: 16px;
+  --f-header:18px;
+}
+
+/*== Color ==*/
+:root{
+  --btn-font: #fff;
+  --bg-btn:#000000;
+
+  --bg-btn-hover:#fff;
+  --btn-font-hover: #000;
+ 
+  --font: #333333;
+  --bg-font-hover: #fff;
+
+  --header:#ffe3d6;
+  --bg:#bdeaef;
+}
+/*---End Root---*/
+
+
+/*############################################*/
+
+
+/*---Start Header---*/
+header{
+  display: flex ;
+  justify-content: space-evenly;
+  align-items: center;
+  background-color: var(--header);
+  padding: 16px;
+  font-size: var(--f-header);
+}
+nav li{
+  margin: 5px;
+}
+nav li a:hover{
+  color: #b58670;
+}
+
+.cbl ul li{
+  display: inline-block;
+  margin-left: 20px;
+}
+.cbl span{
+  margin-left: 8px;
+}
+.btn{
+  color: var(--btn-font);
+  background-color: var(--bg-btn);
+  width: 100px;
+  height: 40px;
+  border-radius: 5px;
+}
+.btn:hover{
+  color: var(--btn-font-hover);
+  background-color: var(--bg-btn-hover);
+}
+/*---End Header---*/
+
+
+/*############################################*/
+
+
+
+/*---Start Main---*/
+main{
+  height: 90vh;
+  background-image: url("photo/Main.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  text-align: center;
+  
+}
+h1{
+  font-size: var(--f-big);
+  padding-top: 150px;
+
+}
+/*---End Main---*/
+
+
+
+/*############################################*/
+
+
+
+/*---Start section 1---*/
+.section-one{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  height: 110vh;
+  overflow: hidden;
+}
+
+.section-left{
+  width: 45%;
+  background-image: url("photo/1.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: -380px;
+}
+
+.section-right{
+  width: 55%;
+}
+.section-right .imag{
+  background-image: url("photo/2.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+.section-right .imag,.se-text{
+  height: 50%;
+}
+.se-text{
+  padding: 35px;
+  padding-right: 200px;
+  margin-bottom: 20px;
+}
+.se-text h3{
+  font-size: var(--f-medium);
+}
+.se-text h2 {
+  font-size: var(--f-big);
+}
+/*---End section 1---*/
+
+
+/*############################################*/
+
+
+
+/*---Start section 2---*/
+.section-two{
+    background-color: var(--bg);
+    width: 100%;
+    text-align: center;
+    padding-top: 100px ;
+    padding-bottom: 30px;
+}
+.two-top p{
+  font-size: var(--f-medium);
+}
+.cards{
+  display: flex;
+  justify-content: space-evenly;
+  margin: 50px 0;
+  height: 80vh;
+}
+.cards div{
+  width: calc(100%/5);
+  font-size: var(--f-big);
+  background-repeat: no-repeat;
+  background-size: 700px;
+  background-position: center;
+}
+.cards .one{
+  background-image: url("photo/WhatsApp\ Image\ 2022-06-11\ at\ 20.16.14.jpeg");
+   
+}
+.cards .two{
+  background-image: url("photo/6.jpg");
+}
+.cards .three {
+  background-image: url("photo/7.jpeg");
+}
+/*---End section 2---*/
+
+
+/*############################################*/
+
+
+
+/*---Start Footer---*/
+footer{
+  padding-top: 50px;
+  padding-bottom: 70px;
+  background-color: var(--header);
+}
+footer .top{
+  display: flex;
+  justify-content: center;
+  gap: 100px;
+  
+}
+footer .top div{
+  border-left: var(--font) solid 2px;
+  padding-left: 10px;
+}
+footer .top h3{
+  margin: 5px;
+  font-size: var(--f-medium);
+}
+footer .bottom{
+  margin-top: 70px;
+  margin-left: 240px;
+}
+/*---End Footer---*/
+
+
+/*############################################*/
+
+
+/*---End Icons---*/
+.icons{
+  position: fixed;
+  left: 15px;
+  top: 300px;
+}
+.icons .fa{
+    color: #b58670;
+  display: block;
+  height: 40px;
+  font-size: 32px;
+}
+.icons .fa:hover{
+  color:var(--font);
+}
+/*---End Icons---*/

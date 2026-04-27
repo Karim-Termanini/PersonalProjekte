@@ -1,0 +1,422 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  width: 100%;
+  height: 100vh;
+}
+
+.bg-container {
+  width: 100%;
+  margin: 100px auto;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  background-color: yellow;
+}
+
+.container {
+  width: 500px;
+  height: 500px;
+  margin: 100px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(31, 30, 30);
+  border-radius: 50%;
+}
+
+.container2 {
+  width: 5px;
+  height: 500px;
+  margin: 100px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(31, 30, 30);
+  border-radius: 50%;
+}
+.container3 {
+  width: 400px;
+  height: 500px;
+  margin: 100px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(31, 30, 30);
+  border-radius: 50%;
+}
+
+.circle-1 {
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  border: 10px solid red;
+  border-left-color: transparent;
+}
+
+.circle-2 {
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  border: 10px solid blue;
+  border-top-color: transparent;
+}
+
+.circle-3 {
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 10px solid burlywood;
+  border-right-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.circle-4 {
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 10px solid rgb(139, 207, 29);
+  border-left-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.circle-5 {
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 10px solid rgb(29, 186, 207);
+  border-bottom-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.circle-6 {
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 10px solid rgb(201, 29, 207);
+  border-right-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.circle-7 {
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 10px solid rgb(207, 29, 97);
+  border-top-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.circle-8 {
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 10px solid rgb(106, 29, 207);
+  border-left-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.circle-9 {
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 10px solid rgb(201, 29, 207);
+  border-bottom-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.circle-11 {
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 10px solid rgb(29, 186, 207);
+  border-bottom-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.circle-12 {
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 10px solid rgb(106, 29, 207);
+  border-bottom-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.circle-13 {
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 10px solid rgb(236, 98, 98);
+  border-bottom-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.circle-14 {
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 10px solid rgb(80, 223, 14);
+  border-bottom-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.circle-15 {
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 10px solid rgb(255, 124, 124);
+  border-bottom-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.circle-16 {
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 10px solid rgb(88, 230, 255);
+  border-bottom-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.circle-17 {
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 10px solid rgb(66, 248, 163);
+  border-bottom-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.circle-18 {
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 10px solid rgb(0, 119, 255);
+  border-bottom-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.circle-19 {
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 10px solid rgb(255, 79, 255);
+  border-bottom-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.circle-20 {
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 10px solid rgb(97, 96, 96);
+  border-left-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.circle-21 {
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 10px solid whitesmoke;
+  border-top-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.circle-22 {
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 10px solid rgb(60, 56, 117);
+  border-bottom-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.circle-23 {
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 10px solid rgb(255, 196, 2);
+  border-bottom-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.circle-24 {
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 10px solid rgb(0, 1, 80);
+  border-bottom-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.circle-25 {
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 10px solid rgb(0, 255, 64);
+  border-bottom-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.circle-26 {
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 10px solid rgb(0, 0, 0);
+  border-bottom-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.circle-27 {
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 10px solid rgb(255, 255, 255);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.circle-1, .circle-2 {
+  animation-name: circle;
+  animation-duration: 5s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+.circle-3, .circle-4 {
+  animation-name: circle-tow;
+  animation-duration: 3s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+.circle-5, .circle-6, .circle-7 {
+  animation-name: circle;
+  animation-duration: 3s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+.circle-8, .circle-9 {
+  animation-name: circle-tow;
+  animation-duration: 3s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+.circle-11, .circle-12, .circle-13, .circle-14, .circle-15, .circle-16, .circle-17, .circle-18, .circle-19, .circle-20, .circle-21, .circle-22, .circle-23, .circle-24, .circle-25, .circle-26, .circle-27 {
+  animation-name: circle-tow;
+  animation-duration: 3s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+@keyframes circle {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes circle-tow {
+  0% {
+    transform: rotate(360deg);
+  }
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+
+.circle-1:hover, .circle-2:hover, .circle-3:hover, .circle-4:hover, .circle-5:hover, .circle-6:hover, .circle-7:hover, .circle-8:hover, .circle-9:hover, .circle-11:hover, .circle-12:hover, .circle-13:hover, .circle-14:hover, .circle-15:hover, .circle-16:hover, .circle-17:hover, .circle-18:hover, .circle-19:hover, .circle-20:hover, .circle-21:hover, .circle-22:hover, .circle-23:hover, .circle-24:hover, .circle-25:hover, .circle-26:hover, .circle-27:hover {
+  animation-timing-function: step-end;
+}

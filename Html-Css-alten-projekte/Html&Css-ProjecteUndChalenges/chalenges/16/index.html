@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="form1.css" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="container">
+      <form action="page.php">
+        <h1>Terms and Conditions</h1>
+        <p>Please read our Terms and Conditions and sign below.</p>
+        <div class="flname">
+          <div class="fname">
+            <label for="fname" class="label-name"
+              >First Name<span style="color: red">*</span></label
+            >
+            <input type="text" name="fname" id="fname" required />
+          </div>
+          <div class="lname">
+            <label for="lname" class="label-name"
+              >Last Name<span style="color: red">*</span></label
+            >
+            <input type="text" name="lname" id="lname" required />
+          </div>
+        </div>
+        <div>
+          <label for="email">Email<span style="color: red">*</span></label
+          ><br />
+          <input type="email" name="email" id="email" required />
+        </div>
+        <div class="textarea">
+          <h3>Terms and Conditions</h3>
+          <textarea name="" id="" cols="30" rows="10"> </textarea>
+        </div>
+        <div class="footer-textarea">
+          <h3>Please sign here</h3>
+          <textarea name="" id="" cols="30" rows="10"></textarea><br />
+          <button type="reset">Clear Signature Pad</button>
+        </div>
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  </body>
+</html>

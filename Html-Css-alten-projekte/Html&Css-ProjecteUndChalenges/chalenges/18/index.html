@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="form3.css" />
+    <title>form3</title>
+  </head>
+  <body>
+    <section>
+      <header>
+        <h1>Become A Mystery Shopper</h1>
+      </header>
+      <main>
+        <form action="page.php" method="POSt">
+          <div>
+            <span>Salutation</span>
+            <select name="Salutation" id="Salutation">
+              <option value="Mr.">Mr.</option>
+              <option value="Ms.">Ms.</option>
+              <option value="Mrs.">Mrs.</option>
+              <option value="Mss.">Mss.</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="fname"
+              >First Name<span style="color: red">*</span></label
+            >
+            <input type="text" name="fname" id="fname" required />
+
+            <label for="lname"
+              >Last Name<span style="color: red">*</span></label
+            >
+            <input type="text" name="lname" id="lname" required />
+          </div>
+
+          <div>
+            <label for="adress"
+              >Address <span style="color: red">*</span></label
+            >
+            <input type="url" name="adress" id="adress" required />
+
+            <label for="City">City<span style="color: red">*</span></label>
+            <input type="text" name="City" id="City" required />
+          </div>
+
+          <div>
+            <label for="Phone">Phone <span style="color: red">*</span></label>
+            <input type="tel" name="Phone" id="Phone" required />
+          </div>
+          <div>
+            <label for="email">Email<span style="color: red">*</span></label>
+            <input type="email" name="email" id="email" required />
+          </div>
+          <div>
+            <label for="comments"
+              >Leave a Comments<span style="color: red">*</span></label
+            >
+            <textarea
+              name="comments"
+              id="comments"
+              cols="30"
+              rows="10"
+            ></textarea>
+            <button type="reset">reset</button>
+          </div>
+          <button type="submit">submit</button>
+        </form>
+      </main>
+    </section>
+  </body>
+</html>
