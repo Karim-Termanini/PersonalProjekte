@@ -1,4 +1,4 @@
-# HypeDevHome
+# HypeDevHome 80% Vibe Coding
 
 > **⚠️ Important Project Strategy Note – Cross-Distribution Compatibility**
 >
