@@ -18,7 +18,6 @@ Herzlich willkommen in meinem Repository für persönliche Projekte! Hier sammle
 ## 🛠 Weitere Inhalte & Experimente
 
 Neben großen Projekten enthält dieses Repository auch:
-*   **[tests]:** Ein Bereich für Tests, Prototypen und das Ausprobieren neuer Frameworks oder Logiken.
 *   **Automatisierungsscripts:** Bash- und Python-Scripts zur Optimierung des Workflows.
 
 ## 💻 Tech Stack
