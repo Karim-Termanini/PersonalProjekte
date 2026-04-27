@@ -55,21 +55,28 @@ label.dim-label,
     margin: 2px 8px;
     padding: 6px 8px;
     color: #8b92a9;
-    transition: background-color 120ms ease, color 120ms ease;
+    background-color: transparent;
+    /* No transition — avoids Adwaita's opacity flicker */
 }
 
 .navigation-sidebar > row:hover {
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: #2a2e3a;
+    color: #d0d4e0;
+}
+
+.navigation-sidebar > row:active {
+    background-color: #2e3340;
     color: #d0d4e0;
 }
 
 .navigation-sidebar > row:selected,
 .navigation-sidebar > row:selected:hover {
-    background-color: rgba(92, 184, 178, 0.15);
+    background-color: #1e3d3c;
     color: #5cb8b2;
 }
 
-.navigation-sidebar > row:selected image {
+.navigation-sidebar > row:selected image,
+.navigation-sidebar > row:selected:hover image {
     color: #5cb8b2;
 }
 
@@ -83,7 +90,8 @@ label.dim-label,
 }
 
 .card:hover {
-    border-color: rgba(92, 184, 178, 0.25);
+    background-color: #2a2e3a;
+    border-color: rgba(92, 184, 178, 0.2);
 }
 
 /* ── Dashboard: status banner ────────────────────────────────────── */
@@ -153,7 +161,6 @@ label.dim-label,
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 8px;
     color: #d0d4e0;
-    transition: background-color 120ms ease, border-color 120ms ease;
 }
 
 .quick-link-btn:hover {
@@ -316,10 +323,9 @@ label.servers-table-header-cell {
 .servers-table-row {
     padding: 4px 8px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-    transition: background-color 100ms ease;
 }
 
-.servers-table-row:hover { background-color: rgba(255, 255, 255, 0.04); }
+.servers-table-row:hover { background-color: #252932; }
 
 .servers-table-cell {
     padding: 6px 2px;
@@ -420,11 +426,10 @@ label.servers-table-header-cell {
 /* ── GitHub rows ─────────────────────────────────────────────────── */
 
 .github-repo-row {
-    transition: background-color 120ms ease;
     border-radius: 6px;
 }
 
-.github-repo-row:hover { background-color: rgba(255, 255, 255, 0.04); }
+.github-repo-row:hover { background-color: #2a2e3a; }
 
 /* ── Workstation source labels ───────────────────────────────────── */
 
@@ -460,3 +465,15 @@ treeview.workstation-fhs-tree header button {
 /* ── Preferences dialogs ─────────────────────────────────────────── */
 
 preferencesdialog switch { min-height: 22px; }
+
+/* ── Tools sidebar group headers ─────────────────────────────────── */
+
+.sidebar-group-header {
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    color: #3d4560;
+    text-transform: uppercase;
+}
+
+/* Header rows are non-activatable — solid hover for regular rows only. */

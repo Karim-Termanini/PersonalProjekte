@@ -27,25 +27,63 @@ from ui.widgets.workstation import (  # noqa: E402
 
 log = logging.getLogger(__name__)
 
-_SIDEBAR_ITEMS: tuple[tuple[str, str, str, str], ...] = (
-    ("apps", "Apps", "One-click apps and post-install configuration", "view-app-grid-symbolic"),
+# Each entry: (page_id | None for separator, title, subtitle, icon_name, group_header)
+# page_id=None → renders a non-selectable section label
+_SIDEBAR_ITEMS: tuple[tuple[str | None, str, str, str], ...] = (
+    # ── EXPLORE ────────────────────────────────────────────────────
+    (None, "EXPLORE", "", ""),
+    (
+        "apps",
+        "Installed Apps",
+        "Browse, search and configure installed applications",
+        "view-app-grid-symbolic",
+    ),
     (
         "servers",
-        "Servers",
-        "Docker, ports, systemd, and local runtime — everything for running workloads",
+        "Servers & Docker",
+        "Docker containers, ports, systemd — live system overview",
         "network-server-symbolic",
     ),
     (
         "services",
         "Services",
-        "Tailscale, Dropbox, NordVPN, Bitwarden, 1Password",
+        "Tailscale, NordVPN, Bitwarden, Dropbox, 1Password",
         "application-x-firmware-symbolic",
     ),
-    ("ai", "AI Tools", "Ollama, LM Studio, Open WebUI, GitHub Copilot CLI", "preferences-desktop-accessibility-symbolic"),
-    ("config", "Config", "Git, SSH keys, dotfiles, Bash reference, and system tweaks", "emblem-synchronizing-symbolic"),
-    ("install", "Install", "Packages, languages, editors, terminals — includes full Machine Setup wizard", "folder-download-symbolic"),
-    ("remove", "Remove", "Uninstall packages and dev stacks safely", "edit-delete-symbolic"),
-    ("extensions", "Extensions", "Browse and manage extensions to add new features", "application-x-addon-symbolic"),
+    (
+        "ai",
+        "AI & Models",
+        "Ollama, LM Studio, Open WebUI, GitHub Copilot CLI",
+        "preferences-desktop-accessibility-symbolic",
+    ),
+    # ── MANAGE ─────────────────────────────────────────────────────
+    (None, "MANAGE", "", ""),
+    (
+        "config",
+        "Git & SSH Config",
+        "Git identity, SSH keys, dotfiles, Bash aliases",
+        "emblem-synchronizing-symbolic",
+    ),
+    (
+        "install",
+        "Install Packages",
+        "Languages, editors, terminals — includes Machine Setup wizard",
+        "folder-download-symbolic",
+    ),
+    (
+        "remove",
+        "Uninstall",
+        "Safely remove packages and development stacks",
+        "edit-delete-symbolic",
+    ),
+    # ── PLATFORM ───────────────────────────────────────────────────
+    (None, "PLATFORM", "", ""),
+    (
+        "extensions",
+        "Extensions",
+        "Browse and install extensions to add new features",
+        "application-x-addon-symbolic",
+    ),
 )
 
 
@@ -59,7 +97,9 @@ class WorkstationPage(BasePage):
         super().__init__(**kwargs)
         # Default to Apps (first real section)
         self._current_view = "apps"
-        self._view_titles: dict[str, str] = {key: title for key, title, _s, _i in _SIDEBAR_ITEMS}
+        self._view_titles: dict[str, str] = {
+            key: title for key, title, _s, _i in _SIDEBAR_ITEMS if key is not None
+        }
         self._subsection_reset_widgets: list[Any] = []
         self._stack_pages: dict[str, Gtk.Widget] = {}
 
@@ -81,8 +121,13 @@ class WorkstationPage(BasePage):
         self._sidebar.connect("row-selected", self._on_sidebar_row_selected)
 
         for page_id, title, subtitle, icon_name in _SIDEBAR_ITEMS:
-            row = self._make_sidebar_row(page_id, title, subtitle, icon_name)
-            self._sidebar.append(row)
+            if page_id is None:
+                # Non-selectable category header
+                header = self._make_sidebar_header(title)
+                self._sidebar.append(header)
+            else:
+                row = self._make_sidebar_row(page_id, title, subtitle, icon_name)
+                self._sidebar.append(row)
 
         sidebar_scroll = Gtk.ScrolledWindow(
             hscrollbar_policy=Gtk.PolicyType.NEVER,
@@ -153,6 +198,20 @@ class WorkstationPage(BasePage):
             vexpand=True,
         )
         return status
+
+    def _make_sidebar_header(self, title: str) -> "Gtk.ListBoxRow":
+        """Non-selectable group label divider."""
+        lbl = Gtk.Label(label=title)
+        lbl.set_halign(Gtk.Align.START)
+        lbl.set_margin_start(14)
+        lbl.set_margin_top(14)
+        lbl.set_margin_bottom(2)
+        lbl.add_css_class("sidebar-group-header")
+        row = Gtk.ListBoxRow(child=lbl)
+        row.set_selectable(False)
+        row.set_activatable(False)
+        row.set_name("__header__")
+        return row
 
     def _make_sidebar_row(
         self, page_id: str, title: str, subtitle: str, icon_name: str
