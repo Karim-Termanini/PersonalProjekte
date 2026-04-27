@@ -1,0 +1,10 @@
+# Placeholder Flatpak manifest — follow flatpak/README.md to wire a real Electron build.
+# This file keeps valid YAML so tooling can lint; builders should replace modules with your release pipeline output.
+
+app-id: io.github.karimodora.LinuxDevHome
+runtime: org.freedesktop.Platform
+runtime-version: '24.08'
+sdk: org.freedesktop.Sdk
+command: linux-dev-home
+
+modules: []
