@@ -1,6 +1,8 @@
 import type { ReactElement, ReactNode } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 
+import { ActiveJobsStrip } from './ActiveJobsStrip'
+import { EnvironmentBanner } from './EnvironmentBanner'
 import { TopBar } from './TopBar'
 
 const nav = [
@@ -103,8 +105,10 @@ export function AppShell({ children }: { children: ReactNode }): ReactElement {
         </div>
       </aside>
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+        <EnvironmentBanner />
         <TopBar path={location.pathname} />
         <main style={{ flex: 1, overflow: 'auto', padding: 24 }}>{children}</main>
+        <ActiveJobsStrip />
       </div>
     </div>
   )

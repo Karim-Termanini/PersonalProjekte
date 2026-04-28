@@ -22,6 +22,12 @@ export type DhApi = {
   onTerminalData: (handler: (msg: { id: string; data: string }) => void) => () => void
   onTerminalExit: (handler: (msg: { id: string }) => void) => () => void
   openExternal: (url: string) => Promise<unknown>
+  sessionInfo: () => Promise<unknown>
+  layoutGet: () => Promise<unknown>
+  layoutSet: (layout: unknown) => Promise<unknown>
+  jobStart: (payload: { kind: string; durationMs?: number }) => Promise<unknown>
+  jobsList: () => Promise<unknown>
+  jobCancel: (payload: { id: string }) => Promise<unknown>
 }
 
 const api: DhApi = {
@@ -59,6 +65,12 @@ const api: DhApi = {
     return () => ipcRenderer.removeListener(IPC.terminalExit, listener)
   },
   openExternal: (url) => ipcRenderer.invoke('dh:openExternal', url),
+  sessionInfo: () => ipcRenderer.invoke(IPC.sessionInfo),
+  layoutGet: () => ipcRenderer.invoke(IPC.layoutGet),
+  layoutSet: (layout) => ipcRenderer.invoke(IPC.layoutSet, layout),
+  jobStart: (payload) => ipcRenderer.invoke(IPC.jobStart, payload),
+  jobsList: () => ipcRenderer.invoke(IPC.jobsList),
+  jobCancel: (payload) => ipcRenderer.invoke(IPC.jobCancel, payload),
 }
 
 contextBridge.exposeInMainWorld('dh', api)
