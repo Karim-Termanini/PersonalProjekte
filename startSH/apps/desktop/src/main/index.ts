@@ -46,6 +46,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 nativeTheme.themeSource = 'dark'
 
+if (!app.isPackaged) {
+  process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true'
+}
+
 let mainWindow: BrowserWindow | null = null
 let docker: Docker | null = null
 const terminals = new Map<string, pty.IPty>()

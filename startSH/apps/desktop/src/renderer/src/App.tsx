@@ -8,6 +8,7 @@ import { DashboardLayout } from './pages/DashboardLayout'
 import { DashboardLogsPage } from './pages/DashboardLogsPage'
 import { DashboardMainPage } from './pages/DashboardMainPage'
 import { DashboardWidgetsPage } from './pages/DashboardWidgetsPage'
+import { DockerPage } from './pages/DockerPage'
 import { ProfilesPage } from './pages/ProfilesPage'
 import { RegistryPage } from './pages/RegistryPage'
 import { SystemPage } from './pages/SystemPage'
@@ -45,6 +46,7 @@ export default function App(): ReactElement | null {
         </Route>
         <Route path="/system" element={<SystemPage />} />
         <Route path="/workstation" element={<WorkstationPage />} />
+        <Route path="/docker" element={<DockerPage />} />
         <Route path="/registry" element={<RegistryPage />} />
         <Route path="/profiles" element={<ProfilesPage />} />
         <Route path="/terminal" element={<TerminalPage />} />

@@ -10,6 +10,7 @@ const nav = [
   { to: '/dashboard', label: 'Dashboard', icon: 'dashboard' },
   { to: '/system', label: 'System', icon: 'server' },
   { to: '/workstation', label: 'Workstation', icon: 'device-desktop' },
+  { to: '/docker', label: 'Docker', icon: 'package' },
   { to: '/registry', label: 'Registry', icon: 'package' },
   { to: '/profiles', label: 'Profiles', icon: 'account' },
   { to: '/terminal', label: 'Terminal', icon: 'terminal' },

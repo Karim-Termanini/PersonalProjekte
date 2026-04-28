@@ -5,6 +5,7 @@ import { NavLink, useLocation } from 'react-router-dom'
 const titles: Record<string, string> = {
   '/system': 'System',
   '/workstation': 'Workstation',
+  '/docker': 'Docker',
   '/registry': 'Registry',
   '/profiles': 'Profiles',
   '/terminal': 'Terminal',
