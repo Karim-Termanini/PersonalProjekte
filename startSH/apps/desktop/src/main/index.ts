@@ -22,6 +22,7 @@ import {
   IPC,
   JobCancelRequestSchema,
   JobStartRequestSchema,
+  WizardStateStoreSchema,
   defaultDashboardLayout,
   isRegisteredWidgetType,
   type ContainerRow,
@@ -36,6 +37,9 @@ import {
   CustomProfilesStoreSchema,
   StoreGetRequestSchema,
   StoreSetRequestSchema,
+  GitConfigSetSchema,
+  SshGenerateSchema,
+  SshGetPubSchema,
 } from '@linux-dev-home/shared'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -139,6 +143,22 @@ function pruneFinishedJobs(): void {
       return
     }
   }
+}
+
+async function execTarget(target: 'sandbox' | 'host', cmd: string, args: string[]): Promise<string> {
+  const isFlatpak = !!process.env.FLATPAK_ID
+  let execCmd = cmd
+  let execArgs = args
+  if (target === 'host' && isFlatpak) {
+    execCmd = 'flatpak-spawn'
+    execArgs = ['--host', cmd, ...args]
+  }
+  return new Promise((resolve, reject) => {
+    execFile(execCmd, execArgs, (err, stdout) => {
+      if (err) reject(err)
+      else resolve(stdout)
+    })
+  })
 }
 
 function jobToSummary(j: JobRecord): JobSummary {
@@ -545,6 +565,42 @@ function registerIpc(): void {
     return { ok: true }
   })
 
+  ipcMain.handle(IPC.gitConfigSet, async (_e, raw: unknown) => {
+    const { name, email, target } = GitConfigSetSchema.parse(raw)
+    await execTarget(target, 'git', ['config', '--global', 'user.name', name])
+    await execTarget(target, 'git', ['config', '--global', 'user.email', email])
+    return { ok: true }
+  })
+
+  ipcMain.handle(IPC.sshGenerate, async (_e, raw: unknown) => {
+    const { target } = SshGenerateSchema.parse(raw)
+    const sshDir = path.join(homedir(), '.ssh')
+    const keyPath = path.join(sshDir, 'id_ed25519')
+    
+    if (target === 'host') {
+      await execTarget('host', 'mkdir', ['-p', sshDir])
+      await execTarget('host', 'ssh-keygen', ['-t', 'ed25519', '-C', 'linux-dev-home', '-N', '', '-f', keyPath])
+    } else {
+      await mkdir(sshDir, { recursive: true })
+      await execTarget('sandbox', 'ssh-keygen', ['-t', 'ed25519', '-C', 'linux-dev-home', '-N', '', '-f', keyPath])
+    }
+    return { ok: true }
+  })
+
+  ipcMain.handle(IPC.sshGetPub, async (_e, raw: unknown) => {
+    const { target } = SshGetPubSchema.parse(raw)
+    const pubPath = path.join(homedir(), '.ssh', 'id_ed25519.pub')
+    try {
+      if (target === 'host') {
+         return await execTarget('host', 'cat', [pubPath])
+      } else {
+         return await readFile(pubPath, 'utf8')
+      }
+    } catch {
+      return null
+    }
+  })
+
   ipcMain.handle(IPC.selectFolder, async () => {
     const r = await dialog.showOpenDialog(mainWindow!, { properties: ['openDirectory'] })
     if (r.canceled || !r.filePaths[0]) return null
@@ -569,6 +625,9 @@ function registerIpc(): void {
       const parsed = JSON.parse(content) as unknown
       if (key === 'custom_profiles') {
         return CustomProfilesStoreSchema.parse(parsed)
+      }
+      if (key === 'wizard_state') {
+        return WizardStateStoreSchema.parse(parsed)
       }
       return null
     } catch {

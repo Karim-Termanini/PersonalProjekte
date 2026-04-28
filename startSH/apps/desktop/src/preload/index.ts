@@ -18,6 +18,9 @@ export type DhApi = {
   gitStatus: (payload: { repoPath: string }) => unknown
   gitRecentList: () => unknown
   gitRecentAdd: (payload: { path: string }) => unknown
+  gitConfigSet: (payload: { name: string; email: string; target: 'sandbox'|'host' }) => Promise<unknown>
+  sshGenerate: (payload: { target: 'sandbox'|'host' }) => Promise<unknown>
+  sshGetPub: (payload: { target: 'sandbox'|'host' }) => Promise<unknown>
   selectFolder: () => Promise<string | null>
   onTerminalData: (handler: (msg: { id: string; data: string }) => void) => () => void
   onTerminalExit: (handler: (msg: { id: string }) => void) => () => void
@@ -48,6 +51,9 @@ const api: DhApi = {
   gitStatus: (payload) => ipcRenderer.invoke(IPC.gitStatus, payload),
   gitRecentList: () => ipcRenderer.invoke(IPC.gitRecentList),
   gitRecentAdd: (payload) => ipcRenderer.invoke(IPC.gitRecentAdd, payload),
+  gitConfigSet: (payload) => ipcRenderer.invoke(IPC.gitConfigSet, payload),
+  sshGenerate: (payload) => ipcRenderer.invoke(IPC.sshGenerate, payload),
+  sshGetPub: (payload) => ipcRenderer.invoke(IPC.sshGetPub, payload),
   selectFolder: () => ipcRenderer.invoke(IPC.selectFolder),
   onTerminalData: (handler) => {
     const listener = (

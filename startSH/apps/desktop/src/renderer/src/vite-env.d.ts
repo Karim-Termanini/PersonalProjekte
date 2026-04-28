@@ -1,6 +1,6 @@
 /// <reference types="vite/client" />
 
-import type { ComposeProfile, CustomProfileEntry } from '@linux-dev-home/shared'
+import type { ComposeProfile } from '@linux-dev-home/shared'
 
 export {}
 
@@ -22,6 +22,9 @@ declare global {
       gitStatus: (payload: { repoPath: string }) => Promise<unknown>
       gitRecentList: () => Promise<unknown>
       gitRecentAdd: (payload: { path: string }) => Promise<unknown>
+      gitConfigSet: (payload: { name: string; email: string; target: 'sandbox'|'host' }) => Promise<unknown>
+      sshGenerate: (payload: { target: 'sandbox'|'host' }) => Promise<unknown>
+      sshGetPub: (payload: { target: 'sandbox'|'host' }) => Promise<unknown>
       selectFolder: () => Promise<string | null>
       onTerminalData: (handler: (msg: { id: string; data: string }) => void) => () => void
       onTerminalExit: (handler: (msg: { id: string }) => void) => () => void
@@ -29,8 +32,8 @@ declare global {
       sessionInfo: () => Promise<unknown>
       layoutGet: () => Promise<unknown>
       layoutSet: (layout: unknown) => Promise<unknown>
-      storeGet: (payload: { key: 'custom_profiles' }) => Promise<CustomProfileEntry[] | null>
-      storeSet: (payload: { key: 'custom_profiles'; data: CustomProfileEntry[] }) => Promise<unknown>
+      storeGet: (payload: import('@linux-dev-home/shared').StoreGetRequest) => Promise<unknown>
+      storeSet: (payload: import('@linux-dev-home/shared').StoreSetRequest) => Promise<unknown>
       jobStart: (payload: { kind: string; durationMs?: number }) => Promise<unknown>
       jobsList: () => Promise<unknown>
       jobCancel: (payload: { id: string }) => Promise<unknown>

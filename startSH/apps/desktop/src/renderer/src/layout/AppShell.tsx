@@ -11,6 +11,7 @@ const nav = [
   { to: '/system', label: 'System', icon: 'server' },
   { to: '/workstation', label: 'Workstation', icon: 'device-desktop' },
   { to: '/registry', label: 'Registry', icon: 'package' },
+  { to: '/profiles', label: 'Profiles', icon: 'account' },
   { to: '/terminal', label: 'Terminal', icon: 'terminal' },
 ] as const
 
