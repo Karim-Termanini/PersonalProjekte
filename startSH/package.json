@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "pnpm --filter desktop dev",
+    "dev": "pnpm --filter @linux-dev-home/shared build && concurrently -n shared,desktop -c cyan,magenta \"pnpm --filter @linux-dev-home/shared dev\" \"pnpm --filter desktop dev:electron\"",
     "build": "pnpm --filter @linux-dev-home/shared build && pnpm --filter desktop build",
     "pack:linux": "pnpm --filter desktop pack:linux",
     "lint": "eslint .",
@@ -11,6 +11,7 @@
     "test": "pnpm --filter shared test"
   },
   "devDependencies": {
+    "concurrently": "^9.1.2",
     "@eslint/js": "^9.15.0",
     "eslint": "^9.15.0",
     "eslint-plugin-react-hooks": "^5.0.0",

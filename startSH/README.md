@@ -27,7 +27,7 @@
 ```bash
 pnpm install
 cd apps/desktop && pnpm exec electron-rebuild -f -w node-pty
-pnpm dev          # electron-vite
+pnpm dev          # shared tsc --watch + electron-vite (run from repo root)
 pnpm test         # shared package unit tests (Zod)
 pnpm typecheck
 pnpm lint

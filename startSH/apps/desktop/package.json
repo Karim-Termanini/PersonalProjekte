@@ -9,7 +9,8 @@
   "homepage": "https://github.com/Karim-Termanini/PersonalProjekte",
   "desktopName": "io.github.karimodora.LinuxDevHome.desktop",
   "scripts": {
-    "dev": "electron-vite dev",
+    "dev": "pnpm --filter @linux-dev-home/shared build && electron-vite dev",
+    "dev:electron": "electron-vite dev",
     "build": "electron-vite build && node scripts/copy-docker-profiles.mjs",
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.node.json",
     "rebuild:native": "electron-rebuild -f -w node-pty",

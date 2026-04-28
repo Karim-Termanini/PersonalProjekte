@@ -12,6 +12,7 @@ export default tseslint.config(
       '**/release/**',
       '**/node_modules/**',
       '**/pack-staging/**',
+      '**/.flatpak-builder/**',
     ],
   },
   eslint.configs.recommended,
