@@ -14,8 +14,11 @@ import {
   ComposeUpRequestSchema,
   DashboardLayoutFileSchema,
   DockerContainerActionSchema,
+  DockerCreateRequestSchema,
   DockerImageActionRequestSchema,
   DockerLogsRequestSchema,
+  DockerPullRequestSchema,
+  DockerRemapPortRequestSchema,
   DockerNetworkActionRequestSchema,
   DockerVolumeActionRequestSchema,
   GitCloneRequestSchema,
@@ -415,6 +418,114 @@ function registerIpc(): void {
     })
     const buf = Buffer.isBuffer(stream) ? stream : Buffer.from(stream as ArrayBuffer)
     return buf.toString('utf8')
+  })
+
+  ipcMain.handle(IPC.dockerCreate, async (_e, raw: unknown) => {
+    const req = DockerCreateRequestSchema.parse(raw)
+    const d = getDocker()
+    if (!d) throw new Error('Docker unavailable')
+    const cmd = req.command?.trim() ? req.command.trim().split(/\s+/) : undefined
+    const exposedPorts =
+      req.ports && req.ports.length > 0
+        ? Object.fromEntries(req.ports.map((p) => [`${p.containerPort}/${p.protocol ?? 'tcp'}`, {}]))
+        : undefined
+    const portBindings =
+      req.ports && req.ports.length > 0
+        ? Object.fromEntries(
+            req.ports.map((p) => [
+              `${p.containerPort}/${p.protocol ?? 'tcp'}`,
+              [{ HostPort: String(p.hostPort) }],
+            ])
+          )
+        : undefined
+    const binds =
+      req.volumes && req.volumes.length > 0
+        ? req.volumes.map((v) => `${v.hostPath}:${v.containerPath}`)
+        : undefined
+    const createPayload = {
+      Image: req.image,
+      name: req.name,
+      Cmd: cmd,
+      Env: req.env,
+      ExposedPorts: exposedPorts,
+      Tty: true,
+      OpenStdin: false,
+      HostConfig: {
+        PortBindings: portBindings,
+        Binds: binds,
+        RestartPolicy: { Name: 'unless-stopped' as const },
+      },
+    }
+    let container: Docker.Container
+    try {
+      container = await d.createContainer(createPayload)
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e)
+      if (!/No such image/i.test(msg)) throw e
+      // If image is missing locally, pull it once and retry create.
+      const stream = await d.pull(req.image)
+      await new Promise<void>((resolvePull, rejectPull) => {
+        d.modem.followProgress(stream, (err) => {
+          if (err) rejectPull(err)
+          else resolvePull()
+        })
+      })
+      container = await d.createContainer(createPayload)
+    }
+    if (req.autoStart ?? true) {
+      await container.start()
+    }
+    return { ok: true, id: container.id }
+  })
+
+  ipcMain.handle(IPC.dockerPull, async (_e, raw: unknown) => {
+    const req = DockerPullRequestSchema.parse(raw)
+    const d = getDocker()
+    if (!d) throw new Error('Docker unavailable')
+    const stream = await d.pull(req.image)
+    await new Promise<void>((resolvePull, rejectPull) => {
+      d.modem.followProgress(stream, (err) => {
+        if (err) rejectPull(err)
+        else resolvePull()
+      })
+    })
+    return { ok: true }
+  })
+
+  ipcMain.handle(IPC.dockerRemapPort, async (_e, raw: unknown) => {
+    const req = DockerRemapPortRequestSchema.parse(raw)
+    const d = getDocker()
+    if (!d) throw new Error('Docker unavailable')
+    const src = d.getContainer(req.id)
+    const info = await src.inspect()
+    const image = info.Config?.Image
+    if (!image) throw new Error('Container image is missing')
+    const oldName = info.Name?.replace(/^\//, '') || `container-${req.id.slice(0, 8)}`
+    const newName = `${oldName}-p${req.newHostPort}`
+    const oldBindings = info.HostConfig?.PortBindings ?? {}
+    const newBindings: Record<string, Array<{ HostPort: string }>> = {}
+    for (const [key, arr] of Object.entries(oldBindings)) {
+      const next = (arr ?? []).map((b) => {
+        if (Number(b.HostPort) === req.oldHostPort) return { HostPort: String(req.newHostPort) }
+        return { HostPort: b.HostPort }
+      })
+      newBindings[key] = next
+    }
+    const clone = await d.createContainer({
+      Image: image,
+      name: newName,
+      Cmd: info.Config?.Cmd ?? undefined,
+      Env: info.Config?.Env ?? undefined,
+      ExposedPorts: info.Config?.ExposedPorts ?? undefined,
+      Tty: Boolean(info.Config?.Tty),
+      OpenStdin: Boolean(info.Config?.OpenStdin),
+      HostConfig: {
+        ...info.HostConfig,
+        PortBindings: newBindings,
+      },
+    })
+    await clone.start()
+    return { ok: true, id: clone.id, name: newName }
   })
 
   ipcMain.handle(IPC.dockerImagesList, async () => {
@@ -830,7 +941,7 @@ function createWindow(): void {
 
   if (process.env.ELECTRON_RENDERER_URL) {
     void mainWindow.loadURL(process.env.ELECTRON_RENDERER_URL)
-    mainWindow.webContents.openDevTools({ mode: 'detach' })
+    // mainWindow.webContents.openDevTools({ mode: 'detach' })
   } else {
     void mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'))
   }
