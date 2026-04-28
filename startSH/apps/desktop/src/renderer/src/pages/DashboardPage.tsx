@@ -1,6 +1,9 @@
-import type { ContainerRow, HostMetricsResponse } from '@linux-dev-home/shared'
+import type { ContainerRow, DashboardLayoutFile, HostMetricsResponse } from '@linux-dev-home/shared'
 import type { CSSProperties, ReactElement } from 'react'
 import { useCallback, useEffect, useState } from 'react'
+
+import { AddWidgetModal } from '../dashboard/AddWidgetModal'
+import { DashboardWidgetDeck } from '../dashboard/DashboardWidgetDeck'
 
 export function DashboardPage(): ReactElement {
   const [docker, setDocker] = useState<
@@ -8,6 +11,9 @@ export function DashboardPage(): ReactElement {
   >(null)
   const [snap, setSnap] = useState<HostMetricsResponse | null>(null)
   const [composeMsg, setComposeMsg] = useState<string | null>(null)
+  const [layout, setLayout] = useState<DashboardLayoutFile | null>(null)
+  const [pickerOpen, setPickerOpen] = useState(false)
+  const [phaseHint, setPhaseHint] = useState<string | null>(null)
 
   const refresh = useCallback(async () => {
     try {
@@ -31,6 +37,30 @@ export function DashboardPage(): ReactElement {
     const id = setInterval(() => void refresh(), 4000)
     return () => clearInterval(id)
   }, [refresh])
+
+  useEffect(() => {
+    void (async () => {
+      try {
+        const raw = (await window.dh.layoutGet()) as DashboardLayoutFile
+        setLayout(raw)
+      } catch {
+        setLayout(null)
+      }
+    })()
+  }, [])
+
+  const removeWidget = useCallback(
+    async (instanceId: string) => {
+      if (!layout) return
+      const next: DashboardLayoutFile = {
+        version: 1,
+        placements: layout.placements.filter((p) => p.instanceId !== instanceId),
+      }
+      await window.dh.layoutSet(next)
+      setLayout(next)
+    },
+    [layout]
+  )
 
   async function initProfile(profile: 'web-dev' | 'data-science' | 'ai-ml'): Promise<void> {
     setComposeMsg(`Starting ${profile}…`)
@@ -73,10 +103,83 @@ export function DashboardPage(): ReactElement {
         </pre>
       ) : null}
 
+      {phaseHint ? (
+        <div
+          style={{
+            padding: '10px 14px',
+            borderRadius: 'var(--radius)',
+            border: '1px solid var(--border)',
+            background: 'rgba(124, 77, 255, 0.08)',
+            fontSize: 13,
+            color: 'var(--text-muted)',
+          }}
+        >
+          {phaseHint}
+        </div>
+      ) : null}
+
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'center' }}>
+        <button
+          type="button"
+          disabled={!layout}
+          onClick={() => layout && setPickerOpen(true)}
+          style={{
+            border: '1px solid var(--border)',
+            background: 'var(--bg-input)',
+            color: 'var(--text)',
+            borderRadius: 8,
+            padding: '10px 16px',
+            fontWeight: 600,
+            cursor: !layout ? 'wait' : 'pointer',
+            fontSize: 13,
+            opacity: !layout ? 0.6 : 1,
+          }}
+        >
+          <span className="codicon codicon-add" style={{ marginRight: 8 }} aria-hidden />
+          Add widget
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setPhaseHint(
+              'Custom profiles (name, compose stacks, widget packs, export/import) land in Phase 1 with the setup wizard.'
+            )
+          }}
+          style={{
+            border: '1px dashed var(--border)',
+            background: 'transparent',
+            color: 'var(--accent)',
+            borderRadius: 8,
+            padding: '10px 16px',
+            fontWeight: 600,
+            cursor: 'pointer',
+            fontSize: 13,
+          }}
+        >
+          <span className="codicon codicon-settings-gear" style={{ marginRight: 8 }} aria-hidden />
+          Custom profile…
+        </button>
+      </div>
+
+      {layout ? (
+        <DashboardWidgetDeck layout={layout} onRemove={(id) => void removeWidget(id)} />
+      ) : (
+        <div style={{ color: 'var(--text-muted)', fontSize: 13 }}>Loading widget layout…</div>
+      )}
+
+      {layout ? (
+        <AddWidgetModal
+          open={pickerOpen}
+          layout={layout}
+          onClose={() => setPickerOpen(false)}
+          onSaved={(next) => setLayout(next)}
+        />
+      ) : null}
+
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 260px), 1fr))',
           gap: 16,
         }}
       >

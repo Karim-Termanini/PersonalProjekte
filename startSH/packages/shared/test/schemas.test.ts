@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest'
+import { DashboardLayoutFileSchema } from '../src/foundation'
 import {
   ComposeUpRequestSchema,
   DockerLogsRequestSchema,
   GitCloneRequestSchema,
   HostExecRequestSchema,
 } from '../src/schemas'
+import { isRegisteredWidgetType } from '../src/widgetRegistry'
 
 describe('schemas', () => {
   it('rejects arbitrary host exec', () => {
@@ -33,5 +35,15 @@ describe('schemas', () => {
         targetDir: '/tmp/x',
       })
     ).toThrow()
+  })
+
+  it('parses dashboard layout file', () => {
+    const v = DashboardLayoutFileSchema.parse({
+      version: 1,
+      placements: [{ instanceId: 'a', widgetTypeId: 'static.docker-permission-hint' }],
+    })
+    expect(v.placements).toHaveLength(1)
+    expect(isRegisteredWidgetType('static.docker-permission-hint')).toBe(true)
+    expect(isRegisteredWidgetType('unknown.widget')).toBe(false)
   })
 })

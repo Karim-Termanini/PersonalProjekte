@@ -58,6 +58,12 @@ export const IPC = {
   gitRecentList: 'dh:git:recent:list',
   gitRecentAdd: 'dh:git:recent:add',
   selectFolder: 'dh:dialog:folder',
+  sessionInfo: 'dh:session:info',
+  layoutGet: 'dh:layout:get',
+  layoutSet: 'dh:layout:set',
+  jobStart: 'dh:job:start',
+  jobsList: 'dh:job:list',
+  jobCancel: 'dh:job:cancel',
 } as const
 
 export type DockerActionPayload = { id: string; action: DockerContainerAction }

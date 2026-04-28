@@ -12,6 +12,7 @@ import simpleGit from 'simple-git'
 
 import {
   ComposeUpRequestSchema,
+  DashboardLayoutFileSchema,
   DockerContainerActionSchema,
   DockerLogsRequestSchema,
   GitCloneRequestSchema,
@@ -19,11 +20,18 @@ import {
   GitStatusRequestSchema,
   HostExecRequestSchema,
   IPC,
+  JobCancelRequestSchema,
+  JobStartRequestSchema,
+  defaultDashboardLayout,
+  isRegisteredWidgetType,
   type ContainerRow,
+  type DashboardLayoutFile,
   type DockerActionPayload,
   type GitRepoEntry,
   type HostMetrics,
   type HostMetricsResponse,
+  type JobSummary,
+  type SessionInfo,
   type SystemdRow,
 } from '@linux-dev-home/shared'
 
@@ -35,6 +43,18 @@ let mainWindow: BrowserWindow | null = null
 let docker: Docker | null = null
 const terminals = new Map<string, pty.IPty>()
 const SYSTEMD_UNITS = ['nginx', 'ssh', 'ufw', 'docker'] as const
+
+type JobRecord = {
+  id: string
+  kind: string
+  state: 'running' | 'completed' | 'failed' | 'cancelled'
+  progress: number
+  log: string[]
+  cancelRequested: boolean
+  timer?: ReturnType<typeof setInterval>
+}
+
+const jobs = new Map<string, JobRecord>()
 
 let lastCpuIdle = 0
 let lastCpuTotal = 0
@@ -66,6 +86,66 @@ function profileComposeDir(profile: string): string {
 
 function recentReposPath(): string {
   return path.join(app.getPath('userData'), 'recent-repos.json')
+}
+
+function dashboardLayoutPath(): string {
+  return path.join(app.getPath('userData'), 'dashboard-layout.json')
+}
+
+function getSessionInfo(): SessionInfo {
+  const flatpakId = process.env.FLATPAK_ID
+  if (flatpakId) {
+    return {
+      kind: 'flatpak',
+      flatpakId,
+      summary:
+        'Flatpak sandbox: Docker socket and host paths need explicit overrides; user-level installers (rustup, nvm) work best inside the home directory.',
+    }
+  }
+  return {
+    kind: 'native',
+    summary: 'Native session: the app runs with your user permissions; system-wide changes may still need sudo or PolicyKit.',
+  }
+}
+
+async function readDashboardLayout(): Promise<DashboardLayoutFile> {
+  try {
+    const raw = await readFile(dashboardLayoutPath(), 'utf8')
+    const parsed = JSON.parse(raw) as unknown
+    return DashboardLayoutFileSchema.parse(parsed)
+  } catch {
+    return defaultDashboardLayout()
+  }
+}
+
+async function writeDashboardLayout(layout: DashboardLayoutFile): Promise<void> {
+  for (const p of layout.placements) {
+    if (!isRegisteredWidgetType(p.widgetTypeId)) {
+      throw new Error(`Unknown widget type: ${p.widgetTypeId}`)
+    }
+  }
+  await mkdir(app.getPath('userData'), { recursive: true })
+  await writeFile(dashboardLayoutPath(), JSON.stringify(layout, null, 2))
+}
+
+function pruneFinishedJobs(): void {
+  if (jobs.size < 25) return
+  for (const [id, j] of jobs) {
+    if (j.state !== 'running') {
+      jobs.delete(id)
+      return
+    }
+  }
+}
+
+function jobToSummary(j: JobRecord): JobSummary {
+  return {
+    id: j.id,
+    kind: j.kind,
+    state: j.state,
+    progress: j.progress,
+    logTail: j.log.slice(-12),
+  }
 }
 
 async function loadRecentRepos(): Promise<GitRepoEntry[]> {
@@ -466,6 +546,73 @@ function registerIpc(): void {
     const r = await dialog.showOpenDialog(mainWindow!, { properties: ['openDirectory'] })
     if (r.canceled || !r.filePaths[0]) return null
     return r.filePaths[0]
+  })
+
+  ipcMain.handle(IPC.sessionInfo, async () => getSessionInfo())
+
+  ipcMain.handle(IPC.layoutGet, async () => await readDashboardLayout())
+
+  ipcMain.handle(IPC.layoutSet, async (_e, raw: unknown) => {
+    const layout = DashboardLayoutFileSchema.parse(raw)
+    await writeDashboardLayout(layout)
+    return { ok: true as const }
+  })
+
+  ipcMain.handle(IPC.jobStart, async (_e, raw: unknown) => {
+    const req = JobStartRequestSchema.parse(raw)
+    if (req.kind !== 'demo_countdown') throw new Error('Unsupported job kind')
+    pruneFinishedJobs()
+    const id = randomUUID()
+    const durationMs = req.durationMs ?? 4000
+    const steps = 8
+    const tick = Math.max(120, Math.floor(durationMs / steps))
+    const job: JobRecord = {
+      id,
+      kind: req.kind,
+      state: 'running',
+      progress: 0,
+      log: ['Demo job started (Phase 0 task runner smoke test).'],
+      cancelRequested: false,
+    }
+    jobs.set(id, job)
+    let step = 0
+    job.timer = setInterval(() => {
+      const j = jobs.get(id)
+      if (!j) {
+        return
+      }
+      if (j.cancelRequested) {
+        j.state = 'cancelled'
+        j.log.push('Cancelled by user.')
+        if (j.timer) clearInterval(j.timer)
+        delete j.timer
+        return
+      }
+      step += 1
+      j.progress = Math.min(100, Math.round((step / steps) * 100))
+      j.log.push(`Step ${step}/${steps} — ${j.progress}%`)
+      if (step >= steps) {
+        j.state = 'completed'
+        j.progress = 100
+        j.log.push('Done.')
+        if (j.timer) clearInterval(j.timer)
+        delete j.timer
+      }
+    }, tick)
+    return { id }
+  })
+
+  ipcMain.handle(IPC.jobsList, async () => {
+    return [...jobs.values()].map((j) => jobToSummary(j))
+  })
+
+  ipcMain.handle(IPC.jobCancel, async (_e, raw: unknown) => {
+    const { id } = JobCancelRequestSchema.parse(raw)
+    const j = jobs.get(id)
+    if (!j) return { ok: false as const, reason: 'not_found' as const }
+    if (j.state !== 'running') return { ok: false as const, reason: 'not_running' as const }
+    j.cancelRequested = true
+    return { ok: true as const }
   })
 
   ipcMain.handle('dh:openExternal', async (_e, url: string) => {

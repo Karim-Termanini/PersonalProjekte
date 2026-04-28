@@ -24,6 +24,12 @@ declare global {
       onTerminalData: (handler: (msg: { id: string; data: string }) => void) => () => void
       onTerminalExit: (handler: (msg: { id: string }) => void) => () => void
       openExternal: (url: string) => Promise<unknown>
+      sessionInfo: () => Promise<unknown>
+      layoutGet: () => Promise<unknown>
+      layoutSet: (layout: unknown) => Promise<unknown>
+      jobStart: (payload: { kind: string; durationMs?: number }) => Promise<unknown>
+      jobsList: () => Promise<unknown>
+      jobCancel: (payload: { id: string }) => Promise<unknown>
     }
   }
 }
