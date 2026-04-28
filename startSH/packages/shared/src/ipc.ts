@@ -13,6 +13,7 @@ export type ContainerRow = {
   state: string
   status: string
   ports: string
+  networks?: string[]
 }
 
 export type ImageRow = {

@@ -2,23 +2,40 @@ import type { ContainerRow, ImageRow, NetworkRow, VolumeRow } from '@linux-dev-h
 import type { ReactElement } from 'react'
 import { useCallback, useEffect, useState } from 'react'
 
-type TabId = 'create' | 'containers' | 'images' | 'volumes' | 'networks' | 'ports'
+import { DockerSchemeView } from '../components/DockerSchemeView'
+
+type TabId = 'scheme' | 'create' | 'containers' | 'images' | 'volumes' | 'networks' | 'ports'
 
 type CreateExample = {
   title: string
   image: string
   command?: string
+  ports?: string
+  volumes?: string
+  env?: string
 }
 
 const CREATE_EXAMPLES: CreateExample[] = [
-  { title: 'Nginx web server', image: 'nginx:latest' },
-  { title: 'PostgreSQL database', image: 'postgres:16' },
-  { title: 'Redis cache', image: 'redis:7-alpine' },
-  { title: 'MySQL database', image: 'mysql:8' },
-  { title: 'MongoDB', image: 'mongo:7' },
+  { title: 'Nginx web server', image: 'nginx:latest', ports: '8080:80', volumes: './:/usr/share/nginx/html' },
+  { title: 'PostgreSQL database', image: 'postgres:16', ports: '5432:5432', env: 'POSTGRES_PASSWORD=postgres\nPOSTGRES_DB=app' },
+  { title: 'Redis cache', image: 'redis:7-alpine', ports: '6379:6379' },
+  { title: 'MySQL database', image: 'mysql:8', ports: '3306:3306', env: 'MYSQL_ROOT_PASSWORD=root\nMYSQL_DATABASE=app' },
+  { title: 'MongoDB', image: 'mongo:7', ports: '27017:27017', env: 'MONGO_INITDB_ROOT_USERNAME=admin\nMONGO_INITDB_ROOT_PASSWORD=admin' },
   { title: 'Ubuntu shell (interactive)', image: 'ubuntu:24.04', command: 'bash' },
-  { title: 'Python dev container', image: 'python:3.12-slim' },
-  { title: 'Node.js app', image: 'node:20-alpine' },
+  {
+    title: 'Python dev container',
+    image: 'python:3.12-slim',
+    ports: '8000:8000',
+    volumes: './:/app',
+    env: 'PYTHONDONTWRITEBYTECODE=1',
+  },
+  {
+    title: 'Node.js app',
+    image: 'node:20-alpine',
+    ports: '3000:3000',
+    volumes: './:/app',
+    env: 'NODE_ENV=development',
+  },
 ]
 
 const RECOMMENDED_IMAGES = [
@@ -31,7 +48,7 @@ const RECOMMENDED_IMAGES = [
 ]
 
 export function DockerPage(): ReactElement {
-  const [tab, setTab] = useState<TabId>('create')
+  const [tab, setTab] = useState<TabId>('scheme')
   const [docker, setDocker] = useState<
     { ok: true; rows: ContainerRow[] } | { ok: false; error: string } | null
   >(null)
@@ -196,6 +213,9 @@ export function DockerPage(): ReactElement {
     const typedName = (customNames[key] ?? '').trim()
     setCustomImage(example.image)
     setCustomName(typedName)
+    setCustomPortsText(example.ports ?? '')
+    setCustomVolumesText(example.volumes ?? '')
+    setCustomEnvText(example.env ?? '')
     setCreatedInfo(`Filled form from example: ${example.title}`)
   }
 
@@ -271,8 +291,12 @@ export function DockerPage(): ReactElement {
   }
 
   const rows = docker?.ok ? docker.rows : []
-  const runningRows = rows.filter((r) => r.state.toLowerCase() === 'running')
-  const stoppedRows = rows.filter((r) => r.state.toLowerCase() !== 'running')
+  const runningRows = rows.filter((r) => {
+    const state = r.state.toLowerCase()
+    const status = r.status.toLowerCase()
+    return state === 'running' || status.startsWith('up ')
+  })
+  const stoppedRows = rows.filter((r) => !runningRows.some((x) => x.id === r.id))
   const rowsWithPorts = rows.filter((r) => r.ports !== '—')
 
   return (
@@ -313,7 +337,7 @@ export function DockerPage(): ReactElement {
       {err ? <div style={{ color: 'var(--orange)' }}>{err}</div> : null}
 
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-        {(['create', 'containers', 'images', 'volumes', 'networks', 'ports'] as const).map((t) => (
+        {(['scheme', 'create', 'containers', 'images', 'volumes', 'networks', 'ports'] as const).map((t) => (
           <button
             key={t}
             type="button"
@@ -429,6 +453,11 @@ export function DockerPage(): ReactElement {
                 onAction={runAction}
                 onLogs={openLogs}
               />
+              {stoppedRows.length === 0 ? (
+                <div style={{ color: 'var(--text-muted)', fontSize: 12 }}>
+                  No stopped containers from current Docker daemon/context.
+                </div>
+              ) : null}
             </div>
           )
         ) : null}
@@ -558,6 +587,9 @@ export function DockerPage(): ReactElement {
               )}
             </div>
           </div>
+        ) : null}
+        {docker?.ok && tab === 'scheme' ? (
+          <DockerSchemeView containers={rows} networks={networks} />
         ) : null}
         {docker?.ok && tab === 'networks' ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>

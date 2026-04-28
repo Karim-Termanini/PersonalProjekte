@@ -442,7 +442,12 @@ function registerIpc(): void {
         : undefined
     const binds =
       req.volumes && req.volumes.length > 0
-        ? req.volumes.map((v) => `${v.hostPath}:${v.containerPath}`)
+        ? req.volumes.map((v) => {
+            const hostPath = path.isAbsolute(v.hostPath)
+              ? v.hostPath
+              : path.resolve(process.cwd(), v.hostPath)
+            return `${hostPath}:${v.containerPath}`
+          })
         : undefined
     const createPayload = {
       Image: req.image,
