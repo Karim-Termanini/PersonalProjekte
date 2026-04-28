@@ -404,7 +404,7 @@ export function SshPage(): ReactElement {
   }
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 32, paddingBottom: 40, alignItems: 'start' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 24, paddingBottom: 40, alignItems: 'start' }}>
       
       {/* LEFT COLUMN: Setup & Bookmarks */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
@@ -421,26 +421,26 @@ export function SshPage(): ReactElement {
           <h2 style={{ fontSize: 18, marginBottom: 16 }}>Local Identity Setup</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             
-            <div style={card}>
+            <div className="hp-card">
               <div style={stepCircle}>1</div>
               <div>
                 <h3 style={stepTitle}>Generate Local ID</h3>
                 <p style={stepText}>Create a secure SSH key to identify this machine to remote servers.</p>
                 <div style={{ display: 'flex', gap: 8 }}>
-                  <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Label / Email (Optional)" style={{ ...inputStyle, flex: 1 }} />
-                  <button type="button" style={btnPrimary} onClick={() => void generate()} disabled={busy}>Generate Key</button>
+                  <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Label / Email (Optional)" className="hp-input" style={{ flex: 1 }} />
+                  <button type="button" className="hp-btn hp-btn-primary" onClick={() => void generate()} disabled={busy}>Generate Key</button>
                 </div>
               </div>
             </div>
 
-            <div style={card}>
+            <div className="hp-card">
               <div style={stepCircle}>2</div>
               <div style={{ flex: 1 }}>
                 <h3 style={stepTitle}>Identity Options</h3>
                 <p style={stepText}>Copy your public key for manual setup, or use the automatic "Enable Remote Access" button after connecting.</p>
                 <div style={{ display: 'flex', gap: 8, marginTop: 10, flexWrap: 'wrap' }}>
-                  <button type="button" style={btn} onClick={() => { void loadPub().then(copyPub) }} disabled={busy}>Copy Public Key</button>
-                  <button type="button" style={btn} onClick={() => void testGithub()} disabled={busy}>Test GitHub Connection</button>
+                  <button type="button" className="hp-btn" onClick={() => { void loadPub().then(copyPub) }} disabled={busy}>Copy Public Key</button>
+                  <button type="button" className="hp-btn" onClick={() => void testGithub()} disabled={busy}>Test GitHub Connection</button>
                 </div>
                 {fingerprint && (
                   <div style={{ marginTop: 12, fontSize: 12, padding: '8px 12px', background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: 6 }}>
@@ -462,18 +462,9 @@ export function SshPage(): ReactElement {
 
           </div>
           {status && (
-            <div
-              style={{
-                marginTop: 12,
-                padding: '10px 12px',
-                borderRadius: 8,
-                fontSize: 13,
-                color: status.includes('✅') ? 'var(--green)' : status.includes('⚠') || status.includes('❌') ? 'var(--orange)' : 'var(--text-muted)',
-                border: `1px solid ${status.includes('✅') ? 'rgba(44,182,125,0.35)' : 'var(--border)'}`,
-                background: status.includes('✅') ? 'rgba(44,182,125,0.08)' : 'var(--bg-input)',
-              }}
-            >
-              {status}
+            <div className={`hp-status-alert ${status.includes('✅') ? 'success' : status.includes('⚠') || status.includes('❌') ? 'warning' : ''}`} style={{ marginTop: 12 }}>
+              <span style={{ fontSize: 18 }}>{status.includes('✅') ? '✔' : status.includes('⚠') || status.includes('❌') ? '⚠' : 'ℹ'}</span>
+              <span>{status}</span>
             </div>
           )}
         </section>
@@ -483,24 +474,35 @@ export function SshPage(): ReactElement {
         {/* Bookmarks Section */}
         <section>
           <h2 style={{ fontSize: 18, marginBottom: 16 }}>Saved Servers</h2>
-          <div style={{ ...card, display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 16, padding: 16 }}>
-            <div style={{ flex: 1, minWidth: 150 }}>
+          <div
+            className="hp-card"
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: 12,
+              alignItems: 'flex-end',
+              marginBottom: 16,
+            }}
+          >
+            <div style={{ flex: '1 1 140px', minWidth: 0 }}>
               <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>Label</div>
-              <input value={newBmName} onChange={(e) => setNewBmName(e.target.value)} placeholder="e.g. My VPS" style={inputStyle} />
+              <input value={newBmName} onChange={(e) => setNewBmName(e.target.value)} placeholder="e.g. My VPS" className="hp-input" style={{ width: '100%' }} />
             </div>
-            <div style={{ width: 100 }}>
+            <div style={{ flex: '1 1 100px', minWidth: 0 }}>
               <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>User</div>
-              <input value={newBmUser} onChange={(e) => setNewBmUser(e.target.value)} placeholder="root" style={inputStyle} />
+              <input value={newBmUser} onChange={(e) => setNewBmUser(e.target.value)} placeholder="root" className="hp-input" style={{ width: '100%' }} />
             </div>
-            <div style={{ flex: 1, minWidth: 150 }}>
+            <div style={{ flex: '1.5 1 180px', minWidth: 0 }}>
               <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>Host (IP / Domain)</div>
-              <input value={newBmHost} onChange={(e) => setNewBmHost(e.target.value)} placeholder="192.168.1.10" style={inputStyle} />
+              <input value={newBmHost} onChange={(e) => setNewBmHost(e.target.value)} placeholder="192.168.1.10" className="hp-input" style={{ width: '100%' }} />
             </div>
-            <div style={{ width: 60 }}>
+            <div style={{ flex: '0.5 1 80px', minWidth: 0 }}>
               <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>Port</div>
-              <input value={newBmPort} onChange={(e) => setNewBmPort(e.target.value)} placeholder="22" style={inputStyle} />
+              <input value={newBmPort} onChange={(e) => setNewBmPort(e.target.value)} placeholder="22" className="hp-input" style={{ width: '100%' }} />
             </div>
-            <button type="button" style={btnPrimary} onClick={addBookmark}>Add</button>
+            <button type="button" className="hp-btn hp-btn-primary" style={{ minHeight: 38 }} onClick={addBookmark}>
+              Add
+            </button>
           </div>
 
           {bookmarks.length === 0 ? (
@@ -516,8 +518,8 @@ export function SshPage(): ReactElement {
                     </div>
                   </div>
                   <div style={{ display: 'flex', gap: 8 }}>
-                    <button type="button" style={btn} onClick={() => handleConnect(bm)}>Connect</button>
-                    <button type="button" style={btnDanger} onClick={() => deleteBookmark(bm.id)}>Remove</button>
+                    <button type="button" className="hp-btn" onClick={() => handleConnect(bm)}>Connect</button>
+                    <button type="button" className="hp-btn hp-btn-danger" onClick={() => deleteBookmark(bm.id)}>Remove</button>
                   </div>
                 </div>
               ))}
@@ -571,25 +573,25 @@ export function SshPage(): ReactElement {
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 4 }}>
                   {sess.status === 'connected' && (
                     <>
-                      <button type="button" style={{ ...btn, padding: '4px 8px', fontSize: 11 }} onClick={() => resetFtState(sess, 'upload')}>
+                      <button type="button" className="hp-btn" style={{ padding: '4px 8px', fontSize: 11 }} onClick={() => resetFtState(sess, 'upload')}>
                         📤 Upload
                       </button>
-                      <button type="button" style={{ ...btn, padding: '4px 8px', fontSize: 11 }} onClick={() => resetFtState(sess, 'download')}>
+                      <button type="button" className="hp-btn" style={{ padding: '4px 8px', fontSize: 11 }} onClick={() => resetFtState(sess, 'download')}>
                         📥 Download
                       </button>
-                      <button type="button" style={{ ...btn, padding: '4px 8px', fontSize: 11 }} onClick={() => setActiveTermSession(sess)}>
+                      <button type="button" className="hp-btn" style={{ padding: '4px 8px', fontSize: 11 }} onClick={() => setActiveTermSession(sess)}>
                         ⌨ Terminal
                       </button>
-                      <button type="button" style={{ ...btn, padding: '4px 8px', fontSize: 11, color: 'var(--accent)' }} onClick={() => void setupKeysOnServer(sess)}>
+                      <button type="button" className="hp-btn" style={{ padding: '4px 8px', fontSize: 11, color: 'var(--accent)' }} onClick={() => void setupKeysOnServer(sess)}>
                         🔑 Enable Access
                       </button>
-                      <button type="button" style={{ ...btnDanger, padding: '4px 8px', fontSize: 11 }} onClick={() => handleDisconnect(sess)}>
+                      <button type="button" className="hp-btn hp-btn-danger" style={{ padding: '4px 8px', fontSize: 11 }} onClick={() => handleDisconnect(sess)}>
                         ✕ Disconnect
                       </button>
                     </>
                   )}
                   {sess.status === 'disconnected' && (
-                    <button type="button" style={{ ...btn, padding: '4px 8px', fontSize: 11, flex: 1 }} onClick={() => setSessions(prev => prev.filter(s => s.id !== sess.id))}>
+                    <button type="button" className="hp-btn" style={{ padding: '4px 8px', fontSize: 11, flex: 1 }} onClick={() => setSessions(prev => prev.filter(s => s.id !== sess.id))}>
                       Clear
                     </button>
                   )}
@@ -621,7 +623,8 @@ export function SshPage(): ReactElement {
                     const s = sessions.find(s => s.id === e.target.value)
                     if (s) resetFtState(s, ftDirection)
                   }}
-                  style={{ ...inputStyle, cursor: 'pointer' }}
+                  className="hp-input"
+                  style={{ cursor: 'pointer' }}
                 >
                   {sessions.filter(s => s.status === 'connected').map(s => (
                     <option key={s.id} value={s.id}>{s.bmName} ({s.user}@ {s.host})</option>
@@ -632,13 +635,15 @@ export function SshPage(): ReactElement {
               {/* Direction selector */}
               <div style={{ display: 'flex', gap: 8 }}>
                 <button type="button"
-                  style={{ ...btn, flex: 1, background: ftDirection === 'upload' ? 'var(--accent)' : 'var(--bg-input)', color: ftDirection === 'upload' ? '#000' : 'var(--text)' }}
+                  className="hp-btn"
+                  style={{ flex: 1, background: ftDirection === 'upload' ? 'var(--accent)' : 'var(--bg-input)', color: ftDirection === 'upload' ? '#000' : 'var(--text)' }}
                   onClick={() => setFtDirection('upload')}
                 >
                   📤 Upload to Device
                 </button>
                 <button type="button"
-                  style={{ ...btn, flex: 1, background: ftDirection === 'download' ? 'var(--accent)' : 'var(--bg-input)', color: ftDirection === 'download' ? '#000' : 'var(--text)' }}
+                  className="hp-btn"
+                  style={{ flex: 1, background: ftDirection === 'download' ? 'var(--accent)' : 'var(--bg-input)', color: ftDirection === 'download' ? '#000' : 'var(--text)' }}
                   onClick={() => setFtDirection('download')}
                 >
                   📥 Download from Device
@@ -651,7 +656,8 @@ export function SshPage(): ReactElement {
                 <div style={{ display: 'flex', gap: 8 }}>
                   {(['scp', 'rsync'] as const).map(t => (
                     <button key={t} type="button"
-                      style={{ ...btn, flex: 1, background: ftTool === t ? 'var(--accent)' : 'var(--bg-input)', color: ftTool === t ? '#000' : 'var(--text)' }}
+                      className="hp-btn"
+                      style={{ flex: 1, background: ftTool === t ? 'var(--accent)' : 'var(--bg-input)', color: ftTool === t ? '#000' : 'var(--text)' }}
                       onClick={() => setFtTool(t)}
                     >
                       {t.toUpperCase()}
@@ -666,27 +672,27 @@ export function SshPage(): ReactElement {
                   <>
                     <div style={{ fontSize: 13, fontWeight: 600 }}>Step 1: Choose Local Files</div>
                     <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
-                      <button type="button" style={btnPrimary} onClick={() => void pickLocalFiles()}>Select Files...</button>
+                      <button type="button" className="hp-btn hp-btn-primary" onClick={() => void pickLocalFiles()}>Select Files...</button>
                       <div style={{ flex: 1, fontSize: 12, color: 'var(--text-muted)', maxHeight: 60, overflowY: 'auto' }}>
                         {ftLocalPaths.length === 0 ? 'No files selected' : ftLocalPaths.map((p, i) => <div key={i}>{p.split("/").pop()}</div>)}
                       </div>
                     </div>
                     <div style={{ fontSize: 13, fontWeight: 600, marginTop: 8 }}>Step 2: Remote Destination</div>
                     <div style={{ display: 'flex', gap: 8 }}>
-                      <input value={ftRemotePath} onChange={e => setFtRemotePath(e.target.value)} style={{ ...inputStyle, flex: 1 }} placeholder="~/Downloads/" />
-                      <button type="button" style={btn} disabled={remoteBrowsing} onClick={() => void browseRemote(ftRemotePath || '~')}>Browse...</button>
+                      <input value={ftRemotePath} onChange={e => setFtRemotePath(e.target.value)} className="hp-input" style={{ flex: 1 }} placeholder="~/Downloads/" />
+                      <button type="button" className="hp-btn" disabled={remoteBrowsing} onClick={() => void browseRemote(ftRemotePath || '~')}>Browse...</button>
                     </div>
                   </>
                 ) : (
                   <>
                     <div style={{ fontSize: 13, fontWeight: 600 }}>Step 1: Choose Remote Files</div>
                     <div style={{ display: 'flex', gap: 8 }}>
-                      <input value={ftRemotePath} onChange={e => setFtRemotePath(e.target.value)} style={{ ...inputStyle, flex: 1 }} />
-                      <button type="button" style={btn} disabled={remoteBrowsing} onClick={() => void browseRemote(ftRemotePath || '~')}>Browse Remote...</button>
+                      <input value={ftRemotePath} onChange={e => setFtRemotePath(e.target.value)} className="hp-input" style={{ flex: 1 }} />
+                      <button type="button" className="hp-btn" disabled={remoteBrowsing} onClick={() => void browseRemote(ftRemotePath || '~')}>Browse Remote...</button>
                     </div>
                     <div style={{ fontSize: 13, fontWeight: 600, marginTop: 8 }}>Step 2: Local Destination</div>
                     <div style={{ display: 'flex', gap: 8 }}>
-                      <button type="button" style={btnPrimary} onClick={() => void pickLocalDestDir()}>Choose Folder...</button>
+                      <button type="button" className="hp-btn hp-btn-primary" onClick={() => void pickLocalDestDir()}>Choose Folder...</button>
                       <div style={{ flex: 1, fontSize: 12, color: 'var(--text-muted)' }}>
                         {ftLocalDestDir || 'Defaults to current directory'}
                       </div>
@@ -721,7 +727,7 @@ export function SshPage(): ReactElement {
 
               {ftStatus && <div style={{ fontSize: 12, color: 'var(--accent)' }}>{ftStatus}</div>}
 
-              <button type="button" style={{ ...btnPrimary, padding: '12px' }} onClick={runTransfer}>
+              <button type="button" className="hp-btn hp-btn-primary" style={{ padding: '12px' }} onClick={runTransfer}>
                 🚀 Start Transfer
               </button>
             </div>
@@ -760,12 +766,13 @@ export function SshPage(): ReactElement {
               onChange={e => setPassInput(e.target.value)}
               placeholder="Server Password"
               onKeyDown={e => e.key === 'Enter' && runSetupWithPassword()}
-              style={{ ...inputStyle, marginBottom: 20 }}
+              className="hp-input"
+              style={{ marginBottom: 20 }}
               autoFocus
             />
             <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
-              <button type="button" style={btn} onClick={() => setPassModalSess(null)}>Cancel</button>
-              <button type="button" style={btnPrimary} onClick={runSetupWithPassword} disabled={!passInput || busy}>
+              <button type="button" className="hp-btn" onClick={() => setPassModalSess(null)}>Cancel</button>
+              <button type="button" className="hp-btn hp-btn-primary" onClick={runSetupWithPassword} disabled={!passInput || busy}>
                 {busy ? '⏳ Activating...' : 'Activate'}
               </button>
             </div>
@@ -821,30 +828,6 @@ const inputStyle = {
   padding: '8px 12px',
   borderRadius: 6,
   fontSize: 13,
-}
-
-const btn = {
-  border: '1px solid var(--border)',
-  background: 'var(--bg-input)',
-  color: 'var(--text)',
-  borderRadius: 6,
-  padding: '8px 16px',
-  cursor: 'pointer',
-  fontSize: 13,
-  fontWeight: 500,
-}
-
-const btnPrimary = {
-  ...btn,
-  background: 'var(--accent)',
-  color: '#000',
-  border: '1px solid var(--accent)',
-}
-
-const btnDanger = {
-  ...btn,
-  color: 'var(--orange)',
-  borderColor: 'rgba(255, 69, 58, 0.3)',
 }
 
 const area = {

@@ -22,16 +22,12 @@ function ContainerNode({ data }: { data: ContainerRow }) {
   const isRunning = data.state.toLowerCase() === 'running'
   return (
     <div
+      className="hp-card"
       style={{
-        background: 'var(--bg-input)',
-        border: '1px solid var(--border)',
-        borderRadius: 12,
-        padding: 16,
         width: 260,
         display: 'flex',
         flexDirection: 'column',
         gap: 12,
-        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
         cursor: 'default',
       }}
     >
@@ -160,8 +156,27 @@ function ClusterGroupNode({ data }: { data: { isSystem: boolean } }) {
         background: data.isSystem ? 'rgba(30, 30, 30, 0.3)' : 'rgba(124, 77, 255, 0.03)',
         border: `2px dashed ${data.isSystem ? 'var(--border)' : 'var(--accent)'}`,
         borderRadius: 16,
+        position: 'relative',
       }}
-    />
+    >
+      <div
+        style={{
+          position: 'absolute',
+          top: -10,
+          left: 20,
+          background: data.isSystem ? 'var(--bg-panel)' : 'var(--accent)',
+          color: data.isSystem ? 'var(--text-muted)' : '#fff',
+          padding: '2px 10px',
+          borderRadius: 4,
+          fontSize: 10,
+          fontWeight: 700,
+          textTransform: 'uppercase',
+          border: `1px solid ${data.isSystem ? 'var(--border)' : 'var(--accent)'}`,
+        }}
+      >
+        {data.isSystem ? 'System Network' : 'Custom Project Network'}
+      </div>
+    </div>
   )
 }
 

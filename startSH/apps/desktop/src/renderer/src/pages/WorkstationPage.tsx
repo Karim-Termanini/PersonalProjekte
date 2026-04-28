@@ -25,14 +25,7 @@ export function WorkstationPage(): ReactElement {
             key={p}
             type="button"
             onClick={() => void showLogs(p)}
-            style={{
-              background: 'var(--bg-widget)',
-              border: '1px solid var(--border)',
-              color: 'var(--text)',
-              borderRadius: 8,
-              padding: '10px 14px',
-              cursor: 'pointer',
-            }}
+            className="hp-btn"
           >
             Logs: {p}
           </button>
@@ -46,10 +39,11 @@ export function WorkstationPage(): ReactElement {
             padding: 16,
             background: '#0a0a0a',
             border: '1px solid var(--border)',
-            borderRadius: 8,
+            borderRadius: 12,
             maxHeight: 480,
             overflow: 'auto',
             fontSize: 12,
+            boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
           }}
         >
           {log}

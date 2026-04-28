@@ -84,6 +84,24 @@ type JobRecord = {
 
 const jobs = new Map<string, JobRecord>()
 
+const DOCKER_INSTALL_STEPS: Record<'ubuntu' | 'fedora' | 'arch', string[]> = {
+  ubuntu: [
+    'apt-get update && apt-get install -y ca-certificates curl && install -m 0755 -d /etc/apt/keyrings && curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc && chmod a+r /etc/apt/keyrings/docker.asc',
+    'echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo $VERSION_CODENAME) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null && apt-get update',
+    'apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin',
+    'systemctl enable --now docker && docker --version',
+  ],
+  fedora: [
+    'dnf -y install dnf-plugins-core && dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo',
+    'dnf install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin',
+    'systemctl enable --now docker && docker --version',
+  ],
+  arch: [
+    'pacman -S --needed --noconfirm docker docker-compose',
+    'systemctl enable --now docker && docker --version',
+  ],
+}
+
 let lastCpuIdle = 0
 let lastCpuTotal = 0
 
@@ -743,6 +761,46 @@ function registerIpc(): void {
     return { ok: true, reclaimedBytes }
   })
 
+  ipcMain.handle(IPC.dockerInstall, async (_e, { distro, password }: { distro: 'ubuntu' | 'fedora' | 'arch'; password?: string }) => {
+    const cmds = DOCKER_INSTALL_STEPS[distro]
+    if (!cmds) throw new Error('Unsupported distro')
+
+    const logs: string[] = []
+    const execWithSudo = (cmd: string) => {
+      return new Promise<{ ok: boolean; error?: string }>((resolve) => {
+        const fullCmd = `sudo -S bash -c "${cmd}"`
+        const proc = spawn('sh', ['-c', fullCmd])
+
+        if (password) {
+          proc.stdin.write(`${password}\n`)
+        }
+
+        proc.stdout.on('data', (d) => logs.push(`OUT: ${d.toString().trim()}`))
+        proc.stderr.on('data', (d) => {
+          const s = d.toString()
+          if (!s.includes('[sudo] password for')) {
+            logs.push(`ERR: ${s.trim()}`)
+          }
+        })
+
+        proc.on('close', (code) => {
+          if (code === 0) resolve({ ok: true })
+          else resolve({ ok: false, error: `Command failed with code ${code}` })
+        })
+      })
+    }
+
+    for (const cmd of cmds) {
+      logs.push(`RUNNING: ${cmd}`)
+      const res = await execWithSudo(cmd)
+      if (!res.ok) {
+        return { ok: false, log: logs, error: res.error }
+      }
+    }
+
+    return { ok: true, log: logs }
+  })
+
   ipcMain.handle(IPC.metrics, async () => await collectMetrics())
 
   ipcMain.handle(IPC.hostExec, async (_e, raw: unknown) => {
@@ -766,6 +824,33 @@ function registerIpc(): void {
     if (req.command === 'systemctl_is_active' && req.unit) {
       const row = await systemdRow(req.unit.replace(/\.service$/, ''))
       return row.state
+    }
+    if (req.command === 'docker_install_step') {
+      if (!req.distro && req.stepIndex !== undefined) throw new Error('Missing install distro')
+      if (req.distro === undefined || req.stepIndex === undefined) throw new Error('Missing install step payload')
+      const steps = DOCKER_INSTALL_STEPS[req.distro]
+      const command = steps[req.stepIndex]
+      if (!command) throw new Error('Invalid install step')
+      return await new Promise<{ ok: boolean; code: number | null; output: string }>((resolveExec) => {
+        execFile(
+          'pkexec',
+          ['bash', '-lc', command],
+          { maxBuffer: 1024 * 1024 * 8, timeout: 1000 * 60 * 20 },
+          (err, stdout, stderr) => {
+            const output = `${stdout ?? ''}${stderr ?? ''}`.trim()
+            if (err) {
+              const code = typeof (err as { code?: unknown }).code === 'number' ? ((err as { code: number }).code) : null
+              resolveExec({
+                ok: false,
+                code,
+                output: output || (err instanceof Error ? err.message : String(err)),
+              })
+              return
+            }
+            resolveExec({ ok: true, code: 0, output: output || 'Step completed successfully.' })
+          }
+        )
+      })
     }
     throw new Error('Unsupported host command')
   })

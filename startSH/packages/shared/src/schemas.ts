@@ -59,8 +59,11 @@ export const HostExecRequestSchema = z.object({
     'systemctl_is_active',
     'nvidia_smi_short',
     'flatpak_spawn_echo',
+    'docker_install_step',
   ] as const),
   unit: z.string().max(128).optional(),
+  distro: z.enum(['ubuntu', 'fedora', 'arch']).optional(),
+  stepIndex: z.number().int().min(0).max(8).optional(),
 })
 
 export const ComposeProfileSchema = z.enum([

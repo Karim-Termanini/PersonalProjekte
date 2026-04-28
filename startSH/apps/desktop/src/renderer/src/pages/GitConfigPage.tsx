@@ -144,70 +144,72 @@ export function GitConfigPage(): ReactElement {
         : 'idle'
 
   return (
-    <div style={{ maxWidth: 980, display: 'grid', gap: 16 }}>
+    <div className="hp-page-stack">
       <header>
-        <h1 style={{ margin: 0 }}>Git Configuration</h1>
-        <p style={{ color: 'var(--text-muted)' }}>
+        <h1 className="hp-title">Git Configuration</h1>
+        <p className="hp-muted">
           Set user identity and default settings, then review all global config entries.
         </p>
       </header>
 
-      <section style={card}>
-        <div style={{ fontWeight: 600, marginBottom: 10 }}>Target</div>
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+      <section className="hp-card">
+        <div className="hp-section-title">Target</div>
+        <div className="hp-row-wrap">
           <button
             type="button"
-            style={target === 'sandbox' ? btnActive : btn}
+            className={`hp-btn ${target === 'sandbox' ? 'hp-btn-primary' : ''}`}
             onClick={() => setTarget('sandbox')}
+            disabled={busy}
           >
-            Sandbox
+            Sandbox (Isolated)
           </button>
           <button
             type="button"
-            style={target === 'host' ? btnActive : btn}
+            className={`hp-btn ${target === 'host' ? 'hp-btn-primary' : ''}`}
             onClick={() => setTarget('host')}
+            disabled={busy}
           >
-            Host
+            Host (Main System)
           </button>
         </div>
       </section>
 
-      <section style={card}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+      <section className="hp-card">
+        <div className="hp-grid-2">
           <div>
-            <div style={{ fontWeight: 600, marginBottom: 12 }}>User Identity</div>
-            <div style={{ display: 'grid', gap: 8 }}>
+            <div className="hp-section-title">User Identity</div>
+            <div className="hp-grid-gap-8">
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Your full name (e.g. Jane Doe)"
-                style={input}
+                className="hp-input"
                 disabled={busy}
               />
               <input
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Your email (e.g. jane@example.com)"
-                style={input}
+                className="hp-input"
                 disabled={busy}
               />
             </div>
           </div>
           <div>
-            <div style={{ fontWeight: 600, marginBottom: 12 }}>Defaults</div>
-            <div style={{ display: 'grid', gap: 8 }}>
+            <div className="hp-section-title">Defaults</div>
+            <div className="hp-grid-gap-8">
               <input
                 value={defaultBranch}
                 onChange={(e) => setDefaultBranch(e.target.value)}
                 placeholder="Default branch (e.g. main)"
-                style={input}
+                className="hp-input"
                 disabled={busy}
               />
-              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                <button type="button" style={btnSmall} onClick={() => setDefaultBranch('main')} disabled={busy}>
+              <div className="hp-row-wrap">
+                <button type="button" className="hp-btn" onClick={() => setDefaultBranch('main')} disabled={busy}>
                   main
                 </button>
-                <button type="button" style={btnSmall} onClick={() => setDefaultBranch('master')} disabled={busy}>
+                <button type="button" className="hp-btn" onClick={() => setDefaultBranch('master')} disabled={busy}>
                   master
                 </button>
               </div>
@@ -215,17 +217,17 @@ export function GitConfigPage(): ReactElement {
                 value={defaultEditor}
                 onChange={(e) => setDefaultEditor(e.target.value)}
                 placeholder="Default editor (e.g. code --wait, vim, nano)"
-                style={input}
+                className="hp-input"
                 disabled={busy}
               />
-              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                <button type="button" style={btnSmall} onClick={() => setDefaultEditor('code --wait')} disabled={busy}>
+              <div className="hp-row-wrap">
+                <button type="button" className="hp-btn" onClick={() => setDefaultEditor('code --wait')} disabled={busy}>
                   VS Code
                 </button>
-                <button type="button" style={btnSmall} onClick={() => setDefaultEditor('vim')} disabled={busy}>
+                <button type="button" className="hp-btn" onClick={() => setDefaultEditor('vim')} disabled={busy}>
                   vim
                 </button>
-                <button type="button" style={btnSmall} onClick={() => setDefaultEditor('nano')} disabled={busy}>
+                <button type="button" className="hp-btn" onClick={() => setDefaultEditor('nano')} disabled={busy}>
                   nano
                 </button>
               </div>
@@ -234,10 +236,10 @@ export function GitConfigPage(): ReactElement {
         </div>
       </section>
 
-      <section style={card}>
+      <section className="hp-card">
         <button
           type="button"
-          style={btnPrimary}
+          className="hp-btn hp-btn-primary"
           onClick={() => void applyConfig()}
           disabled={busy}
         >
@@ -245,34 +247,26 @@ export function GitConfigPage(): ReactElement {
         </button>
       </section>
 
-      <section style={card}>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 12,
-            flexWrap: 'wrap',
-            gap: 8,
-          }}
-        >
-          <div style={{ fontWeight: 600 }}>
+      <section className="hp-card">
+        <div className="hp-row-wrap" style={{ justifyContent: 'space-between', marginBottom: 12 }}>
+          <div className="hp-section-title" style={{ marginBottom: 0 }}>
             Global Config ({rows.length} entries)
           </div>
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <div className="hp-row-wrap">
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Filter entries…"
-              style={{ ...input, marginBottom: 0, width: 200 }}
+              className="hp-input"
+              style={{ width: 200 }}
               disabled={busy}
             />
-            <button type="button" style={btnSmall} onClick={() => void loadConfig()} disabled={busy}>
+            <button type="button" className="hp-btn" onClick={() => void loadConfig()} disabled={busy}>
               Refresh
             </button>
             <button
               type="button"
-              style={btnSmall}
+              className="hp-btn"
               onClick={() => setShowSensitiveOnly((v) => !v)}
               disabled={busy}
             >
@@ -281,24 +275,26 @@ export function GitConfigPage(): ReactElement {
           </div>
         </div>
         {filtered.length === 0 ? (
-          <div style={{ color: 'var(--text-muted)', fontSize: 13 }}>
+          <div className="hp-muted" style={{ fontSize: 13 }}>
             {rows.length === 0
               ? 'No global git config entries found. Run `git config --global --list` in a terminal to verify.'
               : 'No entries match your filter.'}
           </div>
         ) : (
-          <div style={{ width: '100%', overflowX: 'auto' }}>
-            <table style={table}>
+          <div className="hp-table-wrap">
+            <table className="hp-table">
               <thead>
-                <tr style={{ color: 'var(--text-muted)', textAlign: 'left' }}>
+                <tr className="hp-table-head">
                   <th 
-                    style={{ padding: '8px 6px', width: '45%', cursor: 'pointer', userSelect: 'none' }}
+                    className="hp-table-sort"
+                    style={{ width: '45%' }}
                     onClick={() => handleSort('key')}
                   >
                     Key {sortKey === 'key' ? (sortDir === 'asc' ? '↑' : '↓') : ''}
                   </th>
                   <th 
-                    style={{ padding: '8px 6px', width: '45%', cursor: 'pointer', userSelect: 'none' }}
+                    className="hp-table-sort"
+                    style={{ width: '45%' }}
                     onClick={() => handleSort('value')}
                   >
                     Value {sortKey === 'value' ? (sortDir === 'asc' ? '↑' : '↓') : ''}
@@ -313,17 +309,17 @@ export function GitConfigPage(): ReactElement {
                   return (
                     <tr
                       key={r.key}
-                      style={{ borderTop: '1px solid var(--border)' }}
+                      className="hp-table-row"
                     >
                       <td
                         className="mono"
-                        style={{ padding: '9px 6px', fontSize: 12, wordBreak: 'break-all' }}
+                        style={{ padding: '9px 6px' }}
                       >
                         {r.key}
                       </td>
                       <td
                         className="mono"
-                        style={{ padding: '9px 6px', fontSize: 12, wordBreak: 'break-all' }}
+                        style={{ padding: '9px 6px' }}
                       >
                         {masked}
                       </td>
@@ -331,7 +327,7 @@ export function GitConfigPage(): ReactElement {
                         {sensitive ? (
                           <button
                             type="button"
-                            style={btnSmall}
+                            className="hp-btn"
                             onClick={() => toggleMask(r.key)}
                             title={
                               maskedKeys.has(r.key) && sensitive
@@ -355,72 +351,11 @@ export function GitConfigPage(): ReactElement {
       </section>
 
       {status ? (
-        <div
-          style={{
-            color: statusTone === 'success' ? 'var(--green)' : 'var(--orange)',
-            background: statusTone === 'success' ? 'rgba(44, 182, 125, 0.08)' : 'rgba(255, 159, 67, 0.08)',
-            border: `1px solid ${statusTone === 'success' ? 'rgba(44, 182, 125, 0.3)' : 'rgba(255, 159, 67, 0.3)'}`,
-            borderRadius: 8,
-            fontSize: 13,
-            padding: '10px 12px',
-          }}
-        >
-          {status}
+        <div className={`hp-status-alert ${statusTone === 'success' ? 'success' : 'warning'}`}>
+          <span style={{ fontSize: 18 }}>{statusTone === 'success' ? '✔' : '⚠'}</span>
+          <span>{status}</span>
         </div>
       ) : null}
     </div>
   )
-}
-
-const card = {
-  background: 'var(--bg-widget)',
-  border: '1px solid var(--border)',
-  borderRadius: 'var(--radius)',
-  padding: 14,
-}
-
-const btn = {
-  border: '1px solid var(--border)',
-  background: 'var(--bg-input)',
-  color: 'var(--text)',
-  borderRadius: 8,
-  padding: '8px 12px',
-  cursor: 'pointer',
-}
-
-const btnActive = {
-  ...btn,
-  border: '1px solid var(--accent)',
-  color: 'var(--accent)',
-}
-
-const btnPrimary = {
-  ...btn,
-  border: '1px solid var(--accent)',
-  color: 'var(--accent)',
-  fontWeight: 600,
-}
-
-const btnSmall = {
-  ...btn,
-  padding: '5px 10px',
-  fontSize: 12,
-}
-
-const input = {
-  marginBottom: 4,
-  width: '100%',
-  border: '1px solid var(--border)',
-  background: 'var(--bg-input)',
-  color: 'var(--text)',
-  borderRadius: 8,
-  padding: '8px 10px',
-  fontSize: 13,
-}
-
-const table = {
-  width: '100%',
-  minWidth: 600,
-  borderCollapse: 'collapse' as const,
-  fontSize: 13,
 }

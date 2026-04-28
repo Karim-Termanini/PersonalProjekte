@@ -15,6 +15,20 @@ type CreateExample = {
   env?: string
 }
 
+type InstallDistroId = 'ubuntu' | 'fedora' | 'arch'
+
+type InstallStep = {
+  label: string
+  command: string
+}
+
+type InstallDistro = {
+  id: InstallDistroId
+  title: string
+  subtitle: string
+  steps: InstallStep[]
+}
+
 const CREATE_EXAMPLES: CreateExample[] = [
   { title: 'Nginx web server', image: 'nginx:latest', ports: '8080:80', volumes: './:/usr/share/nginx/html' },
   { title: 'PostgreSQL database', image: 'postgres:16', ports: '5432:5432', env: 'POSTGRES_PASSWORD=postgres\nPOSTGRES_DB=app' },
@@ -47,6 +61,68 @@ const RECOMMENDED_IMAGES = [
   { name: 'mongo', tag: '7', description: 'MongoDB document databases provide high availability and easy scalability.', color: '#47A248' },
 ]
 
+const INSTALL_DISTROS: InstallDistro[] = [
+  {
+    id: 'ubuntu',
+    title: 'Ubuntu / Debian / Linux Mint',
+    subtitle: 'APT-based setup with official Docker repository.',
+    steps: [
+      {
+        label: 'Prepare repository keys',
+        command: `apt-get update && apt-get install -y ca-certificates curl && install -m 0755 -d /etc/apt/keyrings && curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc && chmod a+r /etc/apt/keyrings/docker.asc`,
+      },
+      {
+        label: 'Add Docker apt repository',
+        command:
+          `echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null && apt-get update`,
+      },
+      {
+        label: 'Install Docker Engine + Compose',
+        command: `apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin`,
+      },
+      {
+        label: 'Enable service and verify',
+        command: `systemctl enable --now docker && docker --version`,
+      },
+    ],
+  },
+  {
+    id: 'fedora',
+    title: 'Fedora / RedHat / CentOS',
+    subtitle: 'DNF-based setup with official repository.',
+    steps: [
+      {
+        label: 'Add Docker repository',
+        command:
+          `dnf -y install dnf-plugins-core && dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo`,
+      },
+      {
+        label: 'Install Docker Engine + Compose',
+        command: `dnf install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin`,
+      },
+      {
+        label: 'Enable service and verify',
+        command: `systemctl enable --now docker && docker --version`,
+      },
+    ],
+  },
+  {
+    id: 'arch',
+    title: 'Arch Linux',
+    subtitle: 'pacman-based setup from Arch repositories.',
+    steps: [
+      {
+        label: 'Install Docker packages',
+        command: `pacman -S --needed --noconfirm docker docker-compose`,
+      },
+      {
+        label: 'Enable service and verify',
+        command: `systemctl enable --now docker && docker --version`,
+      },
+    ],
+  },
+]
+
 export function DockerPage(): ReactElement {
   const [tab, setTab] = useState<TabId>('scheme')
   const [docker, setDocker] = useState<
@@ -75,6 +151,12 @@ export function DockerPage(): ReactElement {
   const [createVolumeName, setCreateVolumeName] = useState('')
   const [createNetworkName, setCreateNetworkName] = useState('')
   const [showInstallModal, setShowInstallModal] = useState(false)
+  const [selectedDistro, setSelectedDistro] = useState<InstallDistroId | null>(null)
+  const [installStep, setInstallStep] = useState<number>(0)
+  const [sudoPassword, setSudoPassword] = useState('')
+  const [installLogs, setInstallLogs] = useState<string[]>([])
+  const [installError, setInstallError] = useState<string | null>(null)
+  const [installBusy, setInstallBusy] = useState(false)
   const [pruneSelection, setPruneSelection] = useState({ containers: true, images: true, volumes: false, networks: false })
   const [prunePreview, setPrunePreview] = useState<{ containers: number; images: number; volumes: number; networks: number } | null>(null)
 
@@ -115,6 +197,32 @@ export function DockerPage(): ReactElement {
       void previewCleanup()
     }
   }, [tab])
+
+  async function runInstallation(): Promise<void> {
+    if (!selectedDistro) return
+    setInstallBusy(true)
+    setInstallError(null)
+    setInstallLogs(['Starting installation...'])
+    setInstallStep(2) // Move to progress step
+
+    try {
+      const res = await window.dh.dockerInstall({
+        distro: selectedDistro as 'ubuntu' | 'fedora' | 'arch',
+        password: sudoPassword
+      })
+      setInstallLogs(res.log)
+      if (res.ok) {
+        setInstallStep(3) // Success
+        void refreshAll()
+      } else {
+        setInstallError(res.error || 'Unknown error during installation')
+      }
+    } catch (e) {
+      setInstallError(e instanceof Error ? e.message : String(e))
+    } finally {
+      setInstallBusy(false)
+    }
+  }
 
   async function runAction(id: string, action: 'start' | 'stop' | 'restart' | 'remove'): Promise<void> {
     if (action === 'remove') {
@@ -355,7 +463,10 @@ export function DockerPage(): ReactElement {
     }
   }
 
+
+
   const rows = docker?.ok ? docker.rows : []
+
   const runningRows = rows.filter((r) => {
     const state = r.state.toLowerCase()
     const status = r.status.toLowerCase()
@@ -377,7 +488,7 @@ export function DockerPage(): ReactElement {
       </header>
 
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
-        <button type="button" style={btn} onClick={() => void refreshAll()} disabled={busy}>
+        <button type="button" className="hp-btn" onClick={() => void refreshAll()} disabled={busy}>
           Refresh
         </button>
         <button type="button" style={btnWarn} onClick={() => void runPrune()} disabled={busy}>
@@ -385,7 +496,7 @@ export function DockerPage(): ReactElement {
         </button>
         <button
           type="button"
-          style={btn}
+          className="hp-btn"
           onClick={() => setShowInstallModal(true)}
         >
           Install / Setup
@@ -397,9 +508,24 @@ export function DockerPage(): ReactElement {
         </span>
       </div>
 
-      {pruneInfo ? <div style={{ color: 'var(--green)' }}>{pruneInfo}</div> : null}
-      {createdInfo ? <div style={{ color: 'var(--green)' }}>{createdInfo}</div> : null}
-      {err ? <div style={{ color: 'var(--orange)' }}>{err}</div> : null}
+      {pruneInfo ? (
+        <div className="hp-status-alert success">
+          <span style={{ fontSize: 18 }}>✔</span>
+          <span>{pruneInfo}</span>
+        </div>
+      ) : null}
+      {createdInfo ? (
+        <div className="hp-status-alert success">
+          <span style={{ fontSize: 18 }}>✔</span>
+          <span>{createdInfo}</span>
+        </div>
+      ) : null}
+      {err ? (
+        <div className="hp-status-alert warning">
+          <span style={{ fontSize: 18 }}>⚠</span>
+          <span>{err}</span>
+        </div>
+      ) : null}
 
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
         {(['scheme', 'create', 'containers', 'images', 'volumes', 'networks', 'ports', 'cleanup'] as const).map((t) => (
@@ -414,7 +540,7 @@ export function DockerPage(): ReactElement {
         ))}
       </div>
 
-      <section style={card}>
+      <section className="hp-card">
         {!docker ? <div style={{ color: 'var(--text-muted)' }}>Checking Docker daemon…</div> : null}
         {docker && !docker.ok ? <div style={{ color: 'var(--orange)' }}>{docker.error}</div> : null}
         {docker?.ok && tab === 'create' ? (
@@ -422,7 +548,7 @@ export function DockerPage(): ReactElement {
             <div style={{ color: 'var(--text-muted)', fontSize: 13 }}>
               Create from examples. Click <span className="mono">Use</span> to create a new container template.
             </div>
-            <div style={sectionBox}>
+            <div className="hp-card">
               <div style={{ fontWeight: 600, marginBottom: 8 }}>Pull custom image</div>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 <input
@@ -432,24 +558,24 @@ export function DockerPage(): ReactElement {
                   style={{ ...nameInput, marginTop: 0, maxWidth: 420 }}
                   disabled={busy}
                 />
-                <button type="button" style={btnSmallPrimary} onClick={() => void pullCustomImage()} disabled={busy}>
+                <button type="button" className="hp-btn hp-btn-primary" onClick={() => void pullCustomImage()} disabled={busy}>
                   Pull
                 </button>
               </div>
             </div>
-            <div style={sectionBox}>
+            <div className="hp-card">
               <div style={{ fontWeight: 600, marginBottom: 8 }}>Custom create (ports/env/volumes)</div>
               <div style={formGrid}>
-                <input value={customImage} onChange={(e) => setCustomImage(e.target.value)} placeholder="Image" style={nameInput} disabled={busy} />
-                <input value={customName} onChange={(e) => setCustomName(e.target.value)} placeholder="Container name (optional)" style={nameInput} disabled={busy} />
-                <textarea value={customPortsText} onChange={(e) => setCustomPortsText(e.target.value)} placeholder="Ports: host:container per line (e.g. 8080:80)" style={areaInput} />
-                <textarea value={customVolumesText} onChange={(e) => setCustomVolumesText(e.target.value)} placeholder="Volumes: /host/path:/container/path per line" style={areaInput} />
-                <textarea value={customEnvText} onChange={(e) => setCustomEnvText(e.target.value)} placeholder="Env: KEY=VALUE per line" style={areaInput} />
+                <input value={customImage} onChange={(e) => setCustomImage(e.target.value)} placeholder="Image" className="hp-input" disabled={busy} />
+                <input value={customName} onChange={(e) => setCustomName(e.target.value)} placeholder="Container name (optional)" className="hp-input" disabled={busy} />
+                <textarea value={customPortsText} onChange={(e) => setCustomPortsText(e.target.value)} placeholder="Ports: host:container per line (e.g. 8080:80)" className="hp-input" style={{ minHeight: 60 }} />
+                <textarea value={customVolumesText} onChange={(e) => setCustomVolumesText(e.target.value)} placeholder="Volumes: /host/path:/container/path per line" className="hp-input" style={{ minHeight: 60 }} />
+                <textarea value={customEnvText} onChange={(e) => setCustomEnvText(e.target.value)} placeholder="Env: KEY=VALUE per line" className="hp-input" style={{ minHeight: 60 }} />
                 <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
                   <input type="checkbox" checked={autoStart} onChange={(e) => setAutoStart(e.target.checked)} />
                   Auto start after create
                 </label>
-                <button type="button" style={btnSmallPrimary} onClick={() => void createCustomContainer()} disabled={busy}>
+                <button type="button" className="hp-btn hp-btn-primary" onClick={() => void createCustomContainer()} disabled={busy}>
                   Create custom container
                 </button>
               </div>
@@ -483,13 +609,13 @@ export function DockerPage(): ReactElement {
                       }))
                     }
                     placeholder="Container name (optional)"
-                    style={nameInput}
+                    className="hp-input"
                     disabled={busy}
                   />
                 </div>
                 <button
                   type="button"
-                  style={btnSmallPrimary}
+                  className="hp-btn hp-btn-primary"
                   onClick={() => applyExampleToForm(ex)}
                   disabled={busy}
                 >
@@ -602,7 +728,7 @@ export function DockerPage(): ReactElement {
         ) : null}
         {docker?.ok && tab === 'volumes' ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-            <div style={sectionBox}>
+            <div className="hp-card">
               <div style={{ fontWeight: 600, marginBottom: 8 }}>Create Volume</div>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 <input
@@ -612,7 +738,7 @@ export function DockerPage(): ReactElement {
                   style={{ ...nameInput, marginTop: 0, maxWidth: 320 }}
                   disabled={busy}
                 />
-                <button type="button" style={btnSmallPrimary} onClick={() => void createCustomVolume()} disabled={busy}>
+                <button type="button" className="hp-btn hp-btn-primary" onClick={() => void createCustomVolume()} disabled={busy}>
                   Create Volume
                 </button>
               </div>
@@ -666,7 +792,7 @@ export function DockerPage(): ReactElement {
         {docker?.ok && tab === 'scheme' ? (
           <div style={{ display: 'grid', gap: 12 }}>
             <DockerSchemeView containers={rows} networks={networks} />
-            <div style={sectionBox}>
+            <div className="hp-card">
               <div style={{ fontWeight: 600, marginBottom: 8 }}>Relationship details</div>
               {rows.length === 0 ? (
                 <div style={{ color: 'var(--text-muted)' }}>No containers found.</div>
@@ -709,7 +835,7 @@ export function DockerPage(): ReactElement {
         ) : null}
         {docker?.ok && tab === 'networks' ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-            <div style={sectionBox}>
+            <div className="hp-card">
               <div style={{ fontWeight: 600, marginBottom: 8 }}>Create Network</div>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 <input
@@ -719,7 +845,7 @@ export function DockerPage(): ReactElement {
                   style={{ ...nameInput, marginTop: 0, maxWidth: 320 }}
                   disabled={busy}
                 />
-                <button type="button" style={btnSmallPrimary} onClick={() => void createCustomNetwork()} disabled={busy}>
+                <button type="button" className="hp-btn hp-btn-primary" onClick={() => void createCustomNetwork()} disabled={busy}>
                   Create Network
                 </button>
               </div>
@@ -786,7 +912,7 @@ export function DockerPage(): ReactElement {
             <div style={{ color: 'var(--text-muted)', fontSize: 13 }}>
               Port manager for conflicts: clone container with remapped host port.
             </div>
-            <div style={sectionBox}>
+            <div className="hp-card">
               <div style={{ fontWeight: 600, marginBottom: 8 }}>Current published ports</div>
               {rowsWithPorts.length === 0 ? (
                 <div style={{ color: 'var(--text-muted)' }}>No containers with published ports.</div>
@@ -813,13 +939,13 @@ export function DockerPage(): ReactElement {
                 </div>
               )}
             </div>
-            <div style={sectionBox}>
+            <div className="hp-card">
               <div style={{ fontWeight: 600, marginBottom: 8 }}>Remap host port</div>
               <div style={formGrid}>
                 <select
                   value={remapContainerId}
                   onChange={(e) => setRemapContainerId(e.target.value)}
-                  style={nameInput}
+                  className="hp-input"
                 >
                   <option value="">Select container</option>
                   {rowsWithPorts.map((r) => (
@@ -828,9 +954,9 @@ export function DockerPage(): ReactElement {
                     </option>
                   ))}
                 </select>
-                <input value={oldHostPort} onChange={(e) => setOldHostPort(e.target.value)} placeholder="Old host port (e.g. 8080)" style={nameInput} />
-                <input value={newHostPort} onChange={(e) => setNewHostPort(e.target.value)} placeholder="New host port (e.g. 8081)" style={nameInput} />
-                <button type="button" style={btnSmallPrimary} onClick={() => void remapPort()} disabled={busy}>
+                <input value={oldHostPort} onChange={(e) => setOldHostPort(e.target.value)} placeholder="Old host port (e.g. 8080)" className="hp-input" />
+                <input value={newHostPort} onChange={(e) => setNewHostPort(e.target.value)} placeholder="New host port (e.g. 8081)" className="hp-input" />
+                <button type="button" className="hp-btn hp-btn-primary" onClick={() => void remapPort()} disabled={busy}>
                   Remap (clone + start)
                 </button>
               </div>
@@ -839,7 +965,7 @@ export function DockerPage(): ReactElement {
         ) : null}
         {tab === 'cleanup' ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-            <div style={sectionBox}>
+            <div className="hp-card">
               <h3 style={{ margin: 0, fontSize: 18 }}>Guided System Cleanup</h3>
               <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>
                 Free up disk space by removing unused Docker resources. Select what to prune:
@@ -877,7 +1003,7 @@ export function DockerPage(): ReactElement {
               <div style={{ marginTop: 16 }}>
                 <div style={{ fontWeight: 600, marginBottom: 8 }}>Dry-run preview</div>
                 {!prunePreview ? (
-                  <button type="button" style={btnSmall} onClick={() => void previewCleanup()} disabled={busy}>
+                  <button type="button" className="hp-btn" onClick={() => void previewCleanup()} disabled={busy}>
                     Load preview
                   </button>
                 ) : (
@@ -923,88 +1049,140 @@ export function DockerPage(): ReactElement {
 
       {showInstallModal && (
         <div style={modalOverlay}>
-          <div style={{ ...modalContent, maxWidth: 700, maxHeight: '85vh' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-              <h2 style={{ margin: 0 }}>Install Docker Engine</h2>
-              <button type="button" style={closeBtn} onClick={() => setShowInstallModal(false)}>×</button>
-            </div>
-            <div style={{ overflowY: 'auto', flex: 1, paddingRight: 10 }}>
-              <p style={{ color: 'var(--text-muted)', marginBottom: 20 }}>
-                Since this app runs in a sandbox, you must install Docker on your host machine. 
-                Choose your distribution to see the recommended setup steps:
-              </p>
-              
-              <div style={{ display: 'grid', gap: 20 }}>
-                <details style={installStep}>
-                  <summary style={{ fontWeight: 600, cursor: 'pointer' }}>Ubuntu / Debian / Linux Mint</summary>
-                  <div style={{ marginTop: 12, fontSize: 13 }}>
-                    <p>Run these commands in your host terminal:</p>
-                    <pre style={codeBlock}>
-{`# Add Docker's official GPG key:
-sudo apt-get update
-sudo apt-get install ca-certificates curl
-sudo install -m 0755 -d /etc/apt/keyrings
-sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-sudo chmod a+r /etc/apt/keyrings/docker.asc
-
-# Add the repository to Apt sources:
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt-get update
-
-# Install the Docker packages:
-sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin`}
-                    </pre>
-                  </div>
-                </details>
-
-                <details style={installStep}>
-                  <summary style={{ fontWeight: 600, cursor: 'pointer' }}>Fedora / RedHat / CentOS</summary>
-                  <div style={{ marginTop: 12, fontSize: 13 }}>
-                    <pre style={codeBlock}>
-{`sudo dnf -y install dnf-plugins-core
-sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
-sudo dnf install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-sudo systemctl start docker`}
-                    </pre>
-                  </div>
-                </details>
-
-                <details style={installStep}>
-                  <summary style={{ fontWeight: 600, cursor: 'pointer' }}>Arch Linux</summary>
-                  <div style={{ marginTop: 12, fontSize: 13 }}>
-                    <pre style={codeBlock}>
-{`sudo pacman -S docker docker-compose
-sudo systemctl enable --now docker`}
-                    </pre>
-                  </div>
-                </details>
-
-                <div style={{ ...sectionBox, background: 'rgba(33, 150, 243, 0.05)', borderColor: 'var(--accent)' }}>
-                  <div style={{ fontWeight: 600, color: 'var(--accent)', marginBottom: 8 }}>💡 Post-install Tip</div>
-                  <p style={{ margin: 0, fontSize: 13 }}>
-                    To manage Docker as a non-root user (so this app can access it without sudo),
-                    add your user to the docker group:
-                  </p>
-                  <pre style={codeBlock}>
-{`sudo usermod -aG docker $USER
-# Log out and log back in for changes to take effect`}
-                  </pre>
+          <div style={{ ...modalContent, maxWidth: 600, minHeight: 450, background: 'var(--bg-panel)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, borderBottom: '1px solid var(--border)', paddingBottom: 16 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{ width: 32, height: 32, background: 'var(--accent)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700 }}>D</div>
+                <div>
+                  <h2 style={{ margin: 0, fontSize: 18 }}>Docker Setup Wizard</h2>
+                  <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Step {installStep + 1} of 4</div>
                 </div>
               </div>
+              <button type="button" style={closeBtn} onClick={() => setShowInstallModal(false)}>×</button>
             </div>
-            <div style={{ marginTop: 24, display: 'flex', gap: 12 }}>
-              <button type="button" style={btnPrimary} onClick={() => void window.dh.openExternal('https://docs.docker.com/engine/install/')}>Open Full Docs</button>
-              <button type="button" style={btn} onClick={() => setShowInstallModal(false)}>Close</button>
+
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+              {installStep === 0 && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  <p style={{ margin: 0, fontSize: 14 }}>Welcome to the Docker Engine Installation Wizard. This tool will automate the setup on your host machine.</p>
+                  <div style={{ fontWeight: 600, fontSize: 13 }}>Select your Linux distribution:</div>
+                  <div style={{ display: 'grid', gap: 8 }}>
+                    {INSTALL_DISTROS.map((d) => (
+                      <label key={d.id} className="hp-card" style={{ 
+                        display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', cursor: 'pointer', 
+                        borderColor: selectedDistro === d.id ? 'var(--accent)' : 'var(--border)',
+                        background: selectedDistro === d.id ? 'rgba(124, 77, 255, 0.05)' : 'var(--bg-input)'
+                      }}>
+                        <input type="radio" name="distro" checked={selectedDistro === d.id} onChange={() => setSelectedDistro(d.id)} />
+                        <div>
+                          <div style={{ fontWeight: 600, fontSize: 14 }}>{d.title}</div>
+                          <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{d.subtitle}</div>
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {installStep === 1 && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  <h3 style={{ margin: 0, fontSize: 16 }}>Authentication Required</h3>
+                  <p style={{ margin: 0, fontSize: 14, color: 'var(--text-muted)' }}>
+                    Installation requires root privileges. Please enter your <strong>sudo</strong> password to proceed.
+                    This password is only used to run the installation commands and is not stored.
+                  </p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <label style={{ fontSize: 12, fontWeight: 600 }}>Sudo Password</label>
+                    <input 
+                      type="password" 
+                      className="hp-input" 
+                      placeholder="••••••••" 
+                      value={sudoPassword} 
+                      onChange={e => setSudoPassword(e.target.value)} 
+                      autoFocus
+                      onKeyDown={e => e.key === 'Enter' && runInstallation()}
+                    />
+                  </div>
+                  <div style={{ ...sectionBox, background: 'rgba(255, 159, 67, 0.05)', borderColor: 'rgba(255, 159, 67, 0.2)' }}>
+                    <div style={{ fontSize: 12, color: 'var(--orange)' }}>⚠️ Ensure your user has sudo privileges on the host machine.</div>
+                  </div>
+                </div>
+              )}
+
+              {installStep === 2 && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 16, flex: 1 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <h3 style={{ margin: 0, fontSize: 16 }}>Installing Docker...</h3>
+                    {installBusy && <div className="spinner" style={{ width: 20, height: 20, border: '2px solid var(--accent)', borderTopColor: 'transparent', borderRadius: '50%' }} />}
+                  </div>
+                  <div style={{ 
+                    flex: 1, 
+                    background: '#000', 
+                    borderRadius: 8, 
+                    padding: 12, 
+                    fontFamily: 'monospace', 
+                    fontSize: 11, 
+                    color: '#0f0', 
+                    overflowY: 'auto', 
+                    maxHeight: 240, 
+                    minHeight: 200 
+                  }}>
+                    {installLogs.map((log, i) => <div key={i} style={{ marginBottom: 4 }}>{log}</div>)}
+                    {installError && <div style={{ color: 'var(--red)', marginTop: 8, fontWeight: 700 }}>Error: {installError}</div>}
+                  </div>
+                  {installError && (
+                    <button className="hp-btn hp-btn-danger" onClick={() => setInstallStep(1)}>Retry Step</button>
+                  )}
+                </div>
+              )}
+
+              {installStep === 3 && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'center', textAlign: 'center', padding: '20px 0' }}>
+                  <div style={{ width: 64, height: 64, background: 'var(--green)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 32, marginBottom: 12 }}>✔</div>
+                  <h2 style={{ margin: 0 }}>Installation Complete!</h2>
+                  <p style={{ margin: 0, fontSize: 14, color: 'var(--text-muted)', maxWidth: 400 }}>
+                    Docker Engine has been successfully installed and started. You can now manage containers directly from this dashboard.
+                  </p>
+                  <div style={{ ...sectionBox, textAlign: 'left', width: '100%' }}>
+                    <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 4 }}>Next Steps:</div>
+                    <ul style={{ margin: 0, paddingLeft: 20, fontSize: 12, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                      <li>Refresh the dashboard to detect the daemon.</li>
+                      <li>Run <code>docker version</code> in your host terminal to verify.</li>
+                      <li>If access is denied, log out and back in to refresh group permissions.</li>
+                    </ul>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div style={{ marginTop: 32, display: 'flex', justifyContent: 'flex-end', gap: 12, borderTop: '1px solid var(--border)', paddingTop: 20 }}>
+              {installStep === 0 && (
+                <button className="hp-btn hp-btn-primary" disabled={!selectedDistro} onClick={() => setInstallStep(1)}>Next {'>'}</button>
+              )}
+              {installStep === 1 && (
+                <>
+                  <button className="hp-btn" onClick={() => setInstallStep(0)}>{'<'}- Back</button>
+                  <button className="hp-btn hp-btn-primary" disabled={!sudoPassword} onClick={() => void runInstallation()}>Install Now</button>
+                </>
+              )}
+              {(installStep === 2 && !installBusy) && (
+                 <button className="hp-btn" onClick={() => setInstallStep(0)}>Abort</button>
+              )}
+              {installStep === 3 && (
+                <button className="hp-btn hp-btn-primary" onClick={() => setShowInstallModal(false)}>Finish</button>
+              )}
             </div>
           </div>
         </div>
       )}
 
+
+
       {selected ? (
-        <section style={card}>
+        <section className="hp-card">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div style={{ fontWeight: 600 }}>Logs: {selected.name}</div>
-            <button type="button" style={btnSmall} onClick={() => setSelected(null)}>
+            <button type="button" className="hp-btn" onClick={() => setSelected(null)}>
               Close
             </button>
           </div>
@@ -1015,15 +1193,12 @@ sudo systemctl enable --now docker`}
   )
 }
 
-const card = {
-  background: 'var(--bg-widget)',
-  border: '1px solid var(--border)',
-  borderRadius: 'var(--radius)',
-  padding: 14,
-}
 
-const btn = {
-  border: '1px solid var(--border)',
+
+
+
+const btnWarn = {
+  border: '1px solid var(--orange)',
   background: 'var(--bg-input)',
   color: 'var(--text)',
   borderRadius: 8,
@@ -1031,37 +1206,45 @@ const btn = {
   cursor: 'pointer',
 }
 
-const btnWarn = {
-  ...btn,
-  border: '1px solid var(--orange)',
-}
-
 const btnPrimary = {
-  ...btn,
   border: '1px solid var(--accent)',
+  background: 'var(--bg-input)',
   color: 'var(--accent)',
+  borderRadius: 8,
+  padding: '8px 12px',
+  cursor: 'pointer',
 }
 
-const btnSmall = {
-  ...btn,
+
+
+const btnSmallPrimary = {
+  border: '1px solid var(--accent)',
+  background: 'var(--bg-input)',
+  color: 'var(--accent)',
+  borderRadius: 8,
   padding: '5px 10px',
+  cursor: 'pointer',
   fontSize: 12,
 }
 
-const btnSmallPrimary = {
-  ...btnSmall,
-  border: '1px solid var(--accent)',
-  color: 'var(--accent)',
-}
-
 const btnSmallDanger = {
-  ...btnSmall,
   border: '1px solid var(--orange)',
+  background: 'var(--bg-input)',
   color: 'var(--orange)',
+  borderRadius: 8,
+  padding: '5px 10px',
+  cursor: 'pointer',
+  fontSize: 12,
 }
 
 const tabBtn = {
-  ...btnSmall,
+  border: '1px solid var(--border)',
+  background: 'var(--bg-input)',
+  color: 'var(--text)',
+  borderRadius: 8,
+  padding: '5px 10px',
+  cursor: 'pointer',
+  fontSize: 12,
   textTransform: 'capitalize' as const,
 }
 
@@ -1103,12 +1286,7 @@ const nameInput = {
   fontSize: 12,
 }
 
-const areaInput = {
-  ...nameInput,
-  minHeight: 72,
-  resize: 'vertical' as const,
-  fontFamily: 'inherit',
-}
+
 
 const checkboxLabel = {
   display: 'flex',
@@ -1150,23 +1328,7 @@ const systemBadge = {
   textAlign: 'center' as const,
 }
 
-const installStep = {
-  padding: '12px 16px',
-  background: 'var(--bg-widget)',
-  border: '1px solid var(--border)',
-  borderRadius: 10,
-}
 
-const codeBlock = {
-  background: '#000',
-  color: '#0f0',
-  padding: 12,
-  borderRadius: 6,
-  overflowX: 'auto' as const,
-  fontSize: 12,
-  fontFamily: 'monospace',
-  marginTop: 8,
-}
 
 const modalOverlay = {
   position: 'fixed' as const,
@@ -1308,11 +1470,7 @@ function ContainerTable(props: ContainerTableProps): ReactElement {
           {rows.map((r) => {
             const isRunning = r.state.toLowerCase() === 'running'
             return (
-              <div key={r.id} style={{
-                background: 'var(--bg-input)',
-                border: '1px solid var(--border)',
-                borderRadius: 12,
-                padding: 16,
+              <div key={r.id} className="hp-card" style={{
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 12,
@@ -1335,19 +1493,19 @@ function ContainerTable(props: ContainerTableProps): ReactElement {
                 )}
                 
                 <div style={{ marginTop: 'auto', display: 'flex', gap: 8, paddingTop: 4 }}>
-                  <button type="button" style={btnSmall} onClick={() => void onAction(r.id, isRunning ? 'stop' : 'start')} disabled={busy}>
+                  <button type="button" className="hp-btn" onClick={() => void onAction(r.id, isRunning ? 'stop' : 'start')} disabled={busy}>
                     {isRunning ? 'Stop' : 'Start'}
                   </button>
                   {isRunning && (
-                    <button type="button" style={btnSmall} onClick={() => void onAction(r.id, 'restart')} disabled={busy}>
+                    <button type="button" className="hp-btn" onClick={() => void onAction(r.id, 'restart')} disabled={busy}>
                       Restart
                     </button>
                   )}
-                  <button type="button" style={btnSmall} onClick={() => void onLogs(r)} disabled={busy}>
+                  <button type="button" className="hp-btn" onClick={() => void onLogs(r)} disabled={busy}>
                     Logs
                   </button>
                   {!isRunning ? (
-                    <button type="button" style={btnSmallDanger} onClick={() => void onAction(r.id, 'remove')} disabled={busy}>
+                    <button type="button" className="hp-btn hp-btn-danger" onClick={() => void onAction(r.id, 'remove')} disabled={busy}>
                       Remove
                     </button>
                   ) : null}

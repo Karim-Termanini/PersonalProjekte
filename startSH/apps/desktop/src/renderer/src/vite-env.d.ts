@@ -65,6 +65,7 @@ declare global {
       jobStart: (payload: { kind: string; durationMs?: number }) => Promise<unknown>
       jobsList: () => Promise<unknown>
       jobCancel: (payload: { id: string }) => Promise<unknown>
+      dockerInstall: (payload: { distro: 'ubuntu'|'fedora'|'arch'; password?: string }) => Promise<{ ok: boolean; log: string[]; error?: string }>
     }
   }
 }
