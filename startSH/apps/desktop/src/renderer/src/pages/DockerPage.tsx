@@ -219,14 +219,15 @@ export function DockerPage(): ReactElement {
     setCreatedInfo(`Filled form from example: ${example.title}`)
   }
 
-  async function pullCustomImage(): Promise<void> {
-    if (!pullImage.trim()) return
+  async function pullCustomImage(forceImage?: string): Promise<void> {
+    const img = forceImage || pullImage.trim()
+    if (!img) return
     setBusy(true)
     setErr('')
-    setCreatedInfo('')
+    setCreatedInfo(`Pulling image: ${img} (this may take a minute)...`)
     try {
-      await window.dh.dockerPull({ image: pullImage.trim() })
-      setCreatedInfo(`Pulled image: ${pullImage.trim()}`)
+      await window.dh.dockerPull({ image: img })
+      setCreatedInfo(`Pulled image: ${img}`)
       await refreshAll()
     } catch (e) {
       setErr(e instanceof Error ? e.message : String(e))
@@ -238,7 +239,7 @@ export function DockerPage(): ReactElement {
   async function createCustomContainer(): Promise<void> {
     setBusy(true)
     setErr('')
-    setCreatedInfo('')
+    setCreatedInfo('Creating container (this may take a while to pull the image)...')
     try {
       const image = customImage.trim()
       if (!image) throw new Error('Image is required')
@@ -492,8 +493,9 @@ export function DockerPage(): ReactElement {
                       {rec.description}
                     </div>
                     <button type="button" style={{ ...btnSmallPrimary, width: '100%', marginTop: 'auto' }} onClick={() => {
-                        setPullImage(`${rec.name}:${rec.tag}`)
-                        void pullCustomImage()
+                        const img = `${rec.name}:${rec.tag}`
+                        setPullImage(img)
+                        void pullCustomImage(img)
                       }} disabled={busy}>
                       PULL
                     </button>
