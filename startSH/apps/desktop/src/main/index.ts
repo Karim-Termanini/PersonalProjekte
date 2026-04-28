@@ -761,9 +761,24 @@ function registerIpc(): void {
     return { ok: true, reclaimedBytes }
   })
 
-  ipcMain.handle(IPC.dockerInstall, async (_e, { distro, password }: { distro: 'ubuntu' | 'fedora' | 'arch'; password?: string }) => {
-    const cmds = DOCKER_INSTALL_STEPS[distro]
-    if (!cmds) throw new Error('Unsupported distro')
+  ipcMain.handle(IPC.dockerCheckInstalled, async () => {
+    const check = (cmd: string) => new Promise<boolean>(res => {
+      execFile('which', [cmd], (err) => res(!err))
+    })
+    const checkPlugin = (plugin: string) => new Promise<boolean>(res => {
+      execFile('docker', [plugin, 'version'], (err) => res(!err))
+    })
+
+    const hasDocker = await check('docker')
+    const hasCompose = await check('docker-compose') || await checkPlugin('compose')
+    const hasBuildx = await checkPlugin('buildx')
+
+    return { docker: hasDocker, compose: hasCompose, buildx: hasBuildx }
+  })
+
+  ipcMain.handle(IPC.dockerInstall, async (_e, { distro, password, components }: { distro: 'ubuntu' | 'fedora' | 'arch'; password?: string; components?: string[] }) => {
+    const baseSteps = DOCKER_INSTALL_STEPS[distro]
+    if (!baseSteps) throw new Error('Unsupported distro')
 
     const logs: string[] = []
     const execWithSudo = (cmd: string) => {
@@ -790,7 +805,37 @@ function registerIpc(): void {
       })
     }
 
-    for (const cmd of cmds) {
+    // Filter packages based on components if provided
+    let steps = [...baseSteps]
+    if (components && components.length > 0) {
+      if (distro === 'ubuntu' || distro === 'fedora') {
+        const pkgCmd = distro === 'ubuntu' ? 'apt-get install -y' : 'dnf install -y'
+        const packages: string[] = []
+        if (components.includes('docker')) packages.push('docker-ce', 'docker-ce-cli', 'containerd.io')
+        if (components.includes('compose')) packages.push('docker-compose-plugin')
+        if (components.includes('buildx')) packages.push('docker-buildx-plugin')
+        
+        steps = steps.map(s => {
+          if (s.includes('install -y docker-ce')) {
+             return `${pkgCmd} ${packages.join(' ')}`
+          }
+          return s
+        })
+      } else if (distro === 'arch') {
+        const packages: string[] = []
+        if (components.includes('docker')) packages.push('docker')
+        if (components.includes('compose')) packages.push('docker-compose')
+        
+        steps = steps.map(s => {
+          if (s.includes('pacman -S')) {
+             return `pacman -S --needed --noconfirm ${packages.join(' ')}`
+          }
+          return s
+        })
+      }
+    }
+
+    for (const cmd of steps) {
       logs.push(`RUNNING: ${cmd}`)
       const res = await execWithSudo(cmd)
       if (!res.ok) {

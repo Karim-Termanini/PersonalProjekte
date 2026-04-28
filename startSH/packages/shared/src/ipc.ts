@@ -122,6 +122,7 @@ export const IPC = {
   jobsList: 'dh:job:list',
   jobCancel: 'dh:job:cancel',
   dockerInstall: 'dh:docker:install',
+  dockerCheckInstalled: 'dh:docker:check-installed',
 } as const
 
 export type DockerActionPayload = { id: string; action: DockerContainerAction }

@@ -159,6 +159,9 @@ export function DockerPage(): ReactElement {
   const [installBusy, setInstallBusy] = useState(false)
   const [pruneSelection, setPruneSelection] = useState({ containers: true, images: true, volumes: false, networks: false })
   const [prunePreview, setPrunePreview] = useState<{ containers: number; images: number; volumes: number; networks: number } | null>(null)
+  const [installedFeatures, setInstalledFeatures] = useState<{ docker: boolean; compose: boolean; buildx: boolean }>({ docker: false, compose: false, buildx: false })
+  const [selectedFeatures, setSelectedFeatures] = useState<string[]>(['docker', 'compose', 'buildx'])
+  const [isScanning, setIsScanning] = useState(false)
 
   const refreshAll = useCallback(async () => {
     try {
@@ -198,21 +201,42 @@ export function DockerPage(): ReactElement {
     }
   }, [tab])
 
+  async function runScan(): Promise<void> {
+    setIsScanning(true)
+    try {
+      const res = await window.dh.dockerCheckInstalled()
+      setInstalledFeatures(res)
+      // Auto-select features that are NOT installed
+      const toSelect: string[] = []
+      if (!res.docker) toSelect.push('docker')
+      if (!res.compose) toSelect.push('compose')
+      if (!res.buildx) toSelect.push('buildx')
+      setSelectedFeatures(toSelect)
+      setInstallStep(1)
+    } catch (e) {
+      console.error('Scan failed', e)
+      setInstallStep(1) // Continue anyway
+    } finally {
+      setIsScanning(false)
+    }
+  }
+
   async function runInstallation(): Promise<void> {
     if (!selectedDistro) return
     setInstallBusy(true)
     setInstallError(null)
     setInstallLogs(['Starting installation...'])
-    setInstallStep(2) // Move to progress step
+    setInstallStep(3) // Move to progress step (mapped to step 3 now)
 
     try {
       const res = await window.dh.dockerInstall({
         distro: selectedDistro as 'ubuntu' | 'fedora' | 'arch',
-        password: sudoPassword
+        password: sudoPassword,
+        components: selectedFeatures
       })
       setInstallLogs(res.log)
       if (res.ok) {
-        setInstallStep(3) // Success
+        setInstallStep(4) // Success (mapped to step 4 now)
         void refreshAll()
       } else {
         setInstallError(res.error || 'Unknown error during installation')
@@ -1055,7 +1079,7 @@ export function DockerPage(): ReactElement {
                 <div style={{ width: 32, height: 32, background: 'var(--accent)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700 }}>D</div>
                 <div>
                   <h2 style={{ margin: 0, fontSize: 18 }}>Docker Setup Wizard</h2>
-                  <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Step {installStep + 1} of 4</div>
+                  <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Step {installStep + 1} of 5</div>
                 </div>
               </div>
               <button type="button" style={closeBtn} onClick={() => setShowInstallModal(false)}>×</button>
@@ -1086,6 +1110,49 @@ export function DockerPage(): ReactElement {
 
               {installStep === 1 && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  <h3 style={{ margin: 0, fontSize: 16 }}>Select Components</h3>
+                  <p style={{ margin: 0, fontSize: 14, color: 'var(--text-muted)' }}>
+                    We scanned your system and found some components are already installed.
+                  </p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    {[
+                      { id: 'docker', title: 'Docker Engine', desc: 'Core daemon and CLI tools.' },
+                      { id: 'compose', title: 'Docker Compose', desc: 'Tool for defining and running multi-container apps.' },
+                      { id: 'buildx', title: 'Docker Buildx', desc: 'Extended build capabilities with BuildKit.' }
+                    ].map(feat => {
+                      const isInstalled = installedFeatures[feat.id as keyof typeof installedFeatures]
+                      return (
+                        <label key={feat.id} className="hp-card" style={{ 
+                          display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', 
+                          opacity: isInstalled ? 0.6 : 1,
+                          cursor: isInstalled ? 'default' : 'pointer',
+                          background: selectedFeatures.includes(feat.id) ? 'rgba(124, 77, 255, 0.05)' : 'var(--bg-input)'
+                        }}>
+                          <input 
+                            type="checkbox" 
+                            checked={selectedFeatures.includes(feat.id) || isInstalled} 
+                            disabled={isInstalled} 
+                            onChange={() => {
+                              if (selectedFeatures.includes(feat.id)) setSelectedFeatures(prev => prev.filter(x => x !== feat.id))
+                              else setSelectedFeatures(prev => [...prev, feat.id])
+                            }}
+                          />
+                          <div style={{ flex: 1 }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                              <span style={{ fontWeight: 600 }}>{feat.title}</span>
+                              {isInstalled && <span style={{ fontSize: 10, color: 'var(--green)', background: 'rgba(76, 175, 80, 0.1)', padding: '2px 6px', borderRadius: 4 }}>INSTALLED</span>}
+                            </div>
+                            <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{feat.desc}</div>
+                          </div>
+                        </label>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {installStep === 2 && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                   <h3 style={{ margin: 0, fontSize: 16 }}>Authentication Required</h3>
                   <p style={{ margin: 0, fontSize: 14, color: 'var(--text-muted)' }}>
                     Installation requires root privileges. Please enter your <strong>sudo</strong> password to proceed.
@@ -1109,7 +1176,7 @@ export function DockerPage(): ReactElement {
                 </div>
               )}
 
-              {installStep === 2 && (
+              {installStep === 3 && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 16, flex: 1 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <h3 style={{ margin: 0, fontSize: 16 }}>Installing Docker...</h3>
@@ -1131,12 +1198,12 @@ export function DockerPage(): ReactElement {
                     {installError && <div style={{ color: 'var(--red)', marginTop: 8, fontWeight: 700 }}>Error: {installError}</div>}
                   </div>
                   {installError && (
-                    <button className="hp-btn hp-btn-danger" onClick={() => setInstallStep(1)}>Retry Step</button>
+                    <button className="hp-btn hp-btn-danger" onClick={() => setInstallStep(2)}>Retry Step</button>
                   )}
                 </div>
               )}
 
-              {installStep === 3 && (
+              {installStep === 4 && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'center', textAlign: 'center', padding: '20px 0' }}>
                   <div style={{ width: 64, height: 64, background: 'var(--green)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 32, marginBottom: 12 }}>✔</div>
                   <h2 style={{ margin: 0 }}>Installation Complete!</h2>
@@ -1157,18 +1224,26 @@ export function DockerPage(): ReactElement {
 
             <div style={{ marginTop: 32, display: 'flex', justifyContent: 'flex-end', gap: 12, borderTop: '1px solid var(--border)', paddingTop: 20 }}>
               {installStep === 0 && (
-                <button className="hp-btn hp-btn-primary" disabled={!selectedDistro} onClick={() => setInstallStep(1)}>Next {'>'}</button>
+                <button className="hp-btn hp-btn-primary" disabled={!selectedDistro || isScanning} onClick={() => void runScan()}>
+                  {isScanning ? 'Scanning...' : 'Next >'}
+                </button>
               )}
               {installStep === 1 && (
                 <>
                   <button className="hp-btn" onClick={() => setInstallStep(0)}>{'<'}- Back</button>
+                  <button className="hp-btn hp-btn-primary" disabled={selectedFeatures.length === 0} onClick={() => setInstallStep(2)}>Next {'>'}</button>
+                </>
+              )}
+              {installStep === 2 && (
+                <>
+                  <button className="hp-btn" onClick={() => setInstallStep(1)}>{'<'}- Back</button>
                   <button className="hp-btn hp-btn-primary" disabled={!sudoPassword} onClick={() => void runInstallation()}>Install Now</button>
                 </>
               )}
-              {(installStep === 2 && !installBusy) && (
+              {(installStep === 3 && !installBusy) && (
                  <button className="hp-btn" onClick={() => setInstallStep(0)}>Abort</button>
               )}
-              {installStep === 3 && (
+              {installStep === 4 && (
                 <button className="hp-btn hp-btn-primary" onClick={() => setShowInstallModal(false)}>Finish</button>
               )}
             </div>

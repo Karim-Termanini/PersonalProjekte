@@ -61,7 +61,8 @@ export type DhApi = {
   jobStart: (payload: { kind: string; durationMs?: number }) => Promise<unknown>
   jobsList: () => Promise<unknown>
   jobCancel: (payload: { id: string }) => Promise<unknown>
-  dockerInstall: (payload: { distro: 'ubuntu'|'fedora'|'arch'; password?: string }) => Promise<{ ok: boolean; log: string[]; error?: string }>
+  dockerInstall: (payload: { distro: 'ubuntu'|'fedora'|'arch'; password?: string; components?: string[] }) => Promise<{ ok: boolean; log: string[]; error?: string }>
+  dockerCheckInstalled: () => Promise<{ docker: boolean; compose: boolean; buildx: boolean }>
 }
 
 const api: DhApi = {
@@ -131,6 +132,7 @@ const api: DhApi = {
   jobsList: () => ipcRenderer.invoke(IPC.jobsList),
   jobCancel: (payload) => ipcRenderer.invoke(IPC.jobCancel, payload),
   dockerInstall: (payload) => ipcRenderer.invoke(IPC.dockerInstall, payload),
+  dockerCheckInstalled: () => ipcRenderer.invoke(IPC.dockerCheckInstalled),
 }
 
 contextBridge.exposeInMainWorld('dh', api)
