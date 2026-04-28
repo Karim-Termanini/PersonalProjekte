@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 
-import { IPC, type ComposeProfile, type CustomProfileEntry } from '@linux-dev-home/shared'
+import { IPC, type ComposeProfile } from '@linux-dev-home/shared'
 
 export type DhApi = {
   dockerList: () => unknown
@@ -38,9 +38,11 @@ export type DhApi = {
   gitStatus: (payload: { repoPath: string }) => unknown
   gitRecentList: () => unknown
   gitRecentAdd: (payload: { path: string }) => unknown
-  gitConfigSet: (payload: { name: string; email: string; target: 'sandbox'|'host' }) => Promise<unknown>
-  sshGenerate: (payload: { target: 'sandbox'|'host' }) => Promise<unknown>
+  gitConfigSet: (payload: { name: string; email: string; defaultBranch?: string; defaultEditor?: string; target: 'sandbox'|'host' }) => Promise<unknown>
+  gitConfigList: (payload: { target: 'sandbox'|'host' }) => Promise<unknown>
+  sshGenerate: (payload: { target: 'sandbox'|'host'; email?: string }) => Promise<unknown>
   sshGetPub: (payload: { target: 'sandbox'|'host' }) => Promise<unknown>
+  sshTestGithub: (payload: { target: 'sandbox'|'host' }) => Promise<unknown>
   selectFolder: () => Promise<string | null>
   onTerminalData: (handler: (msg: { id: string; data: string }) => void) => () => void
   onTerminalExit: (handler: (msg: { id: string }) => void) => () => void
@@ -48,8 +50,8 @@ export type DhApi = {
   sessionInfo: () => Promise<unknown>
   layoutGet: () => Promise<unknown>
   layoutSet: (layout: unknown) => Promise<unknown>
-  storeGet: (payload: { key: 'custom_profiles' }) => Promise<CustomProfileEntry[] | null>
-  storeSet: (payload: { key: 'custom_profiles'; data: CustomProfileEntry[] }) => Promise<unknown>
+  storeGet: (payload: import('@linux-dev-home/shared').StoreGetRequest) => Promise<unknown>
+  storeSet: (payload: import('@linux-dev-home/shared').StoreSetRequest) => Promise<unknown>
   jobStart: (payload: { kind: string; durationMs?: number }) => Promise<unknown>
   jobsList: () => Promise<unknown>
   jobCancel: (payload: { id: string }) => Promise<unknown>
@@ -84,8 +86,10 @@ const api: DhApi = {
   gitRecentList: () => ipcRenderer.invoke(IPC.gitRecentList),
   gitRecentAdd: (payload) => ipcRenderer.invoke(IPC.gitRecentAdd, payload),
   gitConfigSet: (payload) => ipcRenderer.invoke(IPC.gitConfigSet, payload),
+  gitConfigList: (payload) => ipcRenderer.invoke(IPC.gitConfigList, payload),
   sshGenerate: (payload) => ipcRenderer.invoke(IPC.sshGenerate, payload),
   sshGetPub: (payload) => ipcRenderer.invoke(IPC.sshGetPub, payload),
+  sshTestGithub: (payload) => ipcRenderer.invoke(IPC.sshTestGithub, payload),
   selectFolder: () => ipcRenderer.invoke(IPC.selectFolder),
   onTerminalData: (handler) => {
     const listener = (

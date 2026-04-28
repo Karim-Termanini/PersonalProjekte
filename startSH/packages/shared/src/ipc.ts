@@ -10,10 +10,12 @@ export type ContainerRow = {
   id: string
   name: string
   image: string
+  imageId?: string
   state: string
   status: string
   ports: string
   networks?: string[]
+  volumes?: string[]
 }
 
 export type ImageRow = {
@@ -28,6 +30,7 @@ export type VolumeRow = {
   driver: string
   mountpoint: string
   scope: string
+  usedBy?: string[]
 }
 
 export type NetworkRow = {
@@ -98,8 +101,10 @@ export const IPC = {
   gitRecentList: 'dh:git:recent:list',
   gitRecentAdd: 'dh:git:recent:add',
   gitConfigSet: 'dh:git:config:set',
+  gitConfigList: 'dh:git:config:list',
   sshGenerate: 'dh:ssh:generate',
   sshGetPub: 'dh:ssh:get:pub',
+  sshTestGithub: 'dh:ssh:test:github',
   selectFolder: 'dh:dialog:folder',
   sessionInfo: 'dh:session:info',
   layoutGet: 'dh:layout:get',

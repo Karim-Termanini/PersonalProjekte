@@ -96,6 +96,32 @@ function ContainerNode({ data }: { data: ContainerRow }) {
           {data.ports}
         </div>
       )}
+      {data.networks && data.networks.length > 0 ? (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+          {data.networks.slice(0, 3).map((n) => (
+            <span
+              key={n}
+              className="mono"
+              style={{ fontSize: 10, border: '1px solid var(--border)', borderRadius: 999, padding: '2px 6px' }}
+            >
+              net:{n}
+            </span>
+          ))}
+        </div>
+      ) : null}
+      {data.volumes && data.volumes.length > 0 ? (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+          {data.volumes.slice(0, 2).map((v) => (
+            <span
+              key={v}
+              className="mono"
+              style={{ fontSize: 10, border: '1px solid var(--border)', borderRadius: 999, padding: '2px 6px' }}
+            >
+              vol:{v}
+            </span>
+          ))}
+        </div>
+      ) : null}
       <Handle type="source" position={Position.Bottom} style={{ background: 'var(--accent)' }} />
     </div>
   )

@@ -107,7 +107,11 @@ export function DockerPage(): ReactElement {
     return () => clearInterval(id)
   }, [refreshAll])
 
-  async function runAction(id: string, action: 'start' | 'stop' | 'restart'): Promise<void> {
+  async function runAction(id: string, action: 'start' | 'stop' | 'restart' | 'remove'): Promise<void> {
+    if (action === 'remove') {
+      const yes = window.confirm('Remove this stopped container? This cannot be undone.')
+      if (!yes) return
+    }
     setBusy(true)
     try {
       await window.dh.dockerAction({ id, action })
@@ -130,7 +134,26 @@ export function DockerPage(): ReactElement {
       await window.dh.dockerImageAction({ id, action: 'remove' })
       await refreshAll()
     } catch (e) {
-      setErr(e instanceof Error ? e.message : String(e))
+      const message = e instanceof Error ? e.message : String(e)
+      const canForce = /must be forced|being used by stopped container|conflict/i.test(message)
+      if (canForce) {
+        const yes = window.confirm(
+          'This image is referenced by stopped containers. Force remove it anyway?'
+        )
+        if (yes) {
+          try {
+            await window.dh.dockerImageAction({ id, action: 'remove', force: true })
+            await refreshAll()
+            setErr('')
+          } catch (forceErr) {
+            setErr(forceErr instanceof Error ? forceErr.message : String(forceErr))
+          }
+        } else {
+          setErr('Image removal cancelled.')
+        }
+      } else {
+        setErr(message)
+      }
     } finally {
       setBusy(false)
     }
@@ -580,6 +603,12 @@ export function DockerPage(): ReactElement {
                       <div className="mono" style={{ fontSize: 11, background: 'var(--bg)', padding: '6px 8px', borderRadius: 6, wordBreak: 'break-all' }} title={v.mountpoint}>
                         {truncateMiddle(v.mountpoint, 60)}
                       </div>
+                      <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
+                        Used by:{' '}
+                        <span className="mono" style={{ fontSize: 11 }}>
+                          {v.usedBy && v.usedBy.length > 0 ? v.usedBy.join(', ') : 'unused'}
+                        </span>
+                      </div>
                       <button type="button" style={{ ...btnSmallDanger, marginTop: 8 }} onClick={() => void removeVolume(v.name)} disabled={busy}>
                         Remove Volume
                       </button>
@@ -591,7 +620,48 @@ export function DockerPage(): ReactElement {
           </div>
         ) : null}
         {docker?.ok && tab === 'scheme' ? (
-          <DockerSchemeView containers={rows} networks={networks} />
+          <div style={{ display: 'grid', gap: 12 }}>
+            <DockerSchemeView containers={rows} networks={networks} />
+            <div style={sectionBox}>
+              <div style={{ fontWeight: 600, marginBottom: 8 }}>Relationship details</div>
+              {rows.length === 0 ? (
+                <div style={{ color: 'var(--text-muted)' }}>No containers found.</div>
+              ) : (
+                <div style={tableWrap}>
+                  <table style={table}>
+                    <thead>
+                      <tr style={{ color: 'var(--text-muted)', textAlign: 'left' }}>
+                        <th style={{ padding: '8px 6px' }}>Container</th>
+                        <th>Image</th>
+                        <th>Networks</th>
+                        <th>Volumes</th>
+                        <th>Ports</th>
+                        <th>State</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rows.map((r) => (
+                        <tr key={r.id} style={{ borderTop: '1px solid var(--border)' }}>
+                          <td style={{ padding: '9px 6px', fontWeight: 600 }}>{r.name}</td>
+                          <td className="mono" style={monoCell} title={r.image}>
+                            {r.image}
+                          </td>
+                          <td className="mono" style={monoCell} title={(r.networks ?? []).join(', ')}>
+                            {(r.networks ?? []).length > 0 ? (r.networks ?? []).join(', ') : '—'}
+                          </td>
+                          <td className="mono" style={monoCell} title={(r.volumes ?? []).join(', ')}>
+                            {(r.volumes ?? []).length > 0 ? (r.volumes ?? []).join(', ') : '—'}
+                          </td>
+                          <td className="mono" style={monoCell} title={r.ports}>{r.ports}</td>
+                          <td>{r.state}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
         ) : null}
         {docker?.ok && tab === 'networks' ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
@@ -889,7 +959,7 @@ type ContainerTableProps = {
   title: string
   rows: ContainerRow[]
   busy: boolean
-  onAction: (id: string, action: 'start' | 'stop' | 'restart') => Promise<void>
+  onAction: (id: string, action: 'start' | 'stop' | 'restart' | 'remove') => Promise<void>
   onLogs: (row: ContainerRow) => Promise<void>
 }
 
@@ -943,6 +1013,11 @@ function ContainerTable(props: ContainerTableProps): ReactElement {
                   <button type="button" style={btnSmall} onClick={() => void onLogs(r)} disabled={busy}>
                     Logs
                   </button>
+                  {!isRunning ? (
+                    <button type="button" style={btnSmallDanger} onClick={() => void onAction(r.id, 'remove')} disabled={busy}>
+                      Remove
+                    </button>
+                  ) : null}
                 </div>
               </div>
             )

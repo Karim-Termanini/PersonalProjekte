@@ -42,9 +42,11 @@ declare global {
       gitStatus: (payload: { repoPath: string }) => Promise<unknown>
       gitRecentList: () => Promise<unknown>
       gitRecentAdd: (payload: { path: string }) => Promise<unknown>
-      gitConfigSet: (payload: { name: string; email: string; target: 'sandbox'|'host' }) => Promise<unknown>
-      sshGenerate: (payload: { target: 'sandbox'|'host' }) => Promise<unknown>
+      gitConfigSet: (payload: { name: string; email: string; defaultBranch?: string; defaultEditor?: string; target: 'sandbox'|'host' }) => Promise<unknown>
+      gitConfigList: (payload: { target: 'sandbox'|'host' }) => Promise<unknown>
+      sshGenerate: (payload: { target: 'sandbox'|'host'; email?: string }) => Promise<unknown>
       sshGetPub: (payload: { target: 'sandbox'|'host' }) => Promise<unknown>
+      sshTestGithub: (payload: { target: 'sandbox'|'host' }) => Promise<unknown>
       selectFolder: () => Promise<string | null>
       onTerminalData: (handler: (msg: { id: string; data: string }) => void) => () => void
       onTerminalExit: (handler: (msg: { id: string }) => void) => () => void

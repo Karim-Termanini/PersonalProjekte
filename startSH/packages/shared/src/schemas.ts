@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const DockerContainerActionSchema = z.enum(['start', 'stop', 'restart'])
+export const DockerContainerActionSchema = z.enum(['start', 'stop', 'restart', 'remove'])
 export const DockerImageActionSchema = z.enum(['remove'])
 export const DockerVolumeActionSchema = z.enum(['remove'])
 export const DockerNetworkActionSchema = z.enum(['remove'])
@@ -90,7 +90,7 @@ export const WizardStateStoreSchema = z.object({
 })
 
 /** Keys with typed payloads persisted under userData (`store_<key>.json`). */
-export const StoreKeySchema = z.enum(['custom_profiles', 'wizard_state'])
+export const StoreKeySchema = z.enum(['custom_profiles', 'wizard_state', 'ssh_bookmarks'])
 
 export const StoreGetRequestSchema = z.object({
   key: StoreKeySchema,
@@ -104,6 +104,16 @@ export const StoreSetRequestSchema = z.discriminatedUnion('key', [
   z.object({
     key: z.literal('wizard_state'),
     data: WizardStateStoreSchema,
+  }),
+  z.object({
+    key: z.literal('ssh_bookmarks'),
+    data: z.array(z.object({
+      id: z.string(),
+      name: z.string(),
+      user: z.string(),
+      host: z.string(),
+      port: z.number().default(22),
+    })),
   }),
 ])
 export const ComposeUpRequestSchema = z.object({
@@ -126,14 +136,25 @@ export const GitRecentAddSchema = z.object({
 export const GitConfigSetSchema = z.object({
   name: z.string().min(1),
   email: z.string().email(),
+  defaultBranch: z.string().max(64).optional(),
+  defaultEditor: z.string().max(256).optional(),
+  target: z.enum(['sandbox', 'host']),
+})
+
+export const GitConfigListSchema = z.object({
   target: z.enum(['sandbox', 'host']),
 })
 
 export const SshGenerateSchema = z.object({
   target: z.enum(['sandbox', 'host']),
+  email: z.string().optional(),
 })
 
 export const SshGetPubSchema = z.object({
+  target: z.enum(['sandbox', 'host']),
+})
+
+export const SshTestGithubSchema = z.object({
   target: z.enum(['sandbox', 'host']),
 })
 
@@ -144,5 +165,7 @@ export type DockerNetworkAction = z.infer<typeof DockerNetworkActionSchema>
 export type ComposeProfile = z.infer<typeof ComposeProfileSchema>
 export type CustomProfileEntry = z.infer<typeof CustomProfileEntrySchema>
 export type StoreKey = z.infer<typeof StoreKeySchema>
+export type StoreGetRequest = z.infer<typeof StoreGetRequestSchema>
 export type StoreSetRequest = z.infer<typeof StoreSetRequestSchema>
 export type WizardStateStore = z.infer<typeof WizardStateStoreSchema>
+export type SshBookmark = { id: string; name: string; user: string; host: string; port: number }

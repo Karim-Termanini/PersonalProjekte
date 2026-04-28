@@ -9,9 +9,11 @@ import { DashboardLogsPage } from './pages/DashboardLogsPage'
 import { DashboardMainPage } from './pages/DashboardMainPage'
 import { DashboardWidgetsPage } from './pages/DashboardWidgetsPage'
 import { DockerPage } from './pages/DockerPage'
+import { GitConfigPage } from './pages/GitConfigPage'
 import { ProfilesPage } from './pages/ProfilesPage'
 import { RegistryPage } from './pages/RegistryPage'
 import { SystemPage } from './pages/SystemPage'
+import { SshPage } from './pages/SshPage'
 import { TerminalPage } from './pages/TerminalPage'
 import { WorkstationPage } from './pages/WorkstationPage'
 import { WizardFlow } from './wizard/WizardFlow'
@@ -47,6 +49,8 @@ export default function App(): ReactElement | null {
         <Route path="/system" element={<SystemPage />} />
         <Route path="/workstation" element={<WorkstationPage />} />
         <Route path="/docker" element={<DockerPage />} />
+        <Route path="/ssh" element={<SshPage />} />
+        <Route path="/git-config" element={<GitConfigPage />} />
         <Route path="/registry" element={<RegistryPage />} />
         <Route path="/profiles" element={<ProfilesPage />} />
         <Route path="/terminal" element={<TerminalPage />} />

@@ -6,6 +6,8 @@ const titles: Record<string, string> = {
   '/system': 'System',
   '/workstation': 'Workstation',
   '/docker': 'Docker',
+  '/ssh': 'SSH',
+  '/git-config': 'Git Config',
   '/registry': 'Registry',
   '/profiles': 'Profiles',
   '/terminal': 'Terminal',

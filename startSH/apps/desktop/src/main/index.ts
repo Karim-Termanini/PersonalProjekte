@@ -9,6 +9,7 @@ import { app, BrowserWindow, dialog, ipcMain, nativeTheme, shell } from 'electro
 import Docker from 'dockerode'
 import pty from 'node-pty'
 import simpleGit from 'simple-git'
+import { z } from 'zod'
 
 import {
   ComposeUpRequestSchema,
@@ -54,6 +55,7 @@ import {
   GitConfigSetSchema,
   SshGenerateSchema,
   SshGetPubSchema,
+  SshTestGithubSchema,
 } from '@linux-dev-home/shared'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -370,13 +372,22 @@ async function listContainers(): Promise<
     const list = await d.listContainers({ all: true })
     const rows: ContainerRow[] = list.map((c) => {
       const name = (c.Names?.[0] ?? '').replace(/^\//, '') || c.Id.slice(0, 8)
+      const networks = c.NetworkSettings?.Networks
+        ? Object.keys(c.NetworkSettings.Networks)
+        : []
+      const volumes = (c.Mounts ?? [])
+        .filter((m) => m.Type === 'volume' && !!m.Name)
+        .map((m) => m.Name as string)
       return {
         id: c.Id,
         name,
         image: c.Image,
+        imageId: c.ImageID,
         state: c.State,
         status: c.Status,
         ports: formatPorts(c.Ports ?? []),
+        networks,
+        volumes,
       }
     })
     return { ok: true, rows }
@@ -403,7 +414,8 @@ function registerIpc(): void {
     const container = d.getContainer(id)
     if (act.data === 'start') await container.start()
     else if (act.data === 'stop') await container.stop()
-    else await container.restart()
+    else if (act.data === 'restart') await container.restart()
+    else await container.remove({ force: true })
     return { ok: true }
   })
 
@@ -562,11 +574,22 @@ function registerIpc(): void {
     const d = getDocker()
     if (!d) throw new Error('Docker unavailable')
     const list = await d.listVolumes()
+    const containers = await d.listContainers({ all: true })
+    const usage = new Map<string, Set<string>>()
+    for (const c of containers) {
+      const cName = (c.Names?.[0] ?? '').replace(/^\//, '') || c.Id.slice(0, 12)
+      for (const m of c.Mounts ?? []) {
+        if (m.Type !== 'volume' || !m.Name) continue
+        if (!usage.has(m.Name)) usage.set(m.Name, new Set<string>())
+        usage.get(m.Name)?.add(cName)
+      }
+    }
     const rows: VolumeRow[] = (list.Volumes ?? []).map((v) => ({
       name: v.Name,
       driver: v.Driver,
       mountpoint: v.Mountpoint,
       scope: v.Scope,
+      usedBy: Array.from(usage.get(v.Name) ?? []),
     }))
     return { ok: true, rows }
   })
@@ -805,16 +828,17 @@ function registerIpc(): void {
   })
 
   ipcMain.handle(IPC.sshGenerate, async (_e, raw: unknown) => {
-    const { target } = SshGenerateSchema.parse(raw)
+    const { target, email } = SshGenerateSchema.parse(raw)
     const sshDir = path.join(homedir(), '.ssh')
     const keyPath = path.join(sshDir, 'id_ed25519')
+    const comment = email && email.trim() !== '' ? email.trim() : 'linux-dev-home'
     
     if (target === 'host') {
       await execTarget('host', 'mkdir', ['-p', sshDir])
-      await execTarget('host', 'ssh-keygen', ['-t', 'ed25519', '-C', 'linux-dev-home', '-N', '', '-f', keyPath])
+      await execTarget('host', 'ssh-keygen', ['-t', 'ed25519', '-C', comment, '-N', '', '-f', keyPath])
     } else {
       await mkdir(sshDir, { recursive: true })
-      await execTarget('sandbox', 'ssh-keygen', ['-t', 'ed25519', '-C', 'linux-dev-home', '-N', '', '-f', keyPath])
+      await execTarget('sandbox', 'ssh-keygen', ['-t', 'ed25519', '-C', comment, '-N', '', '-f', keyPath])
     }
     return { ok: true }
   })
@@ -831,6 +855,35 @@ function registerIpc(): void {
     } catch {
       return null
     }
+  })
+
+  ipcMain.handle(IPC.sshTestGithub, async (_e, raw: unknown) => {
+    const { target } = SshTestGithubSchema.parse(raw)
+    const isFlatpak = !!process.env.FLATPAK_ID
+    let cmd = 'ssh'
+    let args = ['-T', '-o', 'BatchMode=yes', '-o', 'ConnectTimeout=10', 'git@github.com']
+    if (target === 'host' && isFlatpak) {
+      cmd = 'flatpak-spawn'
+      args = ['--host', 'ssh', ...args]
+    }
+    return await new Promise<{ ok: boolean; output: string; code: number | null }>((resolveTest) => {
+      const child = spawn(cmd, args)
+      let out = ''
+      child.stdout.on('data', (d) => {
+        out += d.toString()
+      })
+      child.stderr.on('data', (d) => {
+        out += d.toString()
+      })
+      child.on('error', (err) => {
+        resolveTest({ ok: false, output: String(err), code: null })
+      })
+      child.on('close', (code) => {
+        const text = out.trim() || `exit ${code ?? 'unknown'}`
+        const ok = /successfully authenticated/i.test(text) || /hi .*github/i.test(text)
+        resolveTest({ ok, output: text, code: code ?? null })
+      })
+    })
   })
 
   ipcMain.handle(IPC.selectFolder, async () => {
@@ -860,6 +913,15 @@ function registerIpc(): void {
       }
       if (key === 'wizard_state') {
         return WizardStateStoreSchema.parse(parsed)
+      }
+      if (key === 'ssh_bookmarks') {
+        return z.array(z.object({
+          id: z.string(),
+          name: z.string(),
+          user: z.string(),
+          host: z.string(),
+          port: z.number().default(22),
+        })).parse(parsed)
       }
       return null
     } catch {
