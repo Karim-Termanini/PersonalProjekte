@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "pnpm --filter desktop dev",
-    "build": "pnpm --filter desktop build",
+    "build": "pnpm --filter @linux-dev-home/shared build && pnpm --filter desktop build",
     "pack:linux": "pnpm --filter desktop pack:linux",
     "lint": "eslint .",
     "typecheck": "pnpm -r typecheck",
