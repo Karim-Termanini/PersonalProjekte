@@ -1,3 +1,8 @@
+# SPDX-License-Identifier: MIT
+# Offline-oriented Flatpak build (no network in the build sandbox).
+# Uses flatpak-node-generator output: flatpak/generated-sources.json
+# Regenerate after lockfile changes: ./flatpak/generate-node-sources.sh
+
 app-id: io.github.karimodora.LinuxDevHome
 runtime: org.freedesktop.Platform
 runtime-version: '24.08'
@@ -28,11 +33,13 @@ modules:
       append-path: /usr/lib/sdk/node20/bin
       env:
         NPM_CONFIG_LOGLEVEL: info
-      build-args:
-        - --share=network
+        XDG_CACHE_HOME: /run/build/linux-dev-home/flatpak-node/cache
+        npm_config_cache: /run/build/linux-dev-home/flatpak-node/npm-cache
+        npm_config_offline: 'true'
     sources:
       - type: dir
         path: ..
+      - generated-sources.json
     build-commands:
       - corepack enable && corepack prepare pnpm@9.14.2 --activate
       - rm -rf node_modules apps/desktop/out apps/desktop/release apps/desktop/pack-staging

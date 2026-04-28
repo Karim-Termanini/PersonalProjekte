@@ -1,9 +1,16 @@
 # Install test (Flatpak)
 
-After building the Flatpak locally:
+After building the Flatpak locally (network build; see `flatpak/README.md` for the offline manifest):
 
 ```bash
-flatpak-builder --user --install --force-clean flatpak-out flatpak/io.github.karimodora.LinuxDevHome.yml
+cd /path/to/startSH
+flatpak-builder --user --install --force-clean flatpak-build-dir flatpak/io.github.karimodora.LinuxDevHome.yml
+```
+
+Offline / Flathub-style (uses `flatpak/generated-sources.json`; regenerate after lockfile changes):
+
+```bash
+flatpak-builder --user --install --force-clean flatpak-build-dir flatpak/io.github.karimodora.LinuxDevHome.offline.yml
 ```
 
 Smoke checklist:

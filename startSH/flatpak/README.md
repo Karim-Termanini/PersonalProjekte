@@ -1,19 +1,37 @@
-# Flatpak packaging
+# Flatpak
 
-End-user distribution is intended to be **Flatpak-only**. Electron on Flathub typically uses `org.electronjs.Electron2.BaseApp` and a two-stage build (bundle your `asar`, ship launcher script).
+Two manifests (run from **repository root** `startSH/`):
 
-The file `io.github.karimodora.LinuxDevHome.yml` in this directory is a **starting point**, not a drop-in Flathub submission:
+| Manifest | Use |
+|----------|-----|
+| [`io.github.karimodora.LinuxDevHome.yml`](io.github.karimodora.LinuxDevHome.yml) | **Network build** (CI or quick local); `flatpak-builder` passes `--share=network`. |
+| [`io.github.karimodora.LinuxDevHome.offline.yml`](io.github.karimodora.LinuxDevHome.offline.yml) | **Offline build** for Flathub-style reproducibility; requires [`generated-sources.json`](generated-sources.json). |
 
-- Replace placeholders with your verified app id.
-- Wire `build-commands` to your real artifacts (`electron-vite build` output in `apps/desktop/out`).
-- Add the Node SDK extension and any extra `finish-args` required for Docker (see `docs/DOCKER_FLATPAK.md`).
+## Regenerate Node sources (offline manifest)
 
-Use `docs/FLATHUB_CHECKLIST.md` before opening a Flathub PR.
-
-Recommended local command once the manifest is complete:
+After changing **pnpm** dependencies or `pnpm-lock.yaml`:
 
 ```bash
-flatpak-builder --user --install --force-clean ../flatpak-out io.github.karimodora.LinuxDevHome.yml
+chmod +x flatpak/generate-node-sources.sh
+./flatpak/generate-node-sources.sh
 ```
 
-Run through `docs/INSTALL_TEST.md` after installing the bundle.
+Commit the updated `flatpak/generated-sources.json` (or vendor it only in your Flathub submission repo).
+
+## Build and install
+
+```bash
+# Network (simpler)
+flatpak-builder --user --install --force-clean flatpak-build-dir \
+  flatpak/io.github.karimodora.LinuxDevHome.yml \
+  --install-deps-from=flathub
+
+# Offline (no build network; install Flathub runtimes first)
+flatpak-builder --user --install --force-clean flatpak-build-dir-offline \
+  flatpak/io.github.karimodora.LinuxDevHome.offline.yml \
+  --install-deps-from=flathub
+```
+
+Run: `flatpak run io.github.karimodora.LinuxDevHome`
+
+See [../docs/DOCKER_FLATPAK.md](../docs/DOCKER_FLATPAK.md), [../docs/INSTALL_TEST.md](../docs/INSTALL_TEST.md), [../docs/FLATHUB_CHECKLIST.md](../docs/FLATHUB_CHECKLIST.md).
