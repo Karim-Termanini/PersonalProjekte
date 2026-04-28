@@ -4,24 +4,20 @@ import {
   type ComposeProfile,
   type ContainerRow,
   type CustomProfileEntry,
-  type DashboardLayoutFile,
   type HostMetricsResponse,
 } from '@linux-dev-home/shared'
 import type { CSSProperties, ReactElement } from 'react'
 import { useCallback, useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 
-import { AddWidgetModal } from '../dashboard/AddWidgetModal'
 import { CustomProfileWizardModal } from '../dashboard/CustomProfileWizardModal'
-import { DashboardWidgetDeck } from '../dashboard/DashboardWidgetDeck'
 
-export function DashboardPage(): ReactElement {
+export function DashboardMainPage(): ReactElement {
   const [docker, setDocker] = useState<
     { ok: true; rows: ContainerRow[] } | { ok: false; error: string } | null
   >(null)
   const [snap, setSnap] = useState<HostMetricsResponse | null>(null)
   const [composeMsg, setComposeMsg] = useState<string | null>(null)
-  const [layout, setLayout] = useState<DashboardLayoutFile | null>(null)
-  const [pickerOpen, setPickerOpen] = useState(false)
   const [wizardOpen, setWizardOpen] = useState(false)
   const [customProfiles, setCustomProfiles] = useState<CustomProfileEntry[]>([])
 
@@ -51,12 +47,6 @@ export function DashboardPage(): ReactElement {
   useEffect(() => {
     void (async () => {
       try {
-        const raw = (await window.dh.layoutGet()) as DashboardLayoutFile
-        setLayout(raw)
-      } catch {
-        setLayout(null)
-      }
-      try {
         const profiles = await window.dh.storeGet({ key: 'custom_profiles' })
         if (profiles) {
           const parsed = CustomProfilesStoreSchema.safeParse(profiles)
@@ -67,19 +57,6 @@ export function DashboardPage(): ReactElement {
       }
     })()
   }, [])
-
-  const removeWidget = useCallback(
-    async (instanceId: string) => {
-      if (!layout) return
-      const next: DashboardLayoutFile = {
-        version: 1,
-        placements: layout.placements.filter((p) => p.instanceId !== instanceId),
-      }
-      await window.dh.layoutSet(next)
-      setLayout(next)
-    },
-    [layout]
-  )
 
   async function initProfile(profile: ComposeProfile): Promise<void> {
     setComposeMsg(`Starting ${profile}…`)
@@ -124,26 +101,16 @@ export function DashboardPage(): ReactElement {
 
       {/* phaseHint removed */}
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'center' }}>
-        <button
-          type="button"
-          disabled={!layout}
-          onClick={() => layout && setPickerOpen(true)}
-          style={{
-            border: '1px solid var(--border)',
-            background: 'var(--bg-input)',
-            color: 'var(--text)',
-            borderRadius: 8,
-            padding: '10px 16px',
-            fontWeight: 600,
-            cursor: !layout ? 'wait' : 'pointer',
-            fontSize: 13,
-            opacity: !layout ? 0.6 : 1,
-          }}
-        >
-          <span className="codicon codicon-add" style={{ marginRight: 8 }} aria-hidden />
-          Add widget
-        </button>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center', justifyContent: 'space-between' }}>
+        <p style={{ margin: 0, fontSize: 13, color: 'var(--text-muted)', maxWidth: 720 }}>
+          Dashboard cards and Docker overview stay on{' '}
+          <span style={{ color: 'var(--text)', fontWeight: 600 }}>Main</span>. Pin
+          widgets and shortcuts on the dedicated{' '}
+          <Link to="/dashboard/widgets" style={{ color: 'var(--accent)', fontWeight: 600 }}>
+            Widget
+          </Link>{' '}
+          page (top bar tab).
+        </p>
         <button
           type="button"
           onClick={() => setWizardOpen(true)}
@@ -156,27 +123,13 @@ export function DashboardPage(): ReactElement {
             fontWeight: 600,
             cursor: 'pointer',
             fontSize: 13,
+            flexShrink: 0,
           }}
         >
           <span className="codicon codicon-settings-gear" style={{ marginRight: 8 }} aria-hidden />
           Custom profile…
         </button>
       </div>
-
-      {layout ? (
-        <DashboardWidgetDeck layout={layout} onRemove={(id) => void removeWidget(id)} />
-      ) : (
-        <div style={{ color: 'var(--text-muted)', fontSize: 13 }}>Loading widget layout…</div>
-      )}
-
-      {layout ? (
-        <AddWidgetModal
-          open={pickerOpen}
-          layout={layout}
-          onClose={() => setPickerOpen(false)}
-          onSaved={(next) => setLayout(next)}
-        />
-      ) : null}
 
       <CustomProfileWizardModal
         open={wizardOpen}

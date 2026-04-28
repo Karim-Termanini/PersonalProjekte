@@ -1,9 +1,10 @@
 import type { ReactElement, ReactNode } from 'react'
-import { NavLink, useLocation } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 
 import { ActiveJobsStrip } from './ActiveJobsStrip'
 import { EnvironmentBanner } from './EnvironmentBanner'
 import { TopBar } from './TopBar'
+import { WidgetLayoutProvider } from './WidgetLayoutContext'
 
 const nav = [
   { to: '/dashboard', label: 'Dashboard', icon: 'dashboard' },
@@ -14,8 +15,6 @@ const nav = [
 ] as const
 
 export function AppShell({ children }: { children: ReactNode }): ReactElement {
-  const location = useLocation()
-
   return (
     <div style={{ display: 'flex', height: '100%', overflow: 'hidden' }}>
       <aside
@@ -105,10 +104,12 @@ export function AppShell({ children }: { children: ReactNode }): ReactElement {
         </div>
       </aside>
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-        <EnvironmentBanner />
-        <TopBar path={location.pathname} />
-        <main style={{ flex: 1, overflow: 'auto', padding: 24 }}>{children}</main>
-        <ActiveJobsStrip />
+        <WidgetLayoutProvider>
+          <EnvironmentBanner />
+          <TopBar />
+          <main style={{ flex: 1, overflow: 'auto', padding: 24 }}>{children}</main>
+          <ActiveJobsStrip />
+        </WidgetLayoutProvider>
       </div>
     </div>
   )

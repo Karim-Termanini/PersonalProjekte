@@ -1,25 +1,36 @@
 import type { CSSProperties, ReactElement } from 'react'
 import { useEffect, useState } from 'react'
+import { NavLink, useLocation } from 'react-router-dom'
 
 const titles: Record<string, string> = {
-  '/dashboard': 'HYPEDEVHOME',
   '/system': 'System',
   '/workstation': 'Workstation',
   '/registry': 'Registry',
   '/terminal': 'Terminal',
 }
 
-export function TopBar({ path }: { path: string }): ReactElement {
+function screenTitle(pathname: string): string {
+  if (pathname === '/dashboard' || pathname.startsWith('/dashboard/')) {
+    return 'HYPEDEVHOME'
+  }
+  return titles[pathname] ?? 'Linux Dev Home'
+}
+
+export function TopBar(): ReactElement {
+  const location = useLocation()
+  const pathname = location.pathname
   const [q, setQ] = useState('')
 
   useEffect(() => {
     setQ('')
-  }, [path])
+  }, [pathname])
+
+  const onDashboard = pathname === '/dashboard' || pathname.startsWith('/dashboard/')
 
   return (
     <header
       style={{
-        height: 'var(--top-height)',
+        minHeight: 'var(--top-height)',
         borderBottom: '1px solid var(--border)',
         display: 'flex',
         alignItems: 'center',
@@ -29,15 +40,14 @@ export function TopBar({ path }: { path: string }): ReactElement {
         flexShrink: 0,
       }}
     >
-      <div style={{ fontWeight: 700, letterSpacing: '0.04em', minWidth: 140 }}>
-        {titles[path] ?? 'Linux Dev Home'}
-      </div>
-      <div style={{ display: 'flex', gap: 8, flex: 1, justifyContent: 'center' }}>
-        {path === '/dashboard' ? (
+      <div style={{ fontWeight: 700, letterSpacing: '0.04em', minWidth: 140 }}>{screenTitle(pathname)}</div>
+      <div style={{ display: 'flex', gap: 2, flex: 1, justifyContent: 'center' }}>
+        {onDashboard ? (
           <>
-            <Tab label="Main" active />
-            <Tab label="Kernels" />
-            <Tab label="Logs" />
+            <DashTab to="/dashboard" end label="Main" />
+            <DashTab to="/dashboard/widgets" label="Widget" />
+            <DashTab to="/dashboard/kernels" label="Kernels" />
+            <DashTab to="/dashboard/logs" label="Logs" />
           </>
         ) : (
           <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>Overview</span>
@@ -57,11 +67,7 @@ export function TopBar({ path }: { path: string }): ReactElement {
           fontSize: 13,
         }}
       />
-      <button
-        type="button"
-        aria-label="Notifications"
-        style={btnIcon}
-      >
+      <button type="button" aria-label="Notifications" style={btnIcon}>
         <span className="codicon codicon-bell" />
       </button>
       <button type="button" aria-label="Console" style={btnIcon}>
@@ -74,22 +80,25 @@ export function TopBar({ path }: { path: string }): ReactElement {
   )
 }
 
-function Tab({ label, active }: { label: string; active?: boolean }): ReactElement {
+function DashTab(props: { to: string; end?: boolean; label: string }): ReactElement {
   return (
-    <button
-      type="button"
-      style={{
+    <NavLink
+      to={props.to}
+      end={props.end}
+      style={({ isActive }) => ({
         border: 'none',
         background: 'none',
-        color: active ? 'var(--text)' : 'var(--text-muted)',
-        fontWeight: active ? 600 : 500,
-        borderBottom: active ? '2px solid var(--accent)' : '2px solid transparent',
-        padding: '10px 4px',
+        color: isActive ? 'var(--text)' : 'var(--text-muted)',
+        fontWeight: isActive ? 600 : 500,
+        borderBottom: isActive ? '2px solid var(--accent)' : '2px solid transparent',
+        padding: '10px 12px',
         cursor: 'pointer',
-      }}
+        fontSize: 13,
+        textDecoration: 'none',
+      })}
     >
-      {label}
-    </button>
+      {props.label}
+    </NavLink>
   )
 }
 
