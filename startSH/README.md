@@ -1,6 +1,6 @@
 # Linux Dev Home (OSS)
 
-100% open-source developer dashboard for Linux, inspired by Microsoft Dev Home and the VS Code visual language. **Install target: Flatpak.** **Dev/CI: Docker-friendly.**
+100% open-source developer dashboard for Linux, inspired by Microsoft Dev Home and the VS Code visual styling. **Install target: Flatpak.** **Dev/CI: Docker-friendly.**
 
 ## Features
 
@@ -59,7 +59,7 @@ See [docs/DOCKER_FLATPAK.md](docs/DOCKER_FLATPAK.md), [docs/INSTALL_TEST.md](doc
 
 ## Branching
 
-See [docs/BRANCHING.md](docs/BRANCHING.md).
+See [docs/BRANCHING.md](docs/BRANCHING.md). After you push a phase branch, use [docs/MERGE_AND_RELEASE.md](docs/MERGE_AND_RELEASE.md) (PR, merge, next steps).
 
 ## Monorepo layout
 

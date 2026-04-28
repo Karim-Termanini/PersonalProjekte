@@ -13,6 +13,7 @@ function run(cmd, args, opts) {
   if (r.status !== 0) process.exit(r.status ?? 1)
 }
 
+run('pnpm', ['--filter', '@linux-dev-home/shared', 'build'], { cwd: repoRoot })
 run('pnpm', ['build'], { cwd: desktopRoot })
 
 rmSync(stage, { recursive: true, force: true })
