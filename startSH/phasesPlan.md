@@ -127,6 +127,21 @@ Define **what “Guardian layers” means in code** (otherwise it stays marketin
 
 ---
 
+## Phase 12 — Advanced Source Control Integrations (GitHub & GitLab)
+
+This phase turns the app into a true daily driver for software engineers managing repositories and cloud source control platforms.
+
+- **Authentication**: Secure storage of Personal Access Tokens (PAT) or OAuth for both **GitHub** and **GitLab**.
+- **Interactive Version Control**: Visual interface for `Commit`, `Push`, `Pull`, and `Sync` without needing a terminal. Branch management (checkout, create, merge).
+- **Cloud Dashboards (API Integration)**: 
+  - **Pull Requests / Merge Requests**: View open PRs/MRs, requested reviews, and merge status.
+  - **Issues Tracking**: List open issues assigned to the user across repositories.
+  - **CI/CD Pipelines**: Real-time status of GitHub Actions and GitLab CI/CD pipelines (Success, Failure, In Progress) for the active local repo.
+  - **Releases & Tags**: Overview of the latest releases.
+- **Repository Widgets**: A dedicated dashboard widget displaying a summary of all active local repositories (status, uncommitted changes, behind/ahead commits) and another widget for cloud notifications (Mentions, Failed Pipelines).
+
+---
+
 ## Navigation (sidebar)
 
 You currently have **5** nav items; you will need more. Plan:
@@ -155,3 +170,4 @@ You currently have **5** nav items; you will need more. Plan:
 5. **Phase 6 Install** (2–3 languages first).  
 6. **Phase 5 Monitor** (incremental tabs).  
 7. **Phase 7–10** (maintenance, settings, profiles productization, extensions).
+8. **Phase 12 Cloud Git** (advanced GitHub & GitLab, CI/CD, PRs, UI Sync).
