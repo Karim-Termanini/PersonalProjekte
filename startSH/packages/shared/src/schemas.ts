@@ -10,6 +10,34 @@ export const DockerLogsRequestSchema = z.object({
   tail: z.number().int().min(1).max(5000).optional(),
 })
 
+export const DockerCreateRequestSchema = z.object({
+  image: z.string().min(1).max(256),
+  name: z.string().trim().min(1).max(64),
+  command: z.string().max(512).optional(),
+  ports: z.array(z.object({ hostPort: z.number().int().min(1).max(65535), containerPort: z.number().int().min(1).max(65535), protocol: z.enum(['tcp', 'udp']).optional() })).optional(),
+  env: z.array(z.string().min(1).max(1024)).optional(),
+  volumes: z.array(z.object({ hostPath: z.string().min(1).max(4096), containerPath: z.string().min(1).max(4096) })).optional(),
+  autoStart: z.boolean().optional(),
+})
+
+export const DockerPullRequestSchema = z.object({
+  image: z.string().trim().min(1).max(256),
+})
+
+export const DockerVolumeCreateRequestSchema = z.object({
+  name: z.string().trim().min(1).max(256),
+})
+
+export const DockerNetworkCreateRequestSchema = z.object({
+  name: z.string().trim().min(1).max(256),
+})
+
+export const DockerRemapPortRequestSchema = z.object({
+  id: z.string().min(1).max(256),
+  oldHostPort: z.number().int().min(1).max(65535),
+  newHostPort: z.number().int().min(1).max(65535),
+})
+
 export const DockerImageActionRequestSchema = z.object({
   id: z.string().min(1).max(256),
   action: DockerImageActionSchema,

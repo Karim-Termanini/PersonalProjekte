@@ -10,12 +10,25 @@ declare global {
       dockerList: () => Promise<unknown>
       dockerAction: (payload: { id: string; action: string }) => Promise<unknown>
       dockerLogs: (payload: { id: string; tail?: number }) => Promise<unknown>
+      dockerCreate: (payload: {
+        image: string
+        name: string
+        command?: string
+        ports?: Array<{ hostPort: number; containerPort: number; protocol?: 'tcp' | 'udp' }>
+        env?: string[]
+        volumes?: Array<{ hostPath: string; containerPath: string }>
+        autoStart?: boolean
+      }) => Promise<unknown>
+      dockerPull: (payload: { image: string }) => Promise<unknown>
+      dockerRemapPort: (payload: { id: string; oldHostPort: number; newHostPort: number }) => Promise<unknown>
       dockerImagesList: () => Promise<unknown>
       dockerImageAction: (payload: { id: string; action: 'remove'; force?: boolean }) => Promise<unknown>
       dockerVolumesList: () => Promise<unknown>
       dockerVolumeAction: (payload: { name: string; action: 'remove' }) => Promise<unknown>
+      dockerVolumeCreate: (payload: { name: string }) => Promise<unknown>
       dockerNetworksList: () => Promise<unknown>
       dockerNetworkAction: (payload: { id: string; action: 'remove' }) => Promise<unknown>
+      dockerNetworkCreate: (payload: { name: string }) => Promise<unknown>
       dockerPrune: () => Promise<unknown>
       metrics: () => Promise<unknown>
       hostExec: (payload: unknown) => Promise<unknown>

@@ -6,12 +6,25 @@ export type DhApi = {
   dockerList: () => unknown
   dockerAction: (payload: { id: string; action: string }) => unknown
   dockerLogs: (payload: { id: string; tail?: number }) => unknown
+  dockerCreate: (payload: {
+    image: string
+    name: string
+    command?: string
+    ports?: Array<{ hostPort: number; containerPort: number; protocol?: 'tcp' | 'udp' }>
+    env?: string[]
+    volumes?: Array<{ hostPath: string; containerPath: string }>
+    autoStart?: boolean
+  }) => unknown
+  dockerPull: (payload: { image: string }) => unknown
+  dockerRemapPort: (payload: { id: string; oldHostPort: number; newHostPort: number }) => unknown
   dockerImagesList: () => unknown
   dockerImageAction: (payload: { id: string; action: 'remove'; force?: boolean }) => unknown
   dockerVolumesList: () => unknown
   dockerVolumeAction: (payload: { name: string; action: 'remove' }) => unknown
+  dockerVolumeCreate: (payload: { name: string }) => unknown
   dockerNetworksList: () => unknown
   dockerNetworkAction: (payload: { id: string; action: 'remove' }) => unknown
+  dockerNetworkCreate: (payload: { name: string }) => unknown
   dockerPrune: () => unknown
   metrics: () => unknown
   hostExec: (payload: unknown) => unknown
@@ -46,12 +59,17 @@ const api: DhApi = {
   dockerList: () => ipcRenderer.invoke(IPC.dockerList),
   dockerAction: (payload) => ipcRenderer.invoke(IPC.dockerAction, payload),
   dockerLogs: (payload) => ipcRenderer.invoke(IPC.dockerLogs, payload),
+  dockerCreate: (payload) => ipcRenderer.invoke(IPC.dockerCreate, payload),
+  dockerPull: (payload) => ipcRenderer.invoke(IPC.dockerPull, payload),
+  dockerRemapPort: (payload) => ipcRenderer.invoke(IPC.dockerRemapPort, payload),
   dockerImagesList: () => ipcRenderer.invoke(IPC.dockerImagesList),
   dockerImageAction: (payload) => ipcRenderer.invoke(IPC.dockerImageAction, payload),
   dockerVolumesList: () => ipcRenderer.invoke(IPC.dockerVolumesList),
   dockerVolumeAction: (payload) => ipcRenderer.invoke(IPC.dockerVolumeAction, payload),
+  dockerVolumeCreate: (payload) => ipcRenderer.invoke(IPC.dockerVolumeCreate, payload),
   dockerNetworksList: () => ipcRenderer.invoke(IPC.dockerNetworksList),
   dockerNetworkAction: (payload) => ipcRenderer.invoke(IPC.dockerNetworkAction, payload),
+  dockerNetworkCreate: (payload) => ipcRenderer.invoke(IPC.dockerNetworkCreate, payload),
   dockerPrune: () => ipcRenderer.invoke(IPC.dockerPrune),
   metrics: () => ipcRenderer.invoke(IPC.metrics),
   hostExec: (payload) => ipcRenderer.invoke(IPC.hostExec, payload),

@@ -20,7 +20,9 @@ import {
   DockerPullRequestSchema,
   DockerRemapPortRequestSchema,
   DockerNetworkActionRequestSchema,
+  DockerNetworkCreateRequestSchema,
   DockerVolumeActionRequestSchema,
+  DockerVolumeCreateRequestSchema,
   GitCloneRequestSchema,
   GitRecentAddSchema,
   GitStatusRequestSchema,
@@ -505,9 +507,10 @@ function registerIpc(): void {
     const oldBindings = info.HostConfig?.PortBindings ?? {}
     const newBindings: Record<string, Array<{ HostPort: string }>> = {}
     for (const [key, arr] of Object.entries(oldBindings)) {
-      const next = (arr ?? []).map((b) => {
+      const bindingRows = Array.isArray(arr) ? (arr as Array<{ HostPort?: string }>) : []
+      const next = bindingRows.map((b) => {
         if (Number(b.HostPort) === req.oldHostPort) return { HostPort: String(req.newHostPort) }
-        return { HostPort: b.HostPort }
+        return { HostPort: String(b.HostPort ?? '') }
       })
       newBindings[key] = next
     }
@@ -572,6 +575,14 @@ function registerIpc(): void {
     return { ok: true }
   })
 
+  ipcMain.handle(IPC.dockerVolumeCreate, async (_e, raw: unknown) => {
+    const { name } = DockerVolumeCreateRequestSchema.parse(raw)
+    const d = getDocker()
+    if (!d) throw new Error('Docker unavailable')
+    await d.createVolume({ Name: name })
+    return { ok: true }
+  })
+
   ipcMain.handle(IPC.dockerNetworksList, async () => {
     const d = getDocker()
     if (!d) throw new Error('Docker unavailable')
@@ -591,6 +602,14 @@ function registerIpc(): void {
     if (!d) throw new Error('Docker unavailable')
     if (req.action !== 'remove') throw new Error('Unsupported network action')
     await d.getNetwork(req.id).remove()
+    return { ok: true }
+  })
+
+  ipcMain.handle(IPC.dockerNetworkCreate, async (_e, raw: unknown) => {
+    const { name } = DockerNetworkCreateRequestSchema.parse(raw)
+    const d = getDocker()
+    if (!d) throw new Error('Docker unavailable')
+    await d.createNetwork({ Name: name })
     return { ok: true }
   })
 
