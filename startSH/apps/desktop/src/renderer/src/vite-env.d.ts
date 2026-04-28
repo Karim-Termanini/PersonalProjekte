@@ -10,6 +10,13 @@ declare global {
       dockerList: () => Promise<unknown>
       dockerAction: (payload: { id: string; action: string }) => Promise<unknown>
       dockerLogs: (payload: { id: string; tail?: number }) => Promise<unknown>
+      dockerImagesList: () => Promise<unknown>
+      dockerImageAction: (payload: { id: string; action: 'remove'; force?: boolean }) => Promise<unknown>
+      dockerVolumesList: () => Promise<unknown>
+      dockerVolumeAction: (payload: { name: string; action: 'remove' }) => Promise<unknown>
+      dockerNetworksList: () => Promise<unknown>
+      dockerNetworkAction: (payload: { id: string; action: 'remove' }) => Promise<unknown>
+      dockerPrune: () => Promise<unknown>
       metrics: () => Promise<unknown>
       hostExec: (payload: unknown) => Promise<unknown>
       composeUp: (payload: { profile: ComposeProfile }) => Promise<unknown>

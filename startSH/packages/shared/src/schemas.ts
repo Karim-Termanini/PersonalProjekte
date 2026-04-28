@@ -1,10 +1,29 @@
 import { z } from 'zod'
 
 export const DockerContainerActionSchema = z.enum(['start', 'stop', 'restart'])
+export const DockerImageActionSchema = z.enum(['remove'])
+export const DockerVolumeActionSchema = z.enum(['remove'])
+export const DockerNetworkActionSchema = z.enum(['remove'])
 
 export const DockerLogsRequestSchema = z.object({
   id: z.string().min(1).max(256),
   tail: z.number().int().min(1).max(5000).optional(),
+})
+
+export const DockerImageActionRequestSchema = z.object({
+  id: z.string().min(1).max(256),
+  action: DockerImageActionSchema,
+  force: z.boolean().optional(),
+})
+
+export const DockerVolumeActionRequestSchema = z.object({
+  name: z.string().min(1).max(256),
+  action: DockerVolumeActionSchema,
+})
+
+export const DockerNetworkActionRequestSchema = z.object({
+  id: z.string().min(1).max(256),
+  action: DockerNetworkActionSchema,
 })
 
 export const HostExecRequestSchema = z.object({
@@ -91,6 +110,9 @@ export const SshGetPubSchema = z.object({
 })
 
 export type DockerContainerAction = z.infer<typeof DockerContainerActionSchema>
+export type DockerImageAction = z.infer<typeof DockerImageActionSchema>
+export type DockerVolumeAction = z.infer<typeof DockerVolumeActionSchema>
+export type DockerNetworkAction = z.infer<typeof DockerNetworkActionSchema>
 export type ComposeProfile = z.infer<typeof ComposeProfileSchema>
 export type CustomProfileEntry = z.infer<typeof CustomProfileEntrySchema>
 export type StoreKey = z.infer<typeof StoreKeySchema>

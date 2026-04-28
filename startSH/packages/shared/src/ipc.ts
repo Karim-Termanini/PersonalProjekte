@@ -1,4 +1,10 @@
-import type { ComposeProfile, DockerContainerAction } from './schemas.js'
+import type {
+  ComposeProfile,
+  DockerContainerAction,
+  DockerImageAction,
+  DockerNetworkAction,
+  DockerVolumeAction,
+} from './schemas.js'
 
 export type ContainerRow = {
   id: string
@@ -7,6 +13,27 @@ export type ContainerRow = {
   state: string
   status: string
   ports: string
+}
+
+export type ImageRow = {
+  id: string
+  repoTags: string[]
+  sizeMb: number
+  createdAt: number
+}
+
+export type VolumeRow = {
+  name: string
+  driver: string
+  mountpoint: string
+  scope: string
+}
+
+export type NetworkRow = {
+  id: string
+  name: string
+  driver: string
+  scope: string
 }
 
 export type HostMetrics = {
@@ -42,6 +69,13 @@ export const IPC = {
   dockerList: 'dh:docker:list',
   dockerAction: 'dh:docker:action',
   dockerLogs: 'dh:docker:logs',
+  dockerImagesList: 'dh:docker:images:list',
+  dockerImageAction: 'dh:docker:image:action',
+  dockerVolumesList: 'dh:docker:volumes:list',
+  dockerVolumeAction: 'dh:docker:volume:action',
+  dockerNetworksList: 'dh:docker:networks:list',
+  dockerNetworkAction: 'dh:docker:network:action',
+  dockerPrune: 'dh:docker:prune',
   /** Returns HostMetricsResponse (metrics + read-only systemd rows). */
   metrics: 'dh:metrics',
   hostExec: 'dh:host:exec',
@@ -72,5 +106,8 @@ export const IPC = {
 } as const
 
 export type DockerActionPayload = { id: string; action: DockerContainerAction }
+export type DockerImageActionPayload = { id: string; action: DockerImageAction; force?: boolean }
+export type DockerVolumeActionPayload = { name: string; action: DockerVolumeAction }
+export type DockerNetworkActionPayload = { id: string; action: DockerNetworkAction }
 
 export type ComposeUpPayload = { profile: ComposeProfile }

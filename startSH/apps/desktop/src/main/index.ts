@@ -14,7 +14,10 @@ import {
   ComposeUpRequestSchema,
   DashboardLayoutFileSchema,
   DockerContainerActionSchema,
+  DockerImageActionRequestSchema,
   DockerLogsRequestSchema,
+  DockerNetworkActionRequestSchema,
+  DockerVolumeActionRequestSchema,
   GitCloneRequestSchema,
   GitRecentAddSchema,
   GitStatusRequestSchema,
@@ -28,12 +31,18 @@ import {
   type ContainerRow,
   type DashboardLayoutFile,
   type DockerActionPayload,
+  type DockerImageActionPayload,
+  type DockerNetworkActionPayload,
+  type DockerVolumeActionPayload,
   type GitRepoEntry,
   type HostMetrics,
   type HostMetricsResponse,
+  type ImageRow,
   type JobSummary,
+  type NetworkRow,
   type SessionInfo,
   type SystemdRow,
+  type VolumeRow,
   CustomProfilesStoreSchema,
   StoreGetRequestSchema,
   StoreSetRequestSchema,
@@ -406,6 +415,90 @@ function registerIpc(): void {
     })
     const buf = Buffer.isBuffer(stream) ? stream : Buffer.from(stream as ArrayBuffer)
     return buf.toString('utf8')
+  })
+
+  ipcMain.handle(IPC.dockerImagesList, async () => {
+    const d = getDocker()
+    if (!d) throw new Error('Docker unavailable')
+    const list = await d.listImages({ all: true })
+    const rows: ImageRow[] = list.map((img) => ({
+      id: img.Id,
+      repoTags: Array.isArray(img.RepoTags) && img.RepoTags.length > 0 ? img.RepoTags : ['<none>:<none>'],
+      sizeMb: Math.round((((img.Size ?? 0) as number) / (1024 * 1024)) * 10) / 10,
+      createdAt: ((img.Created ?? 0) as number) * 1000,
+    }))
+    return { ok: true, rows }
+  })
+
+  ipcMain.handle(IPC.dockerImageAction, async (_e, raw: unknown) => {
+    const req = DockerImageActionRequestSchema.parse(raw as DockerImageActionPayload)
+    const d = getDocker()
+    if (!d) throw new Error('Docker unavailable')
+    if (req.action !== 'remove') throw new Error('Unsupported image action')
+    await d.getImage(req.id).remove({ force: req.force ?? false })
+    return { ok: true }
+  })
+
+  ipcMain.handle(IPC.dockerVolumesList, async () => {
+    const d = getDocker()
+    if (!d) throw new Error('Docker unavailable')
+    const list = await d.listVolumes()
+    const rows: VolumeRow[] = (list.Volumes ?? []).map((v) => ({
+      name: v.Name,
+      driver: v.Driver,
+      mountpoint: v.Mountpoint,
+      scope: v.Scope,
+    }))
+    return { ok: true, rows }
+  })
+
+  ipcMain.handle(IPC.dockerVolumeAction, async (_e, raw: unknown) => {
+    const req = DockerVolumeActionRequestSchema.parse(raw as DockerVolumeActionPayload)
+    const d = getDocker()
+    if (!d) throw new Error('Docker unavailable')
+    if (req.action !== 'remove') throw new Error('Unsupported volume action')
+    await d.getVolume(req.name).remove()
+    return { ok: true }
+  })
+
+  ipcMain.handle(IPC.dockerNetworksList, async () => {
+    const d = getDocker()
+    if (!d) throw new Error('Docker unavailable')
+    const list = await d.listNetworks()
+    const rows: NetworkRow[] = list.map((n) => ({
+      id: n.Id,
+      name: n.Name,
+      driver: n.Driver,
+      scope: n.Scope,
+    }))
+    return { ok: true, rows }
+  })
+
+  ipcMain.handle(IPC.dockerNetworkAction, async (_e, raw: unknown) => {
+    const req = DockerNetworkActionRequestSchema.parse(raw as DockerNetworkActionPayload)
+    const d = getDocker()
+    if (!d) throw new Error('Docker unavailable')
+    if (req.action !== 'remove') throw new Error('Unsupported network action')
+    await d.getNetwork(req.id).remove()
+    return { ok: true }
+  })
+
+  ipcMain.handle(IPC.dockerPrune, async () => {
+    const d = getDocker()
+    if (!d) throw new Error('Docker unavailable')
+    const [containers, images, volumes] = await Promise.all([
+      d.pruneContainers(),
+      d.pruneImages(),
+      d.pruneVolumes(),
+    ])
+    await d.pruneNetworks()
+    return {
+      ok: true,
+      reclaimedBytes:
+        Number(containers.SpaceReclaimed ?? 0) +
+        Number(images.SpaceReclaimed ?? 0) +
+        Number(volumes.SpaceReclaimed ?? 0),
+    }
   })
 
   ipcMain.handle(IPC.metrics, async () => await collectMetrics())
