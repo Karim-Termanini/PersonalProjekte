@@ -1,18 +1,28 @@
+import { ComposeProfileSchema, type ComposeProfile, type CustomProfileEntry } from '@linux-dev-home/shared'
 import type { ReactElement } from 'react'
 import { useState } from 'react'
 
-type ProfileData = {
-  name: string
-  baseTemplate: string
+const PROFILE_LABELS: Record<ComposeProfile, string> = {
+  'web-dev': 'Web Development',
+  'data-science': 'Python Data Science',
+  'ai-ml': 'AI/ML Local',
+  mobile: 'Mobile App Dev',
+  'game-dev': 'Game Development',
+  infra: 'Infra / K8s',
+  'desktop-gui': 'Desktop Qt/GTK',
+  docs: 'Docs / Writing',
+  empty: 'Empty Minimal',
 }
+
+const PROFILE_ORDER = ComposeProfileSchema.options
 
 export function CustomProfileWizardModal(props: {
   open: boolean
   onClose: () => void
-  onSave: (data: ProfileData) => void
+  onSave: (data: CustomProfileEntry) => void
 }): ReactElement | null {
   const [name, setName] = useState('')
-  const [template, setTemplate] = useState('web-dev')
+  const [template, setTemplate] = useState<ComposeProfile>('web-dev')
 
   if (!props.open) return null
 
@@ -42,7 +52,8 @@ export function CustomProfileWizardModal(props: {
       >
         <h2 style={{ margin: 0, fontSize: 20 }}>Create Custom Profile</h2>
         <p style={{ color: 'var(--text-muted)', fontSize: 13, marginBottom: 20 }}>
-          Define a new custom profile by selecting a base template.
+          Define a new custom profile by selecting a base template (nine presets use the same Alpine stub compose until
+          real stacks land).
         </p>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -72,7 +83,7 @@ export function CustomProfileWizardModal(props: {
             </label>
             <select
               value={template}
-              onChange={(e) => setTemplate(e.target.value)}
+              onChange={(e) => setTemplate(e.target.value as ComposeProfile)}
               style={{
                 width: '100%',
                 padding: '10px 12px',
@@ -82,15 +93,11 @@ export function CustomProfileWizardModal(props: {
                 color: 'var(--text)',
               }}
             >
-              <option value="web-dev">Web Development</option>
-              <option value="data-science">Python Data Science</option>
-              <option value="ai-ml">AI/ML Local</option>
-              <option value="mobile">Mobile App Dev</option>
-              <option value="game-dev">Game Development</option>
-              <option value="infra">Infra / K8s</option>
-              <option value="desktop-gui">Desktop Qt/GTK</option>
-              <option value="docs">Docs / Writing</option>
-              <option value="empty">Empty Minimal</option>
+              {PROFILE_ORDER.map((id) => (
+                <option key={id} value={id}>
+                  {PROFILE_LABELS[id]}
+                </option>
+              ))}
             </select>
           </div>
         </div>

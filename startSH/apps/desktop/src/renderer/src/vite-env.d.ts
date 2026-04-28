@@ -1,5 +1,7 @@
 /// <reference types="vite/client" />
 
+import type { ComposeProfile, CustomProfileEntry } from '@linux-dev-home/shared'
+
 export {}
 
 declare global {
@@ -10,8 +12,8 @@ declare global {
       dockerLogs: (payload: { id: string; tail?: number }) => Promise<unknown>
       metrics: () => Promise<unknown>
       hostExec: (payload: unknown) => Promise<unknown>
-      composeUp: (payload: { profile: string }) => Promise<unknown>
-      composeLogs: (payload: { profile: string }) => Promise<unknown>
+      composeUp: (payload: { profile: ComposeProfile }) => Promise<unknown>
+      composeLogs: (payload: { profile: ComposeProfile }) => Promise<unknown>
       terminalCreate: (payload: { cols: number; rows: number }) => Promise<unknown>
       terminalWrite: (id: string, data: string) => void
       terminalResize: (id: string, cols: number, rows: number) => void
@@ -27,8 +29,8 @@ declare global {
       sessionInfo: () => Promise<unknown>
       layoutGet: () => Promise<unknown>
       layoutSet: (layout: unknown) => Promise<unknown>
-      storeGet: (payload: { key: string }) => Promise<unknown>
-      storeSet: (payload: { key: string; data: unknown }) => Promise<unknown>
+      storeGet: (payload: { key: 'custom_profiles' }) => Promise<CustomProfileEntry[] | null>
+      storeSet: (payload: { key: 'custom_profiles'; data: CustomProfileEntry[] }) => Promise<unknown>
       jobStart: (payload: { kind: string; durationMs?: number }) => Promise<unknown>
       jobsList: () => Promise<unknown>
       jobCancel: (payload: { id: string }) => Promise<unknown>

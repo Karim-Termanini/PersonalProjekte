@@ -1,4 +1,12 @@
-import type { ComposeProfile, ContainerRow, DashboardLayoutFile, HostMetricsResponse } from '@linux-dev-home/shared'
+import {
+  CustomProfileEntrySchema,
+  CustomProfilesStoreSchema,
+  type ComposeProfile,
+  type ContainerRow,
+  type CustomProfileEntry,
+  type DashboardLayoutFile,
+  type HostMetricsResponse,
+} from '@linux-dev-home/shared'
 import type { CSSProperties, ReactElement } from 'react'
 import { useCallback, useEffect, useState } from 'react'
 
@@ -15,7 +23,7 @@ export function DashboardPage(): ReactElement {
   const [layout, setLayout] = useState<DashboardLayoutFile | null>(null)
   const [pickerOpen, setPickerOpen] = useState(false)
   const [wizardOpen, setWizardOpen] = useState(false)
-  const [customProfiles, setCustomProfiles] = useState<{name: string, baseTemplate: string}[]>([])
+  const [customProfiles, setCustomProfiles] = useState<CustomProfileEntry[]>([])
 
   const refresh = useCallback(async () => {
     try {
@@ -49,8 +57,11 @@ export function DashboardPage(): ReactElement {
         setLayout(null)
       }
       try {
-        const profiles = (await window.dh.storeGet({ key: 'custom_profiles' })) as {name: string, baseTemplate: string}[]
-        if (profiles) setCustomProfiles(profiles)
+        const profiles = await window.dh.storeGet({ key: 'custom_profiles' })
+        if (profiles) {
+          const parsed = CustomProfilesStoreSchema.safeParse(profiles)
+          if (parsed.success) setCustomProfiles(parsed.data)
+        }
       } catch {
         /* ignore */
       }
@@ -171,7 +182,8 @@ export function DashboardPage(): ReactElement {
         open={wizardOpen}
         onClose={() => setWizardOpen(false)}
         onSave={async (data) => {
-          const next = [...customProfiles, data]
+          const entry = CustomProfileEntrySchema.parse(data)
+          const next = CustomProfilesStoreSchema.parse([...customProfiles, entry])
           setCustomProfiles(next)
           await window.dh.storeSet({ key: 'custom_profiles', data: next })
           setWizardOpen(false)
@@ -265,7 +277,7 @@ export function DashboardPage(): ReactElement {
             accent="var(--accent)"
             description={`Custom profile based on ${p.baseTemplate}.`}
             icon="code"
-            onInit={() => void initProfile(p.baseTemplate as ComposeProfile)}
+            onInit={() => void initProfile(p.baseTemplate)}
           />
         ))}
       </div>

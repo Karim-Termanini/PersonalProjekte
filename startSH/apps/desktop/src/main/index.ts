@@ -33,6 +33,7 @@ import {
   type JobSummary,
   type SessionInfo,
   type SystemdRow,
+  CustomProfilesStoreSchema,
   StoreGetRequestSchema,
   StoreSetRequestSchema,
 } from '@linux-dev-home/shared'
@@ -565,17 +566,21 @@ function registerIpc(): void {
     const storePath = path.join(app.getPath('userData'), `store_${key}.json`)
     try {
       const content = await readFile(storePath, 'utf8')
-      return JSON.parse(content)
+      const parsed = JSON.parse(content) as unknown
+      if (key === 'custom_profiles') {
+        return CustomProfilesStoreSchema.parse(parsed)
+      }
+      return null
     } catch {
       return null
     }
   })
 
   ipcMain.handle(IPC.storeSet, async (_e, raw: unknown) => {
-    const { key, data } = StoreSetRequestSchema.parse(raw)
-    const storePath = path.join(app.getPath('userData'), `store_${key}.json`)
+    const body = StoreSetRequestSchema.parse(raw)
+    const storePath = path.join(app.getPath('userData'), `store_${body.key}.json`)
     await mkdir(app.getPath('userData'), { recursive: true })
-    await writeFile(storePath, JSON.stringify(data, null, 2))
+    await writeFile(storePath, JSON.stringify(body.data, null, 2))
     return { ok: true }
   })
 

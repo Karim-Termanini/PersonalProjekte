@@ -1,12 +1,13 @@
+import { ComposeProfileSchema, type ComposeProfile } from '@linux-dev-home/shared'
 import type { ReactElement } from 'react'
 import { useState } from 'react'
 
-const profiles = ['web-dev', 'data-science', 'ai-ml'] as const
+const profiles = ComposeProfileSchema.options
 
 export function WorkstationPage(): ReactElement {
   const [log, setLog] = useState<string>('')
 
-  async function showLogs(profile: (typeof profiles)[number]): Promise<void> {
+  async function showLogs(profile: ComposeProfile): Promise<void> {
     const text = (await window.dh.composeLogs({ profile })) as string
     setLog(text)
   }

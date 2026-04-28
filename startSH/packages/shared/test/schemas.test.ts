@@ -2,9 +2,11 @@ import { describe, expect, it } from 'vitest'
 import { DashboardLayoutFileSchema } from '../src/foundation'
 import {
   ComposeUpRequestSchema,
+  CustomProfilesStoreSchema,
   DockerLogsRequestSchema,
   GitCloneRequestSchema,
   HostExecRequestSchema,
+  StoreSetRequestSchema,
 } from '../src/schemas'
 import { isRegisteredWidgetType } from '../src/widgetRegistry'
 
@@ -45,5 +47,29 @@ describe('schemas', () => {
     expect(v.placements).toHaveLength(1)
     expect(isRegisteredWidgetType('static.docker-permission-hint')).toBe(true)
     expect(isRegisteredWidgetType('unknown.widget')).toBe(false)
+  })
+
+  it('parses typed store set for custom_profiles', () => {
+    const v = StoreSetRequestSchema.parse({
+      key: 'custom_profiles',
+      data: [{ name: 'My stack', baseTemplate: 'web-dev' }],
+    })
+    expect(v.key).toBe('custom_profiles')
+    expect(v.data).toHaveLength(1)
+  })
+
+  it('rejects store set with unknown key', () => {
+    expect(() =>
+      StoreSetRequestSchema.parse({
+        key: 'other',
+        data: [],
+      } as never)
+    ).toThrow()
+  })
+
+  it('rejects custom profile with invalid baseTemplate', () => {
+    expect(() =>
+      CustomProfilesStoreSchema.parse([{ name: 'x', baseTemplate: 'not-real' as never }])
+    ).toThrow()
   })
 })

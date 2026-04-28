@@ -25,17 +25,30 @@ export const ComposeProfileSchema = z.enum([
   'infra',
   'desktop-gui',
   'docs',
-  'empty'
+  'empty',
 ])
 
-export const StoreSetRequestSchema = z.object({
-  key: z.string().min(1).max(128),
-  data: z.any(),
+/** Preserved compose template id for a user-named dashboard profile. */
+export const CustomProfileEntrySchema = z.object({
+  name: z.string().trim().min(1).max(128),
+  baseTemplate: ComposeProfileSchema,
 })
 
+export const CustomProfilesStoreSchema = z.array(CustomProfileEntrySchema).max(50)
+
+/** Keys with typed payloads persisted under userData (`store_<key>.json`). */
+export const StoreKeySchema = z.enum(['custom_profiles'])
+
 export const StoreGetRequestSchema = z.object({
-  key: z.string().min(1).max(128),
+  key: StoreKeySchema,
 })
+
+export const StoreSetRequestSchema = z.discriminatedUnion('key', [
+  z.object({
+    key: z.literal('custom_profiles'),
+    data: CustomProfilesStoreSchema,
+  }),
+])
 export const ComposeUpRequestSchema = z.object({
   profile: ComposeProfileSchema,
 })
@@ -55,3 +68,6 @@ export const GitRecentAddSchema = z.object({
 
 export type DockerContainerAction = z.infer<typeof DockerContainerActionSchema>
 export type ComposeProfile = z.infer<typeof ComposeProfileSchema>
+export type CustomProfileEntry = z.infer<typeof CustomProfileEntrySchema>
+export type StoreKey = z.infer<typeof StoreKeySchema>
+export type StoreSetRequest = z.infer<typeof StoreSetRequestSchema>

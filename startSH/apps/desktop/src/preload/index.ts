@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 
-import { IPC } from '@linux-dev-home/shared'
+import { IPC, type ComposeProfile, type CustomProfileEntry } from '@linux-dev-home/shared'
 
 export type DhApi = {
   dockerList: () => unknown
@@ -8,8 +8,8 @@ export type DhApi = {
   dockerLogs: (payload: { id: string; tail?: number }) => unknown
   metrics: () => unknown
   hostExec: (payload: unknown) => unknown
-  composeUp: (payload: { profile: string }) => unknown
-  composeLogs: (payload: { profile: string }) => unknown
+  composeUp: (payload: { profile: ComposeProfile }) => unknown
+  composeLogs: (payload: { profile: ComposeProfile }) => unknown
   terminalCreate: (payload: { cols: number; rows: number }) => unknown
   terminalWrite: (id: string, data: string) => void
   terminalResize: (id: string, cols: number, rows: number) => void
@@ -25,8 +25,8 @@ export type DhApi = {
   sessionInfo: () => Promise<unknown>
   layoutGet: () => Promise<unknown>
   layoutSet: (layout: unknown) => Promise<unknown>
-  storeGet: (payload: { key: string }) => Promise<unknown>
-  storeSet: (payload: { key: string; data: unknown }) => Promise<unknown>
+  storeGet: (payload: { key: 'custom_profiles' }) => Promise<CustomProfileEntry[] | null>
+  storeSet: (payload: { key: 'custom_profiles'; data: CustomProfileEntry[] }) => Promise<unknown>
   jobStart: (payload: { kind: string; durationMs?: number }) => Promise<unknown>
   jobsList: () => Promise<unknown>
   jobCancel: (payload: { id: string }) => Promise<unknown>

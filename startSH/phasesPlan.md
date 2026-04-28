@@ -27,7 +27,7 @@
 - **Custom profile card** → wizard: name → pick base template → choose compose stacks → choose default widgets → save to **profiles store**.
 - **“Custom layout”** on dashboard: **edit mode** (drag placeholders first; real drag-drop later) + **Add widget** opens a **picker modal** (list from widget registry).
 
-Deliverable: **10 cards** (9 presets + 1 “Custom…”) and persisted **custom profiles** without new backend services.
+Deliverable: **9 preset cards** on the grid plus **N user-saved custom cards** (wizard → typed JSON store `custom_profiles`, no SQL). Compose folders use a small **Alpine `sleep infinity` stub** until real stack definitions replace them.
 
 ---
 
