@@ -41,7 +41,13 @@ export function GitConfigPage(): ReactElement {
         ok: boolean
         rows: GitConfigRow[]
       }
-      setRows(res.rows ?? [])
+      const nextRows = res.rows ?? []
+      setRows(nextRows)
+      const byKey = new Map(nextRows.map((r) => [r.key.toLowerCase(), r.value]))
+      setName(byKey.get('user.name') ?? '')
+      setEmail(byKey.get('user.email') ?? '')
+      setDefaultBranch(byKey.get('init.defaultbranch') ?? '')
+      setDefaultEditor(byKey.get('core.editor') ?? '')
     } catch (e) {
       setStatus(e instanceof Error ? e.message : String(e))
       setRows([])
@@ -139,42 +145,64 @@ export function GitConfigPage(): ReactElement {
       </section>
 
       <section style={card}>
-        <div style={{ fontWeight: 600, marginBottom: 12 }}>User Identity</div>
-        <div style={{ display: 'grid', gap: 8, maxWidth: 480 }}>
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Your full name (e.g. Jane Doe)"
-            style={input}
-            disabled={busy}
-          />
-          <input
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Your email (e.g. jane@example.com)"
-            style={input}
-            disabled={busy}
-          />
-        </div>
-      </section>
-
-      <section style={card}>
-        <div style={{ fontWeight: 600, marginBottom: 12 }}>Defaults (optional)</div>
-        <div style={{ display: 'grid', gap: 8, maxWidth: 480 }}>
-          <input
-            value={defaultBranch}
-            onChange={(e) => setDefaultBranch(e.target.value)}
-            placeholder="Default branch (e.g. main)"
-            style={input}
-            disabled={busy}
-          />
-          <input
-            value={defaultEditor}
-            onChange={(e) => setDefaultEditor(e.target.value)}
-            placeholder="Default editor (e.g. code --wait, vim, nano)"
-            style={input}
-            disabled={busy}
-          />
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          <div>
+            <div style={{ fontWeight: 600, marginBottom: 12 }}>User Identity</div>
+            <div style={{ display: 'grid', gap: 8 }}>
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Your full name (e.g. Jane Doe)"
+                style={input}
+                disabled={busy}
+              />
+              <input
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Your email (e.g. jane@example.com)"
+                style={input}
+                disabled={busy}
+              />
+            </div>
+          </div>
+          <div>
+            <div style={{ fontWeight: 600, marginBottom: 12 }}>Defaults</div>
+            <div style={{ display: 'grid', gap: 8 }}>
+              <input
+                value={defaultBranch}
+                onChange={(e) => setDefaultBranch(e.target.value)}
+                placeholder="Default branch (e.g. main)"
+                style={input}
+                disabled={busy}
+              />
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                <button type="button" style={btnSmall} onClick={() => setDefaultBranch('main')} disabled={busy}>
+                  main
+                </button>
+                <button type="button" style={btnSmall} onClick={() => setDefaultBranch('master')} disabled={busy}>
+                  master
+                </button>
+              </div>
+              <input
+                value={defaultEditor}
+                onChange={(e) => setDefaultEditor(e.target.value)}
+                placeholder="Default editor (e.g. code --wait, vim, nano)"
+                style={input}
+                disabled={busy}
+              />
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                <button type="button" style={btnSmall} onClick={() => setDefaultEditor('code --wait')} disabled={busy}>
+                  VS Code
+                </button>
+                <button type="button" style={btnSmall} onClick={() => setDefaultEditor('vim')} disabled={busy}>
+                  vim
+                </button>
+                <button type="button" style={btnSmall} onClick={() => setDefaultEditor('nano')} disabled={busy}>
+                  nano
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

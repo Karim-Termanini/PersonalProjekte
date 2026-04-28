@@ -18,8 +18,6 @@ type SchemeProps = {
   networks: NetworkRow[]
 }
 
-
-
 function ContainerNode({ data }: { data: ContainerRow }) {
   const isRunning = data.state.toLowerCase() === 'running'
   return (
@@ -34,6 +32,7 @@ function ContainerNode({ data }: { data: ContainerRow }) {
         flexDirection: 'column',
         gap: 12,
         boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+        cursor: 'default',
       }}
     >
       <Handle type="target" position={Position.Top} style={{ background: 'var(--accent)' }} />
@@ -122,7 +121,6 @@ function ContainerNode({ data }: { data: ContainerRow }) {
           ))}
         </div>
       ) : null}
-      <Handle type="source" position={Position.Bottom} style={{ background: 'var(--accent)' }} />
     </div>
   )
 }
@@ -141,6 +139,8 @@ function NetworkNode({ data }: { data: NetworkRow }) {
         fontSize: 14,
         textAlign: 'center',
         boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+        width: 140,
+        cursor: 'default',
       }}
     >
       <Handle type="target" position={Position.Top} style={{ background: '#555' }} />
@@ -151,9 +151,24 @@ function NetworkNode({ data }: { data: NetworkRow }) {
   )
 }
 
+function ClusterGroupNode({ data }: { data: { isSystem: boolean } }) {
+  return (
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        background: data.isSystem ? 'rgba(30, 30, 30, 0.3)' : 'rgba(124, 77, 255, 0.03)',
+        border: `2px dashed ${data.isSystem ? 'var(--border)' : 'var(--accent)'}`,
+        borderRadius: 16,
+      }}
+    />
+  )
+}
+
 const nodeTypes = {
   containerNode: ContainerNode,
   networkNode: NetworkNode,
+  clusterGroupNode: ClusterGroupNode,
 }
 
 export function DockerSchemeView({ containers, networks }: SchemeProps) {
@@ -164,38 +179,95 @@ export function DockerSchemeView({ containers, networks }: SchemeProps) {
     const newNodes: Node[] = []
     const newEdges: Edge[] = []
 
-    const x = 100
-    const startY = 50
+    // Group containers by primary network
+    const networkContainers: Record<string, ContainerRow[]> = {}
+    networks.forEach((n) => {
+      networkContainers[n.name] = []
+    })
 
-    // Build Network Nodes
-    networks.forEach((net, i) => {
+    containers.forEach((c) => {
+      const primaryNet = c.networks && c.networks.length > 0 ? c.networks[0] : 'none'
+      if (!networkContainers[primaryNet]) {
+        networkContainers[primaryNet] = []
+      }
+      networkContainers[primaryNet].push(c)
+    })
+
+    let currentX = 50
+
+    // Build Clusters
+    networks.forEach((net) => {
+      const conts = networkContainers[net.name] || []
+      const count = conts.length
+      
+      const CONTAINER_WIDTH = 260
+      const GAP = 30
+      const boxWidth = Math.max(300, count * CONTAINER_WIDTH + (count + 1) * GAP)
+      const boxHeight = count > 0 ? 320 : 120
+
+      // Add Cluster Background Box
+      newNodes.push({
+        id: `cluster-${net.name}`,
+        type: 'clusterGroupNode',
+        position: { x: currentX, y: 50 },
+        style: { width: boxWidth, height: boxHeight },
+        data: { isSystem: net.name === 'bridge' || net.name === 'host' || net.name === 'none' },
+      })
+
+      // Add Network Node (the pill) inside the cluster
       newNodes.push({
         id: `net-${net.name}`,
         type: 'networkNode',
-        position: { x: x + i * 200, y: startY },
+        parentId: `cluster-${net.name}`,
+        extent: 'parent',
+        position: { x: boxWidth / 2 - 86, y: 30 }, // 86 is half of 140px width + padding approx
         data: net,
       })
+
+      // Add Containers inside the cluster
+      conts.forEach((c, idx) => {
+        newNodes.push({
+          id: `cont-${c.id}`,
+          type: 'containerNode',
+          parentId: `cluster-${net.name}`,
+          extent: 'parent',
+          position: { x: GAP + idx * (CONTAINER_WIDTH + GAP), y: 130 },
+          data: c,
+        })
+      })
+
+      currentX += boxWidth + 50 // Advance X for next cluster
     })
 
-    // Build Container Nodes
-    containers.forEach((c, i) => {
+    // Handle unmapped containers
+    const unmappedContainers = containers.filter(c => {
+      const primaryNet = c.networks && c.networks.length > 0 ? c.networks[0] : 'none'
+      return !networks.find(n => n.name === primaryNet)
+    })
+
+    unmappedContainers.forEach((c, idx) => {
       newNodes.push({
         id: `cont-${c.id}`,
         type: 'containerNode',
-        position: { x: 100 + i * 320, y: startY + 200 },
+        position: { x: currentX + idx * 300, y: 180 },
         data: c,
       })
+    })
 
-      // Edges to networks
+    // Create Edges for ALL networks
+    containers.forEach((c) => {
       if (c.networks) {
         c.networks.forEach((netName) => {
-          newEdges.push({
-            id: `e-${c.id}-${netName}`,
-            source: `net-${netName}`,
-            target: `cont-${c.id}`,
-            animated: c.state.toLowerCase() === 'running',
-            style: { stroke: 'var(--accent)', strokeWidth: 2 },
-          })
+          // Verify network exists
+          if (networks.find(n => n.name === netName)) {
+            newEdges.push({
+              id: `e-${c.id}-${netName}`,
+              source: `net-${netName}`,
+              target: `cont-${c.id}`,
+              animated: c.state.toLowerCase() === 'running',
+              style: { stroke: 'var(--accent)', strokeWidth: 2 },
+            })
+          }
         })
       }
     })
@@ -214,6 +286,9 @@ export function DockerSchemeView({ containers, networks }: SchemeProps) {
         nodeTypes={nodeTypes}
         fitView
         colorMode="dark"
+        nodesConnectable={false}
+        elementsSelectable={false}
+        edgesFocusable={false}
       >
         <Background />
         <Controls />

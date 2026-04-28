@@ -52,6 +52,7 @@ import {
   CustomProfilesStoreSchema,
   StoreGetRequestSchema,
   StoreSetRequestSchema,
+  GitConfigListSchema,
   GitConfigSetSchema,
   SshGenerateSchema,
   SshGetPubSchema,
@@ -726,12 +727,13 @@ function registerIpc(): void {
     })
   })
 
-  ipcMain.handle(IPC.terminalCreate, (_e, payload: { cols: number; rows: number }) => {
-    const { cols, rows } = payload
-    const shellBin = process.env.SHELL || '/bin/bash'
+  ipcMain.handle(IPC.terminalCreate, (_e, payload: { cols: number; rows: number; cmd?: string; args?: string[] }) => {
+    const { cols, rows, cmd, args } = payload
+    const shellBin = cmd ?? (process.env.SHELL || '/bin/bash')
+    const shellArgs = args ?? []
     const id = randomUUID()
     try {
-      const term = pty.spawn(shellBin, [], {
+      const term = pty.spawn(shellBin, shellArgs, {
         name: 'xterm-color',
         cols: Math.max(2, cols),
         rows: Math.max(2, rows),
@@ -821,10 +823,32 @@ function registerIpc(): void {
   })
 
   ipcMain.handle(IPC.gitConfigSet, async (_e, raw: unknown) => {
-    const { name, email, target } = GitConfigSetSchema.parse(raw)
+    const { name, email, defaultBranch, defaultEditor, target } = GitConfigSetSchema.parse(raw)
     await execTarget(target, 'git', ['config', '--global', 'user.name', name])
     await execTarget(target, 'git', ['config', '--global', 'user.email', email])
+    if (defaultBranch?.trim()) {
+      await execTarget(target, 'git', ['config', '--global', 'init.defaultBranch', defaultBranch.trim()])
+    }
+    if (defaultEditor?.trim()) {
+      await execTarget(target, 'git', ['config', '--global', 'core.editor', defaultEditor.trim()])
+    }
     return { ok: true }
+  })
+
+  ipcMain.handle(IPC.gitConfigList, async (_e, raw: unknown) => {
+    const { target } = GitConfigListSchema.parse(raw)
+    const out = await execTarget(target, 'git', ['config', '--global', '--list'])
+    const rows = out
+      .split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .map((line) => {
+        const i = line.indexOf('=')
+        if (i < 0) return { key: line, value: '' }
+        return { key: line.slice(0, i), value: line.slice(i + 1) }
+      })
+      .sort((a, b) => a.key.localeCompare(b.key))
+    return { ok: true, rows }
   })
 
   ipcMain.handle(IPC.sshGenerate, async (_e, raw: unknown) => {

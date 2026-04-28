@@ -34,7 +34,7 @@ declare global {
       hostExec: (payload: unknown) => Promise<unknown>
       composeUp: (payload: { profile: ComposeProfile }) => Promise<unknown>
       composeLogs: (payload: { profile: ComposeProfile }) => Promise<unknown>
-      terminalCreate: (payload: { cols: number; rows: number }) => Promise<unknown>
+      terminalCreate: (payload: { cols: number; rows: number; cmd?: string; args?: string[] }) => Promise<unknown>
       terminalWrite: (id: string, data: string) => void
       terminalResize: (id: string, cols: number, rows: number) => void
       openExternalTerminal: () => Promise<unknown>

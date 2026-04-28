@@ -171,7 +171,13 @@ export function SshPage(): ReactElement {
     let tid: string | undefined = undefined
 
     void (async () => {
-      const res = (await window.dh.terminalCreate({ cols: term.cols, rows: term.rows })) as
+      const sshArgs = ['-p', String(activeTermSession.port), `${activeTermSession.user}@${activeTermSession.host}`]
+      const res = (await window.dh.terminalCreate({ 
+        cols: term.cols, 
+        rows: term.rows,
+        cmd: 'ssh',
+        args: sshArgs
+      })) as
         | { ok: true; id: string }
         | { ok: false; error: string }
       if (!res.ok) {
@@ -181,10 +187,6 @@ export function SshPage(): ReactElement {
       tid = res.id
       // Update session with termId
       setSessions((prev) => prev.map(s => s.id === activeTermSession.id ? { ...s, termId: tid, status: 'connected' } : s))
-
-      // Execute SSH command
-      const cmd = `ssh -p ${activeTermSession.port} ${activeTermSession.user}@${activeTermSession.host}\r`
-      window.dh.terminalWrite(tid, cmd)
     })()
 
     const onData = (d: string): void => {

@@ -603,6 +603,9 @@ export function DockerPage(): ReactElement {
                       <div className="mono" style={{ fontSize: 11, background: 'var(--bg)', padding: '6px 8px', borderRadius: 6, wordBreak: 'break-all' }} title={v.mountpoint}>
                         {truncateMiddle(v.mountpoint, 60)}
                       </div>
+                      <div style={{ fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.4 }}>
+                        {getVolumeDescription(v.name, !!(v.usedBy && v.usedBy.length > 0))}
+                      </div>
                       <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
                         Used by:{' '}
                         <span className="mono" style={{ fontSize: 11 }}>
@@ -706,6 +709,9 @@ export function DockerPage(): ReactElement {
                       <div style={{ fontSize: 12, color: 'var(--text-muted)', display: 'flex', gap: 8, marginTop: 4 }}>
                         <span>Driver: <span className="mono">{n.driver}</span></span>
                         <span>Scope: <span className="mono">{n.scope}</span></span>
+                      </div>
+                      <div style={{ fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.4 }}>
+                        {getNetworkDescription(n.name)}
                       </div>
                       <button
                         type="button"
@@ -946,6 +952,23 @@ function parseVolumeMappings(text: string): Array<{ hostPath: string; containerP
     }
     return { hostPath: line.slice(0, idx), containerPath: line.slice(idx + 1) }
   })
+}
+
+function getNetworkDescription(name: string): string {
+  if (name === 'bridge') return 'Default network. Connects containers together and provides internet access.'
+  if (name === 'host') return 'Removes network isolation. Containers share the host’s exact IP and ports.'
+  if (name === 'none') return 'Completely disables networking. Container has no internet or local access.'
+  if (name.endsWith('_default')) return 'Custom bridge network (usually created by Docker Compose) to isolate an app.'
+  return 'User-created custom network.'
+}
+
+function getVolumeDescription(name: string, isUsed: boolean): string {
+  if (name.length === 64 && !name.includes('_')) {
+    return isUsed 
+      ? 'Anonymous Volume. Automatically created by a running container to store internal data.'
+      : 'Unused Anonymous Volume. Leftover data from a deleted container. Safe to remove if unneeded.'
+  }
+  return 'Named Volume. Specifically created to persist important database or application data safely.'
 }
 
 function parseEnvLines(text: string): string[] {
