@@ -27,6 +27,8 @@ declare global {
       sessionInfo: () => Promise<unknown>
       layoutGet: () => Promise<unknown>
       layoutSet: (layout: unknown) => Promise<unknown>
+      storeGet: (payload: { key: string }) => Promise<unknown>
+      storeSet: (payload: { key: string; data: unknown }) => Promise<unknown>
       jobStart: (payload: { kind: string; durationMs?: number }) => Promise<unknown>
       jobsList: () => Promise<unknown>
       jobCancel: (payload: { id: string }) => Promise<unknown>

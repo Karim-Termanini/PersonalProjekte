@@ -1,8 +1,9 @@
-import type { ContainerRow, DashboardLayoutFile, HostMetricsResponse } from '@linux-dev-home/shared'
+import type { ComposeProfile, ContainerRow, DashboardLayoutFile, HostMetricsResponse } from '@linux-dev-home/shared'
 import type { CSSProperties, ReactElement } from 'react'
 import { useCallback, useEffect, useState } from 'react'
 
 import { AddWidgetModal } from '../dashboard/AddWidgetModal'
+import { CustomProfileWizardModal } from '../dashboard/CustomProfileWizardModal'
 import { DashboardWidgetDeck } from '../dashboard/DashboardWidgetDeck'
 
 export function DashboardPage(): ReactElement {
@@ -13,7 +14,8 @@ export function DashboardPage(): ReactElement {
   const [composeMsg, setComposeMsg] = useState<string | null>(null)
   const [layout, setLayout] = useState<DashboardLayoutFile | null>(null)
   const [pickerOpen, setPickerOpen] = useState(false)
-  const [phaseHint, setPhaseHint] = useState<string | null>(null)
+  const [wizardOpen, setWizardOpen] = useState(false)
+  const [customProfiles, setCustomProfiles] = useState<{name: string, baseTemplate: string}[]>([])
 
   const refresh = useCallback(async () => {
     try {
@@ -46,6 +48,12 @@ export function DashboardPage(): ReactElement {
       } catch {
         setLayout(null)
       }
+      try {
+        const profiles = (await window.dh.storeGet({ key: 'custom_profiles' })) as {name: string, baseTemplate: string}[]
+        if (profiles) setCustomProfiles(profiles)
+      } catch {
+        /* ignore */
+      }
     })()
   }, [])
 
@@ -62,7 +70,7 @@ export function DashboardPage(): ReactElement {
     [layout]
   )
 
-  async function initProfile(profile: 'web-dev' | 'data-science' | 'ai-ml'): Promise<void> {
+  async function initProfile(profile: ComposeProfile): Promise<void> {
     setComposeMsg(`Starting ${profile}…`)
     const r = (await window.dh.composeUp({ profile })) as { ok: boolean; log: string }
     setComposeMsg(r.ok ? `Compose up: OK\n${r.log}` : `Compose error\n${r.log}`)
@@ -103,20 +111,7 @@ export function DashboardPage(): ReactElement {
         </pre>
       ) : null}
 
-      {phaseHint ? (
-        <div
-          style={{
-            padding: '10px 14px',
-            borderRadius: 'var(--radius)',
-            border: '1px solid var(--border)',
-            background: 'rgba(124, 77, 255, 0.08)',
-            fontSize: 13,
-            color: 'var(--text-muted)',
-          }}
-        >
-          {phaseHint}
-        </div>
-      ) : null}
+      {/* phaseHint removed */}
 
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'center' }}>
         <button
@@ -140,11 +135,7 @@ export function DashboardPage(): ReactElement {
         </button>
         <button
           type="button"
-          onClick={() => {
-            setPhaseHint(
-              'Custom profiles (name, compose stacks, widget packs, export/import) land in Phase 1 with the setup wizard.'
-            )
-          }}
+          onClick={() => setWizardOpen(true)}
           style={{
             border: '1px dashed var(--border)',
             background: 'transparent',
@@ -175,6 +166,17 @@ export function DashboardPage(): ReactElement {
           onSaved={(next) => setLayout(next)}
         />
       ) : null}
+
+      <CustomProfileWizardModal
+        open={wizardOpen}
+        onClose={() => setWizardOpen(false)}
+        onSave={async (data) => {
+          const next = [...customProfiles, data]
+          setCustomProfiles(next)
+          await window.dh.storeSet({ key: 'custom_profiles', data: next })
+          setWizardOpen(false)
+        }}
+      />
 
       <div
         style={{
@@ -207,6 +209,65 @@ export function DashboardPage(): ReactElement {
           icon="hubot"
           onInit={() => void initProfile('ai-ml')}
         />
+        <ProfileCard
+          tag="PROFILE_04"
+          title="Mobile App Dev"
+          accent="var(--green)"
+          description="React Native / Flutter environment stub."
+          icon="device-mobile"
+          onInit={() => void initProfile('mobile')}
+        />
+        <ProfileCard
+          tag="PROFILE_05"
+          title="Game Development"
+          accent="var(--yellow)"
+          description="Godot/Unity/Unreal minimal engine stub."
+          icon="play-circle"
+          onInit={() => void initProfile('game-dev')}
+        />
+        <ProfileCard
+          tag="PROFILE_06"
+          title="Infra / K8s"
+          accent="var(--purple)"
+          description="Local minikube/k3d or Terraform runner stub."
+          icon="server-environment"
+          onInit={() => void initProfile('infra')}
+        />
+        <ProfileCard
+          tag="PROFILE_07"
+          title="Desktop Qt/GTK"
+          accent="var(--cyan)"
+          description="Native desktop application build environment."
+          icon="window"
+          onInit={() => void initProfile('desktop-gui')}
+        />
+        <ProfileCard
+          tag="PROFILE_08"
+          title="Docs / Writing"
+          accent="var(--red)"
+          description="Jekyll/Hugo/Docusaurus writing environment."
+          icon="book"
+          onInit={() => void initProfile('docs')}
+        />
+        <ProfileCard
+          tag="PROFILE_09"
+          title="Empty Minimal"
+          accent="var(--text-muted)"
+          description="Clean slate alpine image for general scripting."
+          icon="blank"
+          onInit={() => void initProfile('empty')}
+        />
+        {customProfiles.map((p, i) => (
+          <ProfileCard
+            key={i}
+            tag="CUSTOM"
+            title={p.name}
+            accent="var(--accent)"
+            description={`Custom profile based on ${p.baseTemplate}.`}
+            icon="code"
+            onInit={() => void initProfile(p.baseTemplate as ComposeProfile)}
+          />
+        ))}
       </div>
 
       <div

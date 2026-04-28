@@ -61,6 +61,8 @@ export const IPC = {
   sessionInfo: 'dh:session:info',
   layoutGet: 'dh:layout:get',
   layoutSet: 'dh:layout:set',
+  storeGet: 'dh:store:get',
+  storeSet: 'dh:store:set',
   jobStart: 'dh:job:start',
   jobsList: 'dh:job:list',
   jobCancel: 'dh:job:cancel',

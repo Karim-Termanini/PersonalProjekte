@@ -16,8 +16,26 @@ export const HostExecRequestSchema = z.object({
   unit: z.string().max(128).optional(),
 })
 
-export const ComposeProfileSchema = z.enum(['web-dev', 'data-science', 'ai-ml'])
+export const ComposeProfileSchema = z.enum([
+  'web-dev',
+  'data-science',
+  'ai-ml',
+  'mobile',
+  'game-dev',
+  'infra',
+  'desktop-gui',
+  'docs',
+  'empty'
+])
 
+export const StoreSetRequestSchema = z.object({
+  key: z.string().min(1).max(128),
+  data: z.any(),
+})
+
+export const StoreGetRequestSchema = z.object({
+  key: z.string().min(1).max(128),
+})
 export const ComposeUpRequestSchema = z.object({
   profile: ComposeProfileSchema,
 })

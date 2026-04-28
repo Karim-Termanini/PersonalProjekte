@@ -33,6 +33,8 @@ import {
   type JobSummary,
   type SessionInfo,
   type SystemdRow,
+  StoreGetRequestSchema,
+  StoreSetRequestSchema,
 } from '@linux-dev-home/shared'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -556,6 +558,25 @@ function registerIpc(): void {
     const layout = DashboardLayoutFileSchema.parse(raw)
     await writeDashboardLayout(layout)
     return { ok: true as const }
+  })
+
+  ipcMain.handle(IPC.storeGet, async (_e, raw: unknown) => {
+    const { key } = StoreGetRequestSchema.parse(raw)
+    const storePath = path.join(app.getPath('userData'), `store_${key}.json`)
+    try {
+      const content = await readFile(storePath, 'utf8')
+      return JSON.parse(content)
+    } catch {
+      return null
+    }
+  })
+
+  ipcMain.handle(IPC.storeSet, async (_e, raw: unknown) => {
+    const { key, data } = StoreSetRequestSchema.parse(raw)
+    const storePath = path.join(app.getPath('userData'), `store_${key}.json`)
+    await mkdir(app.getPath('userData'), { recursive: true })
+    await writeFile(storePath, JSON.stringify(data, null, 2))
+    return { ok: true }
   })
 
   ipcMain.handle(IPC.jobStart, async (_e, raw: unknown) => {
