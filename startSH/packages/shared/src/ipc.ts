@@ -38,6 +38,7 @@ export type NetworkRow = {
   name: string
   driver: string
   scope: string
+  usedBy?: string[]
 }
 
 export type HostMetrics = {
@@ -83,6 +84,8 @@ export const IPC = {
   dockerNetworkAction: 'dh:docker:network:action',
   dockerNetworkCreate: 'dh:docker:network:create',
   dockerPrune: 'dh:docker:prune',
+  dockerPrunePreview: 'dh:docker:prune:preview',
+  dockerCleanupRun: 'dh:docker:cleanup:run',
   dockerPull: 'dh:docker:pull',
   dockerRemapPort: 'dh:docker:remap-port',
   /** Returns HostMetricsResponse (metrics + read-only systemd rows). */
@@ -106,6 +109,10 @@ export const IPC = {
   sshGetPub: 'dh:ssh:get:pub',
   sshTestGithub: 'dh:ssh:test:github',
   selectFolder: 'dh:dialog:folder',
+  filePickOpen: 'dh:dialog:file:open',
+  filePickSave: 'dh:dialog:file:save',
+  sshListDir: 'dh:ssh:list:dir',
+  sshSetupRemoteKey: 'dh:ssh:setup:remote:key',
   sessionInfo: 'dh:session:info',
   layoutGet: 'dh:layout:get',
   layoutSet: 'dh:layout:set',

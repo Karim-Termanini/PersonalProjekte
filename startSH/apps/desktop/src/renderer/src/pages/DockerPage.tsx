@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 
 import { DockerSchemeView } from '../components/DockerSchemeView'
 
-type TabId = 'scheme' | 'create' | 'containers' | 'images' | 'volumes' | 'networks' | 'ports'
+type TabId = 'scheme' | 'create' | 'containers' | 'images' | 'volumes' | 'networks' | 'ports' | 'cleanup'
 
 type CreateExample = {
   title: string
@@ -74,6 +74,9 @@ export function DockerPage(): ReactElement {
   const [newHostPort, setNewHostPort] = useState('')
   const [createVolumeName, setCreateVolumeName] = useState('')
   const [createNetworkName, setCreateNetworkName] = useState('')
+  const [showInstallModal, setShowInstallModal] = useState(false)
+  const [pruneSelection, setPruneSelection] = useState({ containers: true, images: true, volumes: false, networks: false })
+  const [prunePreview, setPrunePreview] = useState<{ containers: number; images: number; volumes: number; networks: number } | null>(null)
 
   const refreshAll = useCallback(async () => {
     try {
@@ -107,6 +110,12 @@ export function DockerPage(): ReactElement {
     return () => clearInterval(id)
   }, [refreshAll])
 
+  useEffect(() => {
+    if (tab === 'cleanup') {
+      void previewCleanup()
+    }
+  }, [tab])
+
   async function runAction(id: string, action: 'start' | 'stop' | 'restart' | 'remove'): Promise<void> {
     if (action === 'remove') {
       const yes = window.confirm('Remove this stopped container? This cannot be undone.')
@@ -137,11 +146,16 @@ export function DockerPage(): ReactElement {
       const message = e instanceof Error ? e.message : String(e)
       const canForce = /must be forced|being used by stopped container|conflict/i.test(message)
       if (canForce) {
+        const deps = rows.filter((r) => r.imageId === id && r.state.toLowerCase() !== 'running')
+        const depText = deps.length > 0 ? `\nStopped containers using it: ${deps.map((d) => d.name).join(', ')}` : ''
         const yes = window.confirm(
-          'This image is referenced by stopped containers. Force remove it anyway?'
+          `This image is referenced by stopped containers.${depText}\n\nRemove dependent stopped containers first and retry image delete?`
         )
         if (yes) {
           try {
+            for (const dep of deps) {
+              await window.dh.dockerAction({ id: dep.id, action: 'remove' })
+            }
             await window.dh.dockerImageAction({ id, action: 'remove', force: true })
             await refreshAll()
             setErr('')
@@ -160,6 +174,13 @@ export function DockerPage(): ReactElement {
   }
 
   async function removeVolume(name: string): Promise<void> {
+    const usage = volumes.find((v) => v.name === name)?.usedBy ?? []
+    if (usage.length > 0) {
+      const yes = window.confirm(
+        `Volume "${name}" is in use by: ${usage.join(', ')}\nRemoving it may break these containers. Continue?`
+      )
+      if (!yes) return
+    }
     setBusy(true)
     try {
       await window.dh.dockerVolumeAction({ name, action: 'remove' })
@@ -172,6 +193,13 @@ export function DockerPage(): ReactElement {
   }
 
   async function removeNetwork(id: string): Promise<void> {
+    const usage = networks.find((n) => n.id === id)?.usedBy ?? []
+    if (usage.length > 0) {
+      const yes = window.confirm(
+        `This network is used by: ${usage.join(', ')}\nRemove anyway?`
+      )
+      if (!yes) return
+    }
     setBusy(true)
     try {
       await window.dh.dockerNetworkAction({ id, action: 'remove' })
@@ -186,14 +214,27 @@ export function DockerPage(): ReactElement {
   async function runPrune(): Promise<void> {
     setBusy(true)
     try {
-      const res = (await window.dh.dockerPrune()) as { ok: true; reclaimedBytes: number }
+      const res = (await window.dh.dockerCleanupRun(pruneSelection)) as { ok: true; reclaimedBytes: number }
       const mb = Math.round((res.reclaimedBytes / (1024 * 1024)) * 10) / 10
       setPruneInfo(`Cleanup finished. Reclaimed ~${mb} MB.`)
       await refreshAll()
+      await previewCleanup()
     } catch (e) {
       setErr(e instanceof Error ? e.message : String(e))
     } finally {
       setBusy(false)
+    }
+  }
+
+  async function previewCleanup(): Promise<void> {
+    try {
+      const res = (await window.dh.dockerPrunePreview()) as {
+        ok: true
+        preview: { containers: number; images: number; volumes: number; networks: number }
+      }
+      setPrunePreview(res.preview)
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : String(e))
     }
   }
 
@@ -345,9 +386,9 @@ export function DockerPage(): ReactElement {
         <button
           type="button"
           style={btn}
-          onClick={() => void window.dh.openExternal('https://docs.docker.com/engine/install/')}
+          onClick={() => setShowInstallModal(true)}
         >
-          Install docs
+          Install / Setup
         </button>
         <span className="mono" style={{ fontSize: 12, color: 'var(--text-muted)' }}>
           {docker?.ok
@@ -361,7 +402,7 @@ export function DockerPage(): ReactElement {
       {err ? <div style={{ color: 'var(--orange)' }}>{err}</div> : null}
 
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-        {(['scheme', 'create', 'containers', 'images', 'volumes', 'networks', 'ports'] as const).map((t) => (
+        {(['scheme', 'create', 'containers', 'images', 'volumes', 'networks', 'ports', 'cleanup'] as const).map((t) => (
           <button
             key={t}
             type="button"
@@ -713,14 +754,26 @@ export function DockerPage(): ReactElement {
                       <div style={{ fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.4 }}>
                         {getNetworkDescription(n.name)}
                       </div>
-                      <button
-                        type="button"
-                        style={{ ...btnSmallDanger, marginTop: 8 }}
-                        onClick={() => void removeNetwork(n.id)}
-                        disabled={busy || n.name === 'bridge' || n.name === 'host' || n.name === 'none'}
-                      >
-                        {n.name === 'bridge' || n.name === 'host' || n.name === 'none' ? 'System Network' : 'Remove Network'}
-                      </button>
+                      <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
+                        Used by:{' '}
+                        <span className="mono" style={{ fontSize: 11 }}>
+                          {n.usedBy && n.usedBy.length > 0 ? n.usedBy.join(', ') : 'unused'}
+                        </span>
+                      </div>
+                      {n.name === 'bridge' || n.name === 'host' || n.name === 'none' ? (
+                        <div style={{ ...systemBadge, marginTop: 8 }}>
+                          Protected system network
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          style={{ ...btnSmallDanger, marginTop: 8 }}
+                          onClick={() => void removeNetwork(n.id)}
+                          disabled={busy}
+                        >
+                          Remove Network
+                        </button>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -784,7 +837,168 @@ export function DockerPage(): ReactElement {
             </div>
           </div>
         ) : null}
+        {tab === 'cleanup' ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+            <div style={sectionBox}>
+              <h3 style={{ margin: 0, fontSize: 18 }}>Guided System Cleanup</h3>
+              <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>
+                Free up disk space by removing unused Docker resources. Select what to prune:
+              </p>
+              <div style={{ display: 'grid', gap: 12, marginTop: 16 }}>
+                <label style={checkboxLabel}>
+                  <input type="checkbox" checked={pruneSelection.containers} onChange={e => setPruneSelection(p => ({ ...p, containers: e.target.checked }))} />
+                  <div>
+                    <div style={{ fontWeight: 600 }}>Prune Stopped Containers</div>
+                    <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Removes all containers that are not currently running.</div>
+                  </div>
+                </label>
+                <label style={checkboxLabel}>
+                  <input type="checkbox" checked={pruneSelection.images} onChange={e => setPruneSelection(p => ({ ...p, images: e.target.checked }))} />
+                  <div>
+                    <div style={{ fontWeight: 600 }}>Prune Unused Images</div>
+                    <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Removes images that are not referenced by any containers.</div>
+                  </div>
+                </label>
+                <label style={checkboxLabel}>
+                  <input type="checkbox" checked={pruneSelection.volumes} onChange={e => setPruneSelection(p => ({ ...p, volumes: e.target.checked }))} />
+                  <div>
+                    <div style={{ fontWeight: 600 }}>Prune Unused Volumes</div>
+                    <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Removes all local volumes not used by at least one container.</div>
+                  </div>
+                </label>
+                <label style={checkboxLabel}>
+                  <input type="checkbox" checked={pruneSelection.networks} onChange={e => setPruneSelection(p => ({ ...p, networks: e.target.checked }))} />
+                  <div>
+                    <div style={{ fontWeight: 600 }}>Prune Unused Networks</div>
+                    <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Removes all networks not used by at least one container.</div>
+                  </div>
+                </label>
+              </div>
+              <div style={{ marginTop: 16 }}>
+                <div style={{ fontWeight: 600, marginBottom: 8 }}>Dry-run preview</div>
+                {!prunePreview ? (
+                  <button type="button" style={btnSmall} onClick={() => void previewCleanup()} disabled={busy}>
+                    Load preview
+                  </button>
+                ) : (
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(120px, 1fr))', gap: 8 }}>
+                    <div style={previewCard}>
+                      <div style={previewLabel}>Containers</div>
+                      <div style={previewValue}>{prunePreview.containers}</div>
+                    </div>
+                    <div style={previewCard}>
+                      <div style={previewLabel}>Images</div>
+                      <div style={previewValue}>{prunePreview.images}</div>
+                    </div>
+                    <div style={previewCard}>
+                      <div style={previewLabel}>Volumes</div>
+                      <div style={previewValue}>{prunePreview.volumes}</div>
+                    </div>
+                    <div style={previewCard}>
+                      <div style={previewLabel}>Networks</div>
+                      <div style={previewValue}>{prunePreview.networks}</div>
+                    </div>
+                  </div>
+                )}
+              </div>
+              <button 
+                type="button" 
+                style={{ ...btnPrimary, marginTop: 20, width: '100%', padding: '12px' }}
+                onClick={() => void runPrune()}
+                disabled={busy || !Object.values(pruneSelection).some(v => v)}
+              >
+                Run Selected Cleanup
+              </button>
+            </div>
+
+            <div style={{ ...sectionBox, border: '1px solid var(--orange)' }}>
+              <h3 style={{ margin: 0, fontSize: 16, color: 'var(--orange)' }}>Safety note</h3>
+              <p style={{ fontSize: 13, color: 'var(--text-muted)' }}>
+                Cleanup only removes resources Docker reports as unused. Running containers are not removed.
+              </p>
+            </div>
+          </div>
+        ) : null}
       </section>
+
+      {showInstallModal && (
+        <div style={modalOverlay}>
+          <div style={{ ...modalContent, maxWidth: 700, maxHeight: '85vh' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+              <h2 style={{ margin: 0 }}>Install Docker Engine</h2>
+              <button type="button" style={closeBtn} onClick={() => setShowInstallModal(false)}>×</button>
+            </div>
+            <div style={{ overflowY: 'auto', flex: 1, paddingRight: 10 }}>
+              <p style={{ color: 'var(--text-muted)', marginBottom: 20 }}>
+                Since this app runs in a sandbox, you must install Docker on your host machine. 
+                Choose your distribution to see the recommended setup steps:
+              </p>
+              
+              <div style={{ display: 'grid', gap: 20 }}>
+                <details style={installStep}>
+                  <summary style={{ fontWeight: 600, cursor: 'pointer' }}>Ubuntu / Debian / Linux Mint</summary>
+                  <div style={{ marginTop: 12, fontSize: 13 }}>
+                    <p>Run these commands in your host terminal:</p>
+                    <pre style={codeBlock}>
+{`# Add Docker's official GPG key:
+sudo apt-get update
+sudo apt-get install ca-certificates curl
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+# Add the repository to Apt sources:
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get update
+
+# Install the Docker packages:
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin`}
+                    </pre>
+                  </div>
+                </details>
+
+                <details style={installStep}>
+                  <summary style={{ fontWeight: 600, cursor: 'pointer' }}>Fedora / RedHat / CentOS</summary>
+                  <div style={{ marginTop: 12, fontSize: 13 }}>
+                    <pre style={codeBlock}>
+{`sudo dnf -y install dnf-plugins-core
+sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
+sudo dnf install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo systemctl start docker`}
+                    </pre>
+                  </div>
+                </details>
+
+                <details style={installStep}>
+                  <summary style={{ fontWeight: 600, cursor: 'pointer' }}>Arch Linux</summary>
+                  <div style={{ marginTop: 12, fontSize: 13 }}>
+                    <pre style={codeBlock}>
+{`sudo pacman -S docker docker-compose
+sudo systemctl enable --now docker`}
+                    </pre>
+                  </div>
+                </details>
+
+                <div style={{ ...sectionBox, background: 'rgba(33, 150, 243, 0.05)', borderColor: 'var(--accent)' }}>
+                  <div style={{ fontWeight: 600, color: 'var(--accent)', marginBottom: 8 }}>💡 Post-install Tip</div>
+                  <p style={{ margin: 0, fontSize: 13 }}>
+                    To manage Docker as a non-root user (so this app can access it without sudo),
+                    add your user to the docker group:
+                  </p>
+                  <pre style={codeBlock}>
+{`sudo usermod -aG docker $USER
+# Log out and log back in for changes to take effect`}
+                  </pre>
+                </div>
+              </div>
+            </div>
+            <div style={{ marginTop: 24, display: 'flex', gap: 12 }}>
+              <button type="button" style={btnPrimary} onClick={() => void window.dh.openExternal('https://docs.docker.com/engine/install/')}>Open Full Docs</button>
+              <button type="button" style={btn} onClick={() => setShowInstallModal(false)}>Close</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {selected ? (
         <section style={card}>
@@ -820,6 +1034,12 @@ const btn = {
 const btnWarn = {
   ...btn,
   border: '1px solid var(--orange)',
+}
+
+const btnPrimary = {
+  ...btn,
+  border: '1px solid var(--accent)',
+  color: 'var(--accent)',
 }
 
 const btnSmall = {
@@ -888,6 +1108,96 @@ const areaInput = {
   minHeight: 72,
   resize: 'vertical' as const,
   fontFamily: 'inherit',
+}
+
+const checkboxLabel = {
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: 12,
+  padding: '12px 16px',
+  background: 'var(--bg-input)',
+  border: '1px solid var(--border)',
+  borderRadius: 10,
+  cursor: 'pointer',
+  transition: 'border-color 0.2s',
+}
+
+const previewCard = {
+  border: '1px solid var(--border)',
+  borderRadius: 10,
+  padding: '10px 12px',
+  background: 'var(--bg-input)',
+}
+
+const previewLabel = {
+  fontSize: 11,
+  color: 'var(--text-muted)',
+}
+
+const previewValue = {
+  fontSize: 22,
+  fontWeight: 700,
+  marginTop: 4,
+}
+
+const systemBadge = {
+  border: '1px solid var(--border)',
+  borderRadius: 8,
+  padding: '7px 10px',
+  fontSize: 12,
+  color: 'var(--text-muted)',
+  background: 'var(--bg)',
+  textAlign: 'center' as const,
+}
+
+const installStep = {
+  padding: '12px 16px',
+  background: 'var(--bg-widget)',
+  border: '1px solid var(--border)',
+  borderRadius: 10,
+}
+
+const codeBlock = {
+  background: '#000',
+  color: '#0f0',
+  padding: 12,
+  borderRadius: 6,
+  overflowX: 'auto' as const,
+  fontSize: 12,
+  fontFamily: 'monospace',
+  marginTop: 8,
+}
+
+const modalOverlay = {
+  position: 'fixed' as const,
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  background: 'rgba(0,0,0,0.6)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  zIndex: 9999,
+  padding: 20,
+}
+
+const modalContent = {
+  width: '100%',
+  background: 'var(--bg-widget)',
+  border: '1px solid var(--border)',
+  borderRadius: 12,
+  padding: 20,
+  display: 'flex',
+  flexDirection: 'column' as const,
+}
+
+const closeBtn = {
+  background: 'transparent',
+  border: 'none',
+  color: 'var(--text)',
+  fontSize: 24,
+  cursor: 'pointer',
 }
 
 const sectionBox = {

@@ -616,11 +616,21 @@ function registerIpc(): void {
     const d = getDocker()
     if (!d) throw new Error('Docker unavailable')
     const list = await d.listNetworks()
+    const containers = await d.listContainers({ all: true })
+    const usage = new Map<string, Set<string>>()
+    for (const c of containers) {
+      const cName = (c.Names?.[0] ?? '').replace(/^\//, '') || c.Id.slice(0, 12)
+      for (const netName of Object.keys(c.NetworkSettings?.Networks ?? {})) {
+        if (!usage.has(netName)) usage.set(netName, new Set<string>())
+        usage.get(netName)?.add(cName)
+      }
+    }
     const rows: NetworkRow[] = list.map((n) => ({
       id: n.Id,
       name: n.Name,
       driver: n.Driver,
       scope: n.Scope,
+      usedBy: Array.from(usage.get(n.Name) ?? []),
     }))
     return { ok: true, rows }
   })
@@ -642,22 +652,95 @@ function registerIpc(): void {
     return { ok: true }
   })
 
-  ipcMain.handle(IPC.dockerPrune, async () => {
+  ipcMain.handle(IPC.dockerPrune, async (_e, raw: unknown) => {
+    const selection = z
+      .object({
+        containers: z.boolean().optional().default(true),
+        images: z.boolean().optional().default(true),
+        volumes: z.boolean().optional().default(true),
+        networks: z.boolean().optional().default(true),
+      })
+      .parse(raw ?? {})
     const d = getDocker()
     if (!d) throw new Error('Docker unavailable')
-    const [containers, images, volumes] = await Promise.all([
-      d.pruneContainers(),
-      d.pruneImages(),
-      d.pruneVolumes(),
-    ])
-    await d.pruneNetworks()
+
+    let reclaimed = 0
+    if (selection.containers) {
+      const res = await d.pruneContainers()
+      reclaimed += Number(res.SpaceReclaimed || 0)
+    }
+    if (selection.images) {
+      const res = await d.pruneImages()
+      reclaimed += Number(res.SpaceReclaimed || 0)
+    }
+    if (selection.volumes) {
+      const res = await d.pruneVolumes()
+      reclaimed += Number(res.SpaceReclaimed || 0)
+    }
+    if (selection.networks) {
+      await d.pruneNetworks()
+    }
+
     return {
       ok: true,
-      reclaimedBytes:
-        Number(containers.SpaceReclaimed ?? 0) +
-        Number(images.SpaceReclaimed ?? 0) +
-        Number(volumes.SpaceReclaimed ?? 0),
+      reclaimedBytes: reclaimed,
     }
+  })
+
+  ipcMain.handle(IPC.dockerPrunePreview, async () => {
+    const d = getDocker()
+    if (!d) throw new Error('Docker unavailable')
+    const [containers, images, volumes, networks] = await Promise.all([
+      d.listContainers({ all: true }),
+      d.listImages({ all: true, filters: { dangling: ['true'] } }),
+      d.listVolumes(),
+      d.listNetworks(),
+    ])
+    const stoppedCount = containers.filter((c) => c.State !== 'running').length
+    const volumeUnused = (volumes.Volumes ?? []).filter((v) => (v.UsageData?.RefCount ?? 0) === 0).length
+    const networkUnused = networks.filter((n) => {
+      const isSystem = n.Name === 'bridge' || n.Name === 'host' || n.Name === 'none'
+      return !isSystem && (n.Containers ? Object.keys(n.Containers).length === 0 : true)
+    }).length
+    return {
+      ok: true,
+      preview: {
+        containers: stoppedCount,
+        images: images.length,
+        volumes: volumeUnused,
+        networks: networkUnused,
+      },
+    }
+  })
+
+  ipcMain.handle(IPC.dockerCleanupRun, async (_e, raw: unknown) => {
+    const req = z
+      .object({
+        containers: z.boolean().optional().default(false),
+        images: z.boolean().optional().default(false),
+        volumes: z.boolean().optional().default(false),
+        networks: z.boolean().optional().default(false),
+      })
+      .parse(raw)
+    const d = getDocker()
+    if (!d) throw new Error('Docker unavailable')
+    let reclaimedBytes = 0
+    if (req.containers) {
+      const res = await d.pruneContainers()
+      reclaimedBytes += Number(res.SpaceReclaimed ?? 0)
+    }
+    if (req.images) {
+      const res = await d.pruneImages()
+      reclaimedBytes += Number(res.SpaceReclaimed ?? 0)
+    }
+    if (req.volumes) {
+      const res = await d.pruneVolumes()
+      reclaimedBytes += Number(res.SpaceReclaimed ?? 0)
+    }
+    if (req.networks) {
+      await d.pruneNetworks()
+    }
+    return { ok: true, reclaimedBytes }
   })
 
   ipcMain.handle(IPC.metrics, async () => await collectMetrics())
@@ -871,11 +954,32 @@ function registerIpc(): void {
     const { target } = SshGetPubSchema.parse(raw)
     const pubPath = path.join(homedir(), '.ssh', 'id_ed25519.pub')
     try {
+      let pub = ''
       if (target === 'host') {
-         return await execTarget('host', 'cat', [pubPath])
+        pub = (await execTarget('host', 'cat', [pubPath])).trim()
       } else {
-         return await readFile(pubPath, 'utf8')
+        pub = (await readFile(pubPath, 'utf8')).trim()
       }
+
+      if (!pub) return null
+
+      // Get fingerprint: ssh-keygen -lf /path/to/key.pub
+      let fingerprint = ''
+      try {
+        if (target === 'host') {
+          fingerprint = (await execTarget('host', 'ssh-keygen', ['-lf', pubPath])).trim()
+        } else {
+          fingerprint = await new Promise<string>((resolve) => {
+            execFile('ssh-keygen', ['-lf', pubPath], (err, stdout) => {
+              resolve(err ? '' : stdout.trim())
+            })
+          })
+        }
+      } catch {
+        fingerprint = 'Unknown fingerprint'
+      }
+
+      return { pub, fingerprint }
     } catch {
       return null
     }
@@ -914,6 +1018,123 @@ function registerIpc(): void {
     const r = await dialog.showOpenDialog(mainWindow!, { properties: ['openDirectory'] })
     if (r.canceled || !r.filePaths[0]) return null
     return r.filePaths[0]
+  })
+
+  // Open a native file picker dialog (multiple files or folders allowed)
+  ipcMain.handle(IPC.filePickOpen, async (_e, raw: unknown) => {
+    const opts = (raw as { folders?: boolean; multiple?: boolean }) ?? {}
+    const properties: ('openFile' | 'openDirectory' | 'multiSelections')[] = opts.folders
+      ? ['openDirectory']
+      : ['openFile']
+    if (opts.multiple) properties.push('multiSelections')
+    const r = await dialog.showOpenDialog(mainWindow!, { properties })
+    if (r.canceled) return []
+    return r.filePaths
+  })
+
+  // Open a native save/destination folder picker
+  ipcMain.handle(IPC.filePickSave, async () => {
+    const r = await dialog.showOpenDialog(mainWindow!, { properties: ['openDirectory'] })
+    if (r.canceled || !r.filePaths[0]) return null
+    return r.filePaths[0]
+  })
+
+  // List files in a remote directory via SSH
+  ipcMain.handle(IPC.sshListDir, async (_e, raw: unknown) => {
+    const { user, host, port, remotePath } = raw as { user: string; host: string; port: number; remotePath: string }
+    
+    // Expand ~/ to $HOME or relative . to avoid issues with quoted ~ in ls
+    let finalPath = remotePath
+    if (finalPath === '~' || finalPath === '~/') {
+      finalPath = '.'
+    } else if (finalPath.startsWith('~/')) {
+      finalPath = finalPath.replace(/^~\//, '')
+    }
+
+    return new Promise<{ ok: boolean; entries: string[]; error?: string }>((resolve) => {
+      execFile('ssh', [
+        '-p', String(port),
+        '-o', 'StrictHostKeyChecking=no',
+        '-o', 'BatchMode=yes',
+        '-o', 'ConnectTimeout=5',
+        `${user}@${host}`,
+        `ls -1a "${finalPath}"`,
+      ], { timeout: 8000 }, (err, stdout) => {
+        if (err) {
+          let msg = err.message
+          if (msg.includes('Permission denied')) {
+            msg += '\n\n💡 Tip: To use the File Browser, your SSH public key must be added to the server (authorized_keys). The browser does not support password auth yet.'
+          } else if (msg.includes('Connection timed out') || msg.includes('Connection refused')) {
+             msg += '\n\n💡 Tip: Make sure the server is running and the Port is correct.'
+          }
+          resolve({ ok: false, entries: [], error: msg })
+        } else {
+          const entries = stdout.split('\n').map(l => l.trim()).filter(Boolean)
+          resolve({ ok: true, entries })
+        }
+      })
+    })
+  })
+
+  // Setup SSH key on a remote server with a password (GUI flow)
+  ipcMain.handle(IPC.sshSetupRemoteKey, async (_e, raw: unknown) => {
+    const { user, host, port, password, publicKey } = z
+      .object({
+        user: z.string().min(1),
+        host: z.string().min(1),
+        port: z.number().int().min(1).max(65535),
+        password: z.string(),
+        publicKey: z.string().min(1),
+      })
+      .parse(raw)
+    const envVars: Record<string, string> = Object.fromEntries(
+      Object.entries(process.env).filter((entry): entry is [string, string] => typeof entry[1] === 'string')
+    )
+    return new Promise((resolve) => {
+      const ptyProcess = pty.spawn('ssh', [
+        '-p', String(port),
+        '-o', 'StrictHostKeyChecking=no',
+        '-o', 'PreferredAuthentications=password',
+        `${user}@${host}`,
+        `mkdir -p ~/.ssh && chmod 700 ~/.ssh && echo '${publicKey}' >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys`
+      ], {
+        name: 'xterm-color',
+        cols: 80,
+        rows: 24,
+        cwd: homedir(),
+        env: envVars,
+      })
+
+      let output = ''
+      let resolved = false
+
+      ptyProcess.onData((data) => {
+        output += data
+        // Watch for password prompt
+        if (data.toLowerCase().includes('password:')) {
+          ptyProcess.write(password + '\n')
+        }
+      })
+
+      ptyProcess.onExit(({ exitCode }) => {
+        if (resolved) return
+        resolved = true
+        if (exitCode === 0) {
+          resolve({ ok: true })
+        } else {
+          resolve({ ok: false, error: output || 'SSH command failed' })
+        }
+      })
+
+      // Safety timeout
+      setTimeout(() => {
+        if (!resolved) {
+          resolved = true
+          ptyProcess.kill()
+          resolve({ ok: false, error: 'Connection timed out. Please check your host and password.' })
+        }
+      }, 20000)
+    })
   })
 
   ipcMain.handle(IPC.sessionInfo, async () => getSessionInfo())

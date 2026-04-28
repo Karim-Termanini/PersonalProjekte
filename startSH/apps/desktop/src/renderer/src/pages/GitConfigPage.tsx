@@ -29,6 +29,9 @@ export function GitConfigPage(): ReactElement {
   const [rows, setRows] = useState<GitConfigRow[]>([])
   const [status, setStatus] = useState('')
   const [search, setSearch] = useState('')
+  const [sortKey, setSortKey] = useState<'key' | 'value'>('key')
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
+  const [showSensitiveOnly, setShowSensitiveOnly] = useState(false)
   const [maskedKeys, setMaskedKeys] = useState<Set<string>>(
     () => new Set(SENSITIVE_KEYS)
   )
@@ -109,11 +112,36 @@ export function GitConfigPage(): ReactElement {
     return value
   }
 
-  const filtered = rows.filter((r) => {
-    if (!search.trim()) return true
-    const q = search.toLowerCase()
-    return r.key.toLowerCase().includes(q) || r.value.toLowerCase().includes(q)
-  })
+  const filtered = rows
+    .filter((r) => {
+      if (showSensitiveOnly && !isSensitive(r.key)) return false
+      if (!search.trim()) return true
+      const q = search.toLowerCase()
+      return r.key.toLowerCase().includes(q) || r.value.toLowerCase().includes(q)
+    })
+    .sort((a, b) => {
+      const valA = a[sortKey].toLowerCase()
+      const valB = b[sortKey].toLowerCase()
+      if (valA < valB) return sortDir === 'asc' ? -1 : 1
+      if (valA > valB) return sortDir === 'asc' ? 1 : -1
+      return 0
+    })
+
+  function handleSort(key: 'key' | 'value'): void {
+    if (sortKey === key) {
+      setSortDir(sortDir === 'asc' ? 'desc' : 'asc')
+    } else {
+      setSortKey(key)
+      setSortDir('asc')
+    }
+  }
+
+  const statusTone =
+    status.toLowerCase().includes('saved')
+      ? 'success'
+      : status
+        ? 'warning'
+        : 'idle'
 
   return (
     <div style={{ maxWidth: 980, display: 'grid', gap: 16 }}>
@@ -242,6 +270,14 @@ export function GitConfigPage(): ReactElement {
             <button type="button" style={btnSmall} onClick={() => void loadConfig()} disabled={busy}>
               Refresh
             </button>
+            <button
+              type="button"
+              style={btnSmall}
+              onClick={() => setShowSensitiveOnly((v) => !v)}
+              disabled={busy}
+            >
+              {showSensitiveOnly ? 'Show All' : 'Sensitive Only'}
+            </button>
           </div>
         </div>
         {filtered.length === 0 ? (
@@ -255,8 +291,18 @@ export function GitConfigPage(): ReactElement {
             <table style={table}>
               <thead>
                 <tr style={{ color: 'var(--text-muted)', textAlign: 'left' }}>
-                  <th style={{ padding: '8px 6px', width: '45%' }}>Key</th>
-                  <th style={{ padding: '8px 6px', width: '45%' }}>Value</th>
+                  <th 
+                    style={{ padding: '8px 6px', width: '45%', cursor: 'pointer', userSelect: 'none' }}
+                    onClick={() => handleSort('key')}
+                  >
+                    Key {sortKey === 'key' ? (sortDir === 'asc' ? '↑' : '↓') : ''}
+                  </th>
+                  <th 
+                    style={{ padding: '8px 6px', width: '45%', cursor: 'pointer', userSelect: 'none' }}
+                    onClick={() => handleSort('value')}
+                  >
+                    Value {sortKey === 'value' ? (sortDir === 'asc' ? '↑' : '↓') : ''}
+                  </th>
                   <th style={{ padding: '8px 6px', width: '10%' }}></th>
                 </tr>
               </thead>
@@ -311,9 +357,12 @@ export function GitConfigPage(): ReactElement {
       {status ? (
         <div
           style={{
-            color: 'var(--text-muted)',
+            color: statusTone === 'success' ? 'var(--green)' : 'var(--orange)',
+            background: statusTone === 'success' ? 'rgba(44, 182, 125, 0.08)' : 'rgba(255, 159, 67, 0.08)',
+            border: `1px solid ${statusTone === 'success' ? 'rgba(44, 182, 125, 0.3)' : 'rgba(255, 159, 67, 0.3)'}`,
+            borderRadius: 8,
             fontSize: 13,
-            padding: '8px 0',
+            padding: '10px 12px',
           }}
         >
           {status}

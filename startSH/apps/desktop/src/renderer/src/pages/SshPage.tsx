@@ -27,19 +27,40 @@ export function SshPage(): ReactElement {
   const [testOk, setTestOk] = useState<boolean | null>(null)
   const [testResult, setTestResult] = useState('')
   const [status, setStatus] = useState('')
-
   const [bookmarks, setBookmarks] = useState<SshBookmark[]>([])
+
   const [newBmName, setNewBmName] = useState('')
   const [newBmUser, setNewBmUser] = useState('')
   const [newBmHost, setNewBmHost] = useState('')
   const [newBmPort, setNewBmPort] = useState('22')
 
+  const [passModalSess, setPassModalSess] = useState<Session | null>(null)
+  const [passInput, setPassInput] = useState('')
+
   const [sessions, setSessions] = useState<Session[]>([])
   const [activeTermSession, setActiveTermSession] = useState<Session | null>(null)
+
+  // --- File Transfer ---
+  const [ftSession, setFtSession] = useState<Session | null>(null)
+  const [ftDirection, setFtDirection] = useState<'upload' | 'download'>('upload')
+  const [ftLocalPaths, setFtLocalPaths] = useState<string[]>([])  // multiple selected files
+  const [ftLocalDestDir, setFtLocalDestDir] = useState('')         // destination folder for download
+  const [ftRemotePath, setFtRemotePath] = useState('.')
+  const [ftTool, setFtTool] = useState<'scp' | 'rsync'>('scp')
+  const [ftStatus, setFtStatus] = useState('')
+  const [remoteEntries, setRemoteEntries] = useState<string[]>([])
+  const [remoteBrowsing, setRemoteBrowsing] = useState(false)
+  const [fingerprint, setFingerprint] = useState('')
 
   const termWrapRef = useRef<HTMLDivElement | null>(null)
   const xtermRef = useRef<Terminal | null>(null)
   const fitRef = useRef<FitAddon | null>(null)
+  const pendingTransferCmdRef = useRef<string | null>(null)
+  const connectedCount = sessions.filter((s) => s.status === 'connected').length
+
+  function setPendingTransferCmd(cmd: string): void {
+    pendingTransferCmdRef.current = cmd
+  }
 
   useEffect(() => {
     void loadBookmarks()
@@ -79,28 +100,74 @@ export function SshPage(): ReactElement {
 
   async function loadPub(): Promise<void> {
     setBusy(true)
-    setStatus('')
     try {
-      const res = (await window.dh.sshGetPub({ target })) as string | null
-      setPubKey(res?.trim() ?? '')
-      if (!res) setStatus('No public key found yet.')
+      const res = (await window.dh.sshGetPub({ target })) as { pub: string; fingerprint: string } | null
+      if (res) {
+        setPubKey(res.pub)
+        setFingerprint(res.fingerprint)
+      } else {
+        setPubKey('')
+        setFingerprint('')
+      }
     } catch (e) {
-      setStatus(e instanceof Error ? e.message : String(e))
+      console.error(e)
     } finally {
       setBusy(false)
     }
   }
 
   async function copyPub(): Promise<void> {
-    if (!pubKey.trim()) {
-      setStatus('No public key to copy.')
+    if (!pubKey) {
+      alert('Please load the key first.')
       return
     }
     try {
       await navigator.clipboard.writeText(pubKey)
-      setStatus('✅ Public key copied to clipboard!')
-    } catch (e) {
-      setStatus(e instanceof Error ? e.message : String(e))
+      setStatus('Public key copied to clipboard! ✅')
+    } catch (err) {
+      console.error('Clipboard error:', err)
+    }
+  }
+
+  function setupKeysOnServer(sess: Session): void {
+    setPassModalSess(sess)
+    setPassInput('')
+  }
+
+  async function runSetupWithPassword(): Promise<void> {
+    if (!passModalSess) return
+    const sess = passModalSess
+    const password = passInput
+    
+    setPassModalSess(null)
+    setPassInput('')
+    setBusy(true)
+    setStatus(`Activating remote browser for ${sess.host}...`)
+
+    try {
+      const pubRes = await window.dh.sshGetPub({ target: 'host' })
+      if (!pubRes || !pubRes.pub) {
+        setStatus('⚠ Error: No SSH key found. Generate one in the Wizard first.')
+        return
+      }
+
+      const setupRes = await window.dh.sshSetupRemoteKey({
+        user: sess.user,
+        host: sess.host,
+        port: sess.port,
+        password,
+        publicKey: pubRes.pub.trim()
+      })
+
+      if (setupRes.ok) {
+        setStatus(`Remote browser activated for ${sess.host}! ✅`)
+      } else {
+        setStatus(`Failed to activate: ${setupRes.error}`)
+      }
+    } catch (err) {
+      setStatus(`Error: ${err instanceof Error ? err.message : String(err)}`)
+    } finally {
+      setBusy(false)
     }
   }
 
@@ -187,6 +254,15 @@ export function SshPage(): ReactElement {
       tid = res.id
       // Update session with termId
       setSessions((prev) => prev.map(s => s.id === activeTermSession.id ? { ...s, termId: tid, status: 'connected' } : s))
+
+      // If there is a pending transfer command, run it immediately
+      const transferCmd = pendingTransferCmdRef.current
+      if (transferCmd) {
+        pendingTransferCmdRef.current = null
+        setTimeout(() => {
+          window.dh.terminalWrite(res.id, transferCmd + '\r')
+        }, 300)
+      }
     })()
 
     const onData = (d: string): void => {
@@ -221,7 +297,13 @@ export function SshPage(): ReactElement {
     }
   }, [activeTermSession]) // Re-run if we open a new modal for a specific session
 
-  function handleConnect(bm: SshBookmark): void {
+  async function handleConnect(bm: SshBookmark): Promise<void> {
+    // Check if local identity exists, if not, generate one silently
+    const pubRes = await window.dh.sshGetPub({ target: 'host' })
+    if (!pubRes?.pub) {
+      await generate()
+    }
+
     const sId = Date.now().toString()
     const newSession: Session = {
       id: sId,
@@ -239,10 +321,86 @@ export function SshPage(): ReactElement {
 
   function handleDisconnect(sess: Session): void {
     if (sess.termId) {
-      // Send exit sequence and then exit shell to forcefully kill it
       window.dh.terminalWrite(sess.termId, '\r~.\rexit\r')
     }
     setSessions((prev) => prev.map((s) => s.id === sess.id ? { ...s, status: 'disconnected', termId: undefined } : s))
+  }
+
+  async function pickLocalFiles(): Promise<void> {
+    const paths = await window.dh.filePickOpen({ multiple: true })
+    if (paths.length > 0) setFtLocalPaths(paths)
+  }
+
+  async function pickLocalDestDir(): Promise<void> {
+    const dir = await window.dh.filePickSave()
+    if (dir) setFtLocalDestDir(dir)
+  }
+
+  async function browseRemote(path: string): Promise<void> {
+    if (!ftSession) { setFtStatus('Select a session first.'); return }
+    setRemoteBrowsing(true)
+    setFtStatus('Browsing remote directory...')
+    try {
+      const res = await window.dh.sshListDir({ user: ftSession.user, host: ftSession.host, port: ftSession.port, remotePath: path })
+      if (res.ok) {
+        setRemoteEntries(res.entries.filter(e => e !== '.'))
+        setFtRemotePath(path)
+        setFtStatus('')
+      } else {
+        setFtStatus(`⚠ Cannot browse: ${res.error ?? 'Unknown error'}. Enter path manually.`)
+      }
+    } finally {
+      setRemoteBrowsing(false)
+    }
+  }
+
+  function runTransfer(): void {
+    if (!ftSession) { setFtStatus('Please select a session first.'); return }
+
+    const remote = `${ftSession.user}@${ftSession.host}`
+    let cmd = ''
+
+    if (ftDirection === 'upload') {
+      if (ftLocalPaths.length === 0) { setFtStatus('Please select files to upload first.'); return }
+      if (!ftRemotePath.trim()) { setFtStatus('Please select a remote destination folder.'); return }
+      const files = ftLocalPaths.map(p => `"${p}"`).join(' ')
+      cmd = ftTool === 'scp'
+        ? `scp -P ${ftSession.port} -r ${files} ${remote}:${ftRemotePath}`
+        : `rsync -avz -e 'ssh -p ${ftSession.port}' ${files} ${remote}:${ftRemotePath}`
+    } else {
+      if (!ftRemotePath.trim()) { setFtStatus('Please select a remote source file/folder.'); return }
+      const localDest = ftLocalDestDir || '.'
+      cmd = ftTool === 'scp'
+        ? `scp -P ${ftSession.port} -r ${remote}:"${ftRemotePath}" "${localDest}"`
+        : `rsync -avz -e 'ssh -p ${ftSession.port}' ${remote}:"${ftRemotePath}" "${localDest}"`
+    }
+
+    const sId = Date.now().toString()
+    const newSession: Session = {
+      id: sId,
+      bmId: ftSession.bmId,
+      bmName: `📦 Transfer → ${ftSession.bmName}`,
+      user: ftSession.user,
+      host: ftSession.host,
+      port: ftSession.port,
+      status: 'connecting',
+      startTime: Date.now(),
+    }
+    setPendingTransferCmd(cmd)
+    setSessions((prev) => [newSession, ...prev])
+    setActiveTermSession(newSession)
+    setFtStatus(`Launching transfer terminal...`)
+    setFtSession(null) // Close modal
+  }
+
+  function resetFtState(sess: Session, dir: 'upload' | 'download') {
+    setFtSession(sess)
+    setFtDirection(dir)
+    setFtLocalPaths([])
+    setFtLocalDestDir('')
+    setFtRemotePath('.')
+    setFtStatus('')
+    setRemoteEntries([])
   }
 
   return (
@@ -252,24 +410,24 @@ export function SshPage(): ReactElement {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
         <header>
           <div className="mono" style={{ color: 'var(--accent)', fontSize: 12, marginBottom: 8 }}>SETTINGS.SSH</div>
-          <h1 style={{ margin: 0, fontSize: 28, fontWeight: 700 }}>SSH Wizard & Servers</h1>
+          <h1 style={{ margin: 0, fontSize: 28, fontWeight: 700 }}>SSH Identity & Servers</h1>
           <p style={{ color: 'var(--text-muted)', marginTop: 10 }}>
-            Set up GitHub securely without terminal commands, and save your remote servers.
+            Configure your local identity and manage your remote connections securely.
           </p>
         </header>
 
-        {/* GitHub SSH Wizard Section */}
+        {/* SSH Identity Wizard Section */}
         <section>
-          <h2 style={{ fontSize: 18, marginBottom: 16 }}>GitHub Setup Wizard</h2>
+          <h2 style={{ fontSize: 18, marginBottom: 16 }}>Local Identity Setup</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             
             <div style={card}>
               <div style={stepCircle}>1</div>
               <div>
-                <h3 style={stepTitle}>Create Digital ID</h3>
-                <p style={stepText}>Generate a secure SSH key to identify your computer to GitHub.</p>
+                <h3 style={stepTitle}>Generate Local ID</h3>
+                <p style={stepText}>Create a secure SSH key to identify this machine to remote servers.</p>
                 <div style={{ display: 'flex', gap: 8 }}>
-                  <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Your GitHub Email (Optional)" style={{ ...inputStyle, flex: 1 }} />
+                  <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Label / Email (Optional)" style={{ ...inputStyle, flex: 1 }} />
                   <button type="button" style={btnPrimary} onClick={() => void generate()} disabled={busy}>Generate Key</button>
                 </div>
               </div>
@@ -278,33 +436,46 @@ export function SshPage(): ReactElement {
             <div style={card}>
               <div style={stepCircle}>2</div>
               <div style={{ flex: 1 }}>
-                <h3 style={stepTitle}>Add to GitHub</h3>
-                <p style={stepText}>Copy your public key and paste it into GitHub's SSH settings.</p>
-                <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
-                  <button type="button" style={btn} onClick={() => { void loadPub().then(copyPub) }} disabled={busy}>Load & Copy Key</button>
-                  <button type="button" style={btn} onClick={() => void window.dh.openExternal('https://github.com/settings/ssh/new')}>Open GitHub Settings</button>
+                <h3 style={stepTitle}>Identity Options</h3>
+                <p style={stepText}>Copy your public key for manual setup, or use the automatic "Enable Remote Access" button after connecting.</p>
+                <div style={{ display: 'flex', gap: 8, marginTop: 10, flexWrap: 'wrap' }}>
+                  <button type="button" style={btn} onClick={() => { void loadPub().then(copyPub) }} disabled={busy}>Copy Public Key</button>
+                  <button type="button" style={btn} onClick={() => void testGithub()} disabled={busy}>Test GitHub Connection</button>
                 </div>
+                {fingerprint && (
+                  <div style={{ marginTop: 12, fontSize: 12, padding: '8px 12px', background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: 6 }}>
+                    <span style={{ color: 'var(--text-muted)', marginRight: 8 }}>Fingerprint:</span>
+                    <span className="mono">{fingerprint}</span>
+                  </div>
+                )}
+                {testOk !== null && (
+                  <div style={{ marginTop: 8, fontSize: 12, padding: '8px 12px', background: testOk ? 'rgba(76, 175, 80, 0.1)' : 'rgba(244, 67, 54, 0.1)', border: '1px solid ' + (testOk ? 'var(--green)' : 'var(--red)'), borderRadius: 6, whiteSpace: 'pre-wrap' }}>
+                    <div style={{ fontWeight: 600, color: testOk ? 'var(--green)' : 'var(--red)', marginBottom: 4 }}>
+                      {testOk ? '✅ GitHub Connection Successful' : '❌ GitHub Connection Failed'}
+                    </div>
+                    <div className="mono" style={{ fontSize: 11 }}>{testResult}</div>
+                  </div>
+                )}
                 {pubKey && <textarea readOnly value={pubKey} style={{ ...area, marginTop: 12 }} />}
               </div>
             </div>
 
-            <div style={card}>
-              <div style={stepCircle}>3</div>
-              <div style={{ flex: 1 }}>
-                <h3 style={stepTitle}>Test Connection</h3>
-                <p style={stepText}>Verify that GitHub recognizes your new key.</p>
-                <button type="button" style={btnPrimary} onClick={() => void testGithub()} disabled={busy}>Test Connection</button>
-                {testOk !== null && (
-                  <div style={{ marginTop: 12, padding: 8, borderRadius: 8, background: testOk ? 'rgba(0,255,0,0.1)' : 'rgba(255,0,0,0.1)', color: testOk ? 'var(--green)' : 'var(--orange)' }}>
-                    {testOk ? '✅ Success! You can now use git.' : '❌ Failed. Check the output below.'}
-                  </div>
-                )}
-                {testResult && <pre className="mono" style={{ ...pre, marginTop: 8 }}>{testResult}</pre>}
-              </div>
-            </div>
-
           </div>
-          {status && <div style={{ color: 'var(--text-muted)', fontSize: 13, marginTop: 12 }}>{status}</div>}
+          {status && (
+            <div
+              style={{
+                marginTop: 12,
+                padding: '10px 12px',
+                borderRadius: 8,
+                fontSize: 13,
+                color: status.includes('✅') ? 'var(--green)' : status.includes('⚠') || status.includes('❌') ? 'var(--orange)' : 'var(--text-muted)',
+                border: `1px solid ${status.includes('✅') ? 'rgba(44,182,125,0.35)' : 'var(--border)'}`,
+                background: status.includes('✅') ? 'rgba(44,182,125,0.08)' : 'var(--bg-input)',
+              }}
+            >
+              {status}
+            </div>
+          )}
         </section>
 
         <hr style={{ border: 0, borderTop: '1px solid var(--border)' }} />
@@ -356,8 +527,17 @@ export function SshPage(): ReactElement {
       </div>
 
       {/* RIGHT COLUMN: Connection History & Active Sessions */}
+
+
+
+      {/* RIGHT COLUMN: Connection History & Active Sessions */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <h2 style={{ fontSize: 18, margin: 0, paddingBottom: 8, borderBottom: '1px solid var(--border)' }}>Connection History</h2>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 8, borderBottom: '1px solid var(--border)' }}>
+          <h2 style={{ fontSize: 18, margin: 0 }}>Connection History</h2>
+          <span className="mono" style={{ fontSize: 12, color: 'var(--text-muted)' }}>
+            {connectedCount} active / {sessions.length} total
+          </span>
+        </div>
         
         {sessions.length === 0 ? (
           <div style={{ color: 'var(--text-muted)', fontSize: 13, padding: 16, background: 'var(--bg-widget)', borderRadius: 8 }}>
@@ -388,16 +568,25 @@ export function SshPage(): ReactElement {
                   Started: {new Date(sess.startTime).toLocaleTimeString()}
                 </div>
 
-                <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 4 }}>
                   {sess.status === 'connected' && (
-                    <button type="button" style={{ ...btnDanger, padding: '4px 8px', fontSize: 11, flex: 1 }} onClick={() => handleDisconnect(sess)}>
-                      Disconnect
-                    </button>
-                  )}
-                  {sess.status === 'connected' && (
-                    <button type="button" style={{ ...btn, padding: '4px 8px', fontSize: 11, flex: 1 }} onClick={() => setActiveTermSession(sess)}>
-                      Show Terminal
-                    </button>
+                    <>
+                      <button type="button" style={{ ...btn, padding: '4px 8px', fontSize: 11 }} onClick={() => resetFtState(sess, 'upload')}>
+                        📤 Upload
+                      </button>
+                      <button type="button" style={{ ...btn, padding: '4px 8px', fontSize: 11 }} onClick={() => resetFtState(sess, 'download')}>
+                        📥 Download
+                      </button>
+                      <button type="button" style={{ ...btn, padding: '4px 8px', fontSize: 11 }} onClick={() => setActiveTermSession(sess)}>
+                        ⌨ Terminal
+                      </button>
+                      <button type="button" style={{ ...btn, padding: '4px 8px', fontSize: 11, color: 'var(--accent)' }} onClick={() => void setupKeysOnServer(sess)}>
+                        🔑 Enable Access
+                      </button>
+                      <button type="button" style={{ ...btnDanger, padding: '4px 8px', fontSize: 11 }} onClick={() => handleDisconnect(sess)}>
+                        ✕ Disconnect
+                      </button>
+                    </>
                   )}
                   {sess.status === 'disconnected' && (
                     <button type="button" style={{ ...btn, padding: '4px 8px', fontSize: 11, flex: 1 }} onClick={() => setSessions(prev => prev.filter(s => s.id !== sess.id))}>
@@ -410,6 +599,135 @@ export function SshPage(): ReactElement {
           </div>
         )}
       </div>
+
+      {/* File Transfer Modal Overlay */}
+      {ftSession && (
+        <div style={modalOverlay}>
+          <div style={{ ...modalContent, maxWidth: 600, height: 'auto', maxHeight: '90vh' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <h2 style={{ margin: 0, fontSize: 18 }}>📦 File Transfer: {ftSession.bmName}</h2>
+              <button type="button" style={{ background: 'transparent', border: 'none', color: 'var(--text)', cursor: 'pointer', fontSize: 20 }} onClick={() => setFtSession(null)}>
+                ×
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {/* Device Selector (in case user wants to switch within modal) */}
+              <div>
+                <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 6 }}>Connected Device</div>
+                <select 
+                  value={ftSession.id} 
+                  onChange={(e) => {
+                    const s = sessions.find(s => s.id === e.target.value)
+                    if (s) resetFtState(s, ftDirection)
+                  }}
+                  style={{ ...inputStyle, cursor: 'pointer' }}
+                >
+                  {sessions.filter(s => s.status === 'connected').map(s => (
+                    <option key={s.id} value={s.id}>{s.bmName} ({s.user}@ {s.host})</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Direction selector */}
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button type="button"
+                  style={{ ...btn, flex: 1, background: ftDirection === 'upload' ? 'var(--accent)' : 'var(--bg-input)', color: ftDirection === 'upload' ? '#000' : 'var(--text)' }}
+                  onClick={() => setFtDirection('upload')}
+                >
+                  📤 Upload to Device
+                </button>
+                <button type="button"
+                  style={{ ...btn, flex: 1, background: ftDirection === 'download' ? 'var(--accent)' : 'var(--bg-input)', color: ftDirection === 'download' ? '#000' : 'var(--text)' }}
+                  onClick={() => setFtDirection('download')}
+                >
+                  📥 Download from Device
+                </button>
+              </div>
+
+              {/* Tool selector */}
+              <div>
+                <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 6 }}>Transfer Tool</div>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  {(['scp', 'rsync'] as const).map(t => (
+                    <button key={t} type="button"
+                      style={{ ...btn, flex: 1, background: ftTool === t ? 'var(--accent)' : 'var(--bg-input)', color: ftTool === t ? '#000' : 'var(--text)' }}
+                      onClick={() => setFtTool(t)}
+                    >
+                      {t.toUpperCase()}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* File Selection Flow */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: 12, background: 'var(--bg)', borderRadius: 8, border: '1px solid var(--border)' }}>
+                {ftDirection === 'upload' ? (
+                  <>
+                    <div style={{ fontSize: 13, fontWeight: 600 }}>Step 1: Choose Local Files</div>
+                    <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+                      <button type="button" style={btnPrimary} onClick={() => void pickLocalFiles()}>Select Files...</button>
+                      <div style={{ flex: 1, fontSize: 12, color: 'var(--text-muted)', maxHeight: 60, overflowY: 'auto' }}>
+                        {ftLocalPaths.length === 0 ? 'No files selected' : ftLocalPaths.map((p, i) => <div key={i}>{p.split("/").pop()}</div>)}
+                      </div>
+                    </div>
+                    <div style={{ fontSize: 13, fontWeight: 600, marginTop: 8 }}>Step 2: Remote Destination</div>
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <input value={ftRemotePath} onChange={e => setFtRemotePath(e.target.value)} style={{ ...inputStyle, flex: 1 }} placeholder="~/Downloads/" />
+                      <button type="button" style={btn} disabled={remoteBrowsing} onClick={() => void browseRemote(ftRemotePath || '~')}>Browse...</button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div style={{ fontSize: 13, fontWeight: 600 }}>Step 1: Choose Remote Files</div>
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <input value={ftRemotePath} onChange={e => setFtRemotePath(e.target.value)} style={{ ...inputStyle, flex: 1 }} />
+                      <button type="button" style={btn} disabled={remoteBrowsing} onClick={() => void browseRemote(ftRemotePath || '~')}>Browse Remote...</button>
+                    </div>
+                    <div style={{ fontSize: 13, fontWeight: 600, marginTop: 8 }}>Step 2: Local Destination</div>
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <button type="button" style={btnPrimary} onClick={() => void pickLocalDestDir()}>Choose Folder...</button>
+                      <div style={{ flex: 1, fontSize: 12, color: 'var(--text-muted)' }}>
+                        {ftLocalDestDir || 'Defaults to current directory'}
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {/* Remote Browser results inside modal */}
+                {remoteEntries.length > 0 && (
+                  <div style={{ marginTop: 8, background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: 6, maxHeight: 150, overflowY: 'auto' }}>
+                    {remoteEntries.map(entry => (
+                      <div key={entry} 
+                        style={{ padding: '6px 12px', cursor: 'pointer', fontSize: 12, borderBottom: '1px solid var(--border)', display: 'flex', gap: 8 }}
+                        onClick={() => {
+                          if (entry === '..') {
+                            const parent = ftRemotePath.replace(/\/[^/]+\/?$/, '') || '/'
+                            void browseRemote(parent)
+                          } else if (!entry.includes('.')) {
+                            const newPath = ftRemotePath.replace(/\/$/, '') + '/' + entry
+                            void browseRemote(newPath)
+                          } else {
+                            setFtRemotePath(ftRemotePath.replace(/\/$/, '') + '/' + entry)
+                          }
+                        }}
+                      >
+                        {entry.includes('.') ? '📄' : '📁'} {entry}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {ftStatus && <div style={{ fontSize: 12, color: 'var(--accent)' }}>{ftStatus}</div>}
+
+              <button type="button" style={{ ...btnPrimary, padding: '12px' }} onClick={runTransfer}>
+                🚀 Start Transfer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Terminal Modal overlay */}
       {activeTermSession && (
@@ -428,6 +746,32 @@ export function SshPage(): ReactElement {
         </div>
       )}
 
+      {/* Password Modal for Key Setup */}
+      {passModalSess && (
+        <div style={modalOverlay}>
+          <div style={{ ...modalContent, maxWidth: 400, height: 'auto', padding: 24 }}>
+            <h2 style={{ margin: '0 0 16px 0', fontSize: 18 }}>🔑 Activate Remote Access</h2>
+            <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 16 }}>
+              Enter the password for <b>{passModalSess.user}@{passModalSess.host}</b> to enable the file browser.
+            </p>
+            <input 
+              type="password" 
+              value={passInput} 
+              onChange={e => setPassInput(e.target.value)}
+              placeholder="Server Password"
+              onKeyDown={e => e.key === 'Enter' && runSetupWithPassword()}
+              style={{ ...inputStyle, marginBottom: 20 }}
+              autoFocus
+            />
+            <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
+              <button type="button" style={btn} onClick={() => setPassModalSess(null)}>Cancel</button>
+              <button type="button" style={btnPrimary} onClick={runSetupWithPassword} disabled={!passInput || busy}>
+                {busy ? '⏳ Activating...' : 'Activate'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
@@ -508,18 +852,6 @@ const area = {
   minHeight: 60,
   fontFamily: 'monospace',
   fontSize: 12,
-}
-
-const pre = {
-  margin: 0,
-  whiteSpace: 'pre-wrap' as const,
-  fontSize: 12,
-  maxHeight: 150,
-  overflow: 'auto' as const,
-  background: 'var(--bg-input)',
-  padding: 8,
-  borderRadius: 6,
-  border: '1px solid var(--border)',
 }
 
 const modalOverlay: React.CSSProperties = {

@@ -30,6 +30,8 @@ declare global {
       dockerNetworkAction: (payload: { id: string; action: 'remove' }) => Promise<unknown>
       dockerNetworkCreate: (payload: { name: string }) => Promise<unknown>
       dockerPrune: () => Promise<unknown>
+      dockerPrunePreview: () => Promise<unknown>
+      dockerCleanupRun: (payload: { containers?: boolean; images?: boolean; volumes?: boolean; networks?: boolean }) => Promise<unknown>
       metrics: () => Promise<unknown>
       hostExec: (payload: unknown) => Promise<unknown>
       composeUp: (payload: { profile: ComposeProfile }) => Promise<unknown>
@@ -45,9 +47,13 @@ declare global {
       gitConfigSet: (payload: { name: string; email: string; defaultBranch?: string; defaultEditor?: string; target: 'sandbox'|'host' }) => Promise<unknown>
       gitConfigList: (payload: { target: 'sandbox'|'host' }) => Promise<unknown>
       sshGenerate: (payload: { target: 'sandbox'|'host'; email?: string }) => Promise<unknown>
-      sshGetPub: (payload: { target: 'sandbox'|'host' }) => Promise<unknown>
+      sshGetPub: (payload: { target: 'sandbox'|'host' }) => Promise<{ pub: string; fingerprint: string } | null>
       sshTestGithub: (payload: { target: 'sandbox'|'host' }) => Promise<unknown>
       selectFolder: () => Promise<string | null>
+      filePickOpen: (opts?: { folders?: boolean; multiple?: boolean }) => Promise<string[]>
+      filePickSave: () => Promise<string | null>
+      sshListDir: (payload: { user: string; host: string; port: number; remotePath: string }) => Promise<{ ok: boolean; entries: string[]; error?: string }>
+      sshSetupRemoteKey: (payload: { user: string; host: string; port: number; password: string; publicKey: string }) => Promise<{ ok: boolean; error?: string }>
       onTerminalData: (handler: (msg: { id: string; data: string }) => void) => () => void
       onTerminalExit: (handler: (msg: { id: string }) => void) => () => void
       openExternal: (url: string) => Promise<unknown>

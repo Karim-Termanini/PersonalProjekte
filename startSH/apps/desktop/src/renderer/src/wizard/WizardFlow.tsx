@@ -134,7 +134,7 @@ export function WizardFlow({ onComplete }: { onComplete: () => void }): ReactEle
                   try {
                     await window.dh.sshGenerate({ target })
                     const pub = await window.dh.sshGetPub({ target })
-                    setPubKey(pub as string)
+                    setPubKey(pub?.pub ?? '')
                   } catch (e) {
                     alert(e)
                   }
