@@ -1,6 +1,9 @@
 import type { ContainerRow, ImageRow, NetworkRow, VolumeRow } from '@linux-dev-home/shared'
 import type { ReactElement } from 'react'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { Terminal } from '@xterm/xterm'
+import { FitAddon } from '@xterm/addon-fit'
+import '@xterm/xterm/css/xterm.css'
 
 import { DockerSchemeView } from '../components/DockerSchemeView'
 
@@ -163,6 +166,14 @@ export function DockerPage(): ReactElement {
   const [selectedFeatures, setSelectedFeatures] = useState<string[]>(['docker', 'compose', 'buildx'])
   const [isScanning, setIsScanning] = useState(false)
   const [hostDistro, setHostDistro] = useState<string>('unknown')
+  const [hubResults, setHubResults] = useState<Array<{ name: string; description: string; star_count: number; is_official: boolean }>>([])
+  const [isSearchingHub, setIsSearchingHub] = useState(false)
+  const [availableTags, setAvailableTags] = useState<string[]>([])
+  const [selectedTag, setSelectedTag] = useState('latest')
+  const [isLoadingTags, setIsLoadingTags] = useState(false)
+  const [activeTermContainer, setActiveTermContainer] = useState<ContainerRow | null>(null)
+
+  const closeTerminal = useCallback(() => setActiveTermContainer(null), [])
 
   const refreshAll = useCallback(async () => {
     try {
@@ -207,6 +218,26 @@ export function DockerPage(): ReactElement {
       void window.dh.getHostDistro().then(setHostDistro)
     }
   }, [showInstallModal])
+
+  useEffect(() => {
+    const term = pullImage.trim()
+    if (term.length < 2) {
+      setHubResults([])
+      return
+    }
+    const id = setTimeout(async () => {
+      setIsSearchingHub(true)
+      try {
+        const res = await window.dh.dockerSearch(term)
+        setHubResults(res)
+      } catch (e) {
+        console.error('Search failed', e)
+      } finally {
+        setIsSearchingHub(false)
+      }
+    }, 400)
+    return () => clearTimeout(id)
+  }, [pullImage])
 
   async function runScan(): Promise<void> {
     setIsScanning(true)
@@ -580,18 +611,90 @@ export function DockerPage(): ReactElement {
               Create from examples. Click <span className="mono">Use</span> to create a new container template.
             </div>
             <div className="hp-card">
-              <div style={{ fontWeight: 600, marginBottom: 8 }}>Pull custom image</div>
-              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                <input
-                  value={pullImage}
-                  onChange={(e) => setPullImage(e.target.value)}
-                  placeholder="e.g. ghcr.io/owner/app:latest"
-                  style={{ ...nameInput, marginTop: 0, maxWidth: 420 }}
-                  disabled={busy}
-                />
-                <button type="button" className="hp-btn hp-btn-primary" onClick={() => void pullCustomImage()} disabled={busy}>
-                  Pull
-                </button>
+              <div style={{ fontWeight: 600, marginBottom: 8 }}>Pull from Docker Hub Explorer</div>
+              <div style={{ position: 'relative' }}>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  <div style={{ flex: 1, position: 'relative' }}>
+                    <input
+                      value={pullImage}
+                      onChange={(e) => {
+                        setPullImage(e.target.value)
+                        setAvailableTags([]) // Reset tags if typing manually
+                      }}
+                      placeholder="Search images (e.g. redis, postgres, nginx)..."
+                      style={{ ...nameInput, marginTop: 0, width: '100%' }}
+                      disabled={busy}
+                    />
+                    {isSearchingHub && (
+                      <div className="spinner" style={{ position: 'absolute', right: 12, top: 11, width: 16, height: 16, border: '2px solid var(--accent)', borderTopColor: 'transparent', borderRadius: '50%' }} />
+                    )}
+                  </div>
+                  
+                  {availableTags.length > 0 && (
+                    <select 
+                      className="hp-input" 
+                      style={{ minWidth: 120 }}
+                      value={selectedTag}
+                      onChange={(e) => setSelectedTag(e.target.value)}
+                      disabled={busy}
+                    >
+                      {availableTags.map(t => <option key={t} value={t}>{t}</option>)}
+                    </select>
+                  )}
+
+                  <button 
+                    type="button" 
+                    className="hp-btn hp-btn-primary" 
+                    onClick={() => {
+                      const full = pullImage.includes(':') ? pullImage : `${pullImage}:${selectedTag}`
+                      void pullCustomImage(full)
+                    }} 
+                    disabled={busy || !pullImage || isLoadingTags}
+                  >
+                    {isLoadingTags ? 'Tags...' : 'Pull Image'}
+                  </button>
+                </div>
+
+                {hubResults.length > 0 && (
+                  <div style={{ 
+                    position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 100, 
+                    background: 'var(--bg-panel)', border: '1px solid var(--border)', 
+                    borderRadius: 8, marginTop: 4, maxHeight: 300, overflowY: 'auto', 
+                    boxShadow: '0 10px 25px rgba(0,0,0,0.3)' 
+                  }}>
+                    {hubResults.map(r => (
+                      <div 
+                        key={r.name} 
+                        style={{ padding: '10px 12px', borderBottom: '1px solid var(--border)', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                        className="hub-result-item"
+                        onClick={async () => {
+                          setPullImage(r.name)
+                          setHubResults([])
+                          setIsLoadingTags(true)
+                          try {
+                            const tags = await window.dh.dockerGetTags(r.name)
+                            setAvailableTags(tags)
+                            if (tags.includes('latest')) setSelectedTag('latest')
+                            else if (tags.length > 0) setSelectedTag(tags[0])
+                          } finally {
+                            setIsLoadingTags(false)
+                          }
+                        }}
+                      >
+                        <div style={{ minWidth: 0 }}>
+                          <div style={{ fontWeight: 600, fontSize: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
+                            {r.name}
+                            {r.is_official && <span style={{ fontSize: 10, background: 'var(--accent)', color: '#fff', padding: '1px 5px', borderRadius: 4 }}>OFFICIAL</span>}
+                          </div>
+                          <div style={{ fontSize: 12, color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.description}</div>
+                        </div>
+                        <div style={{ fontSize: 12, color: 'var(--orange)', whiteSpace: 'nowrap', marginLeft: 12 }}>
+                          ★ {r.star_count.toLocaleString()}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
             <div className="hp-card">
@@ -667,6 +770,7 @@ export function DockerPage(): ReactElement {
                 busy={busy}
                 onAction={runAction}
                 onLogs={openLogs}
+                onConsole={(r) => setActiveTermContainer(r)}
               />
               <ContainerTable
                 title={`Not running (${stoppedRows.length})`}
@@ -674,6 +778,7 @@ export function DockerPage(): ReactElement {
                 busy={busy}
                 onAction={runAction}
                 onLogs={openLogs}
+                onConsole={(r) => setActiveTermContainer(r)}
               />
               {stoppedRows.length === 0 ? (
                 <div style={{ color: 'var(--text-muted)', fontSize: 12 }}>
@@ -747,9 +852,22 @@ export function DockerPage(): ReactElement {
                       <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
                         {img.sizeMb} MB • {new Date(img.createdAt).toLocaleDateString()}
                       </div>
-                      <button type="button" style={{ ...btnSmallDanger, marginTop: 8 }} onClick={() => void removeImage(img.id)} disabled={busy}>
-                        Remove
-                      </button>
+                      <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+                        <button 
+                          type="button" 
+                          style={{ ...btnSmallPrimary, flex: 1 }} 
+                          onClick={() => {
+                            setCustomImage(img.repoTags[0] || img.id.slice(0, 12))
+                            setTab('create')
+                          }} 
+                          disabled={busy}
+                        >
+                          Deploy
+                        </button>
+                        <button type="button" style={{ ...btnSmallDanger, flex: 1 }} onClick={() => void removeImage(img.id)} disabled={busy}>
+                          Remove
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -1278,6 +1396,13 @@ export function DockerPage(): ReactElement {
           <pre className="mono" style={pre}>{logText}</pre>
         </section>
       ) : null}
+
+      {activeTermContainer && (
+        <DockerTerminalModal 
+          container={activeTermContainer} 
+          onClose={closeTerminal} 
+        />
+      )}
     </div>
   )
 }
@@ -1547,8 +1672,8 @@ type ContainerTableProps = {
   onLogs: (row: ContainerRow) => Promise<void>
 }
 
-function ContainerTable(props: ContainerTableProps): ReactElement {
-  const { title, rows, busy, onAction, onLogs } = props
+function ContainerTable(props: ContainerTableProps & { onConsole: (row: ContainerRow) => void }): ReactElement {
+  const { title, rows, busy, onAction, onLogs, onConsole } = props
   return (
     <div>
       <div style={{ fontWeight: 600, marginBottom: 12 }}>{title}</div>
@@ -1576,8 +1701,25 @@ function ContainerTable(props: ContainerTableProps): ReactElement {
                 </div>
                 
                 {r.ports !== '—' && (
-                  <div className="mono" style={{ fontSize: 11, background: 'var(--bg)', padding: '6px 8px', borderRadius: 6, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={r.ports}>
-                    {r.ports}
+                  <div className="mono" style={{ fontSize: 11, background: 'var(--bg)', padding: '6px 8px', borderRadius: 6, display: 'flex', flexWrap: 'wrap', gap: '4px 8px' }} title={r.ports}>
+                    {r.ports.split(',').map((p, idx) => {
+                      const part = p.trim()
+                      const hostPortMatch = part.match(/^(\d+):/)
+                      if (hostPortMatch && isRunning) {
+                        const hp = hostPortMatch[1]
+                        return (
+                          <a 
+                            key={idx} 
+                            href={`http://localhost:${hp}`} 
+                            onClick={(e) => { e.preventDefault(); void window.dh.openExternal(`http://localhost:${hp}`) }}
+                            style={{ color: 'var(--accent)', textDecoration: 'none', borderBottom: '1px dashed var(--accent)' }}
+                          >
+                            {part}
+                          </a>
+                        )
+                      }
+                      return <span key={idx}>{part}</span>
+                    })}
                   </div>
                 )}
                 
@@ -1593,6 +1735,11 @@ function ContainerTable(props: ContainerTableProps): ReactElement {
                   <button type="button" className="hp-btn" onClick={() => void onLogs(r)} disabled={busy}>
                     Logs
                   </button>
+                  {isRunning && (
+                    <button type="button" className="hp-btn" onClick={() => onConsole(r)} disabled={busy}>
+                      Console
+                    </button>
+                  )}
                   {!isRunning ? (
                     <button type="button" className="hp-btn hp-btn-danger" onClick={() => void onAction(r.id, 'remove')} disabled={busy}>
                       Remove
@@ -1604,6 +1751,87 @@ function ContainerTable(props: ContainerTableProps): ReactElement {
           })}
         </div>
       )}
+    </div>
+  )
+}
+
+
+function DockerTerminalModal({ container, onClose }: { container: ContainerRow; onClose: () => void }): ReactElement {
+  const termWrapRef = useRef<HTMLDivElement>(null)
+  const xtermRef = useRef<Terminal | null>(null)
+
+  useEffect(() => {
+    if (!termWrapRef.current) return
+    const el = termWrapRef.current
+
+    const term = new Terminal({
+      cursorBlink: true,
+      fontFamily: 'JetBrains Mono, monospace',
+      fontSize: 13,
+      theme: { background: '#0a0a0a', foreground: '#e8e8e8', cursor: '#7c4dff' },
+    })
+    const fit = new FitAddon()
+    term.loadAddon(fit)
+    term.open(el)
+    fit.fit()
+    term.focus()
+    xtermRef.current = term
+
+    let tid: string | undefined = undefined
+
+    void (async () => {
+      const res = await window.dh.dockerTerminal({
+        containerId: container.id,
+        cols: term.cols,
+        rows: term.rows
+      })
+      if (!res.ok) {
+        term.writeln(`\r\nError creating terminal: ${res.error}`)
+        return
+      }
+      tid = res.id
+
+      const offOut = window.dh.onTerminalData(({ id, data }) => {
+        if (id === tid) term.write(data)
+      })
+      const offExit = window.dh.onTerminalExit(({ id }) => {
+        if (id === tid) {
+          term.writeln('\r\nProcess exited.')
+          setTimeout(onClose, 1000)
+        }
+      })
+
+      term.onData((data) => {
+        if (tid) window.dh.terminalWrite(tid, data)
+      })
+      term.onResize(({ cols, rows }) => {
+        if (tid) window.dh.terminalResize(tid, cols, rows)
+      })
+
+      return () => {
+        offOut()
+        offExit()
+      }
+    })()
+
+    const handleResize = () => fit.fit()
+    window.addEventListener('resize', handleResize)
+
+    return () => {
+      window.removeEventListener('resize', handleResize)
+      term.dispose()
+    }
+  }, [container.id, onClose])
+
+  return (
+    <div style={modalOverlay}>
+      <div style={{ ...modalContent, width: '90%', height: '80%', maxWidth: 1000 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+          <div style={{ fontWeight: 600 }}>Terminal: {container.name}</div>
+          <button onClick={onClose} style={closeBtn}>&times;</button>
+        </div>
+        <div ref={termWrapRef} style={{ flex: 1, background: '#0a0a0a', borderRadius: 8, padding: 8, overflow: 'hidden' }} />
+      </div>
     </div>
   )
 }

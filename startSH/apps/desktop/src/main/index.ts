@@ -432,7 +432,7 @@ function registerIpc(): void {
     if (!d) throw new Error('Docker unavailable')
     const container = d.getContainer(id)
     if (act.data === 'start') await container.start()
-    else if (act.data === 'stop') await container.stop()
+    else if (act.data === 'stop') await container.stop({ t: 2 })
     else if (act.data === 'restart') await container.restart()
     else await container.remove({ force: true })
     return { ok: true }
@@ -860,6 +860,60 @@ function registerIpc(): void {
       return id || 'unknown'
     } catch {
       return 'unknown'
+    }
+  })
+
+  ipcMain.handle(IPC.dockerSearch, async (_e, term: string) => {
+    if (!docker || !term) return []
+    try {
+      const results = await docker.searchImages({ term })
+      return results.map((r: any) => ({
+        name: r.name,
+        description: r.description,
+        star_count: r.star_count,
+        is_official: r.is_official
+      }))
+    } catch (err) {
+      console.error('Docker search error:', err)
+      return []
+    }
+  })
+
+  ipcMain.handle(IPC.dockerGetTags, async (_e, image: string) => {
+    if (!image) return []
+    const parts = image.split('/')
+    const fullImage = parts.length === 1 ? `library/${image}` : image
+    try {
+      const url = `https://hub.docker.com/v2/repositories/${fullImage}/tags?page_size=100`
+      const resp = await fetch(url)
+      if (!resp.ok) return []
+      const data = (await resp.json()) as { results: Array<{ name: string }> }
+      return data.results.map(r => r.name)
+    } catch (err) {
+      console.error('Docker tags error:', err)
+      return []
+    }
+  })
+
+  ipcMain.handle(IPC.dockerTerminal, async (_e, payload: { containerId: string; cols: number; rows: number }) => {
+    const id = randomUUID()
+    const { containerId, cols, rows } = payload
+    try {
+      const term = pty.spawn('docker', ['exec', '-it', containerId, 'sh', '-c', '[ -x /bin/bash ] && exec /bin/bash || exec sh'], {
+        name: 'xterm-256color',
+        cols: Math.max(2, cols),
+        rows: Math.max(2, rows),
+        env: process.env as { [key: string]: string },
+      })
+      terminals.set(id, term)
+      term.onData((data) => broadcast(IPC.terminalData, { id, data }))
+      term.onExit(() => {
+        terminals.delete(id)
+        broadcast(IPC.terminalExit, { id })
+      })
+      return { ok: true, id }
+    } catch (e) {
+      return { ok: false, error: String(e) }
     }
   })
 

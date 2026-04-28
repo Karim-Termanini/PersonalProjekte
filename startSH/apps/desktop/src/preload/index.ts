@@ -64,6 +64,9 @@ export type DhApi = {
   dockerInstall: (payload: { distro: 'ubuntu'|'fedora'|'arch'; password?: string; components?: string[] }) => Promise<{ ok: boolean; log: string[]; error?: string }>
   dockerCheckInstalled: () => Promise<{ docker: boolean; compose: boolean; buildx: boolean }>
   getHostDistro: () => Promise<string>
+  dockerSearch: (term: string) => Promise<Array<{ name: string; description: string; star_count: number; is_official: boolean }>>
+  dockerGetTags: (image: string) => Promise<string[]>
+  dockerTerminal: (payload: { containerId: string; cols: number; rows: number }) => Promise<{ ok: boolean; id?: string; error?: string }>
 }
 
 const api: DhApi = {
@@ -135,6 +138,9 @@ const api: DhApi = {
   dockerInstall: (payload) => ipcRenderer.invoke(IPC.dockerInstall, payload),
   dockerCheckInstalled: () => ipcRenderer.invoke(IPC.dockerCheckInstalled),
   getHostDistro: () => ipcRenderer.invoke(IPC.getHostDistro),
+  dockerSearch: (term) => ipcRenderer.invoke(IPC.dockerSearch, term),
+  dockerGetTags: (image) => ipcRenderer.invoke(IPC.dockerGetTags, image),
+  dockerTerminal: (payload) => ipcRenderer.invoke(IPC.dockerTerminal, payload),
 }
 
 contextBridge.exposeInMainWorld('dh', api)

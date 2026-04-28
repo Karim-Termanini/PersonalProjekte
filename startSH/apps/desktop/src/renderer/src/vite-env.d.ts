@@ -68,6 +68,9 @@ declare global {
       dockerInstall: (payload: { distro: 'ubuntu'|'fedora'|'arch'; password?: string; components?: string[] }) => Promise<{ ok: boolean; log: string[]; error?: string }>
       dockerCheckInstalled: () => Promise<{ docker: boolean; compose: boolean; buildx: boolean }>
       getHostDistro: () => Promise<string>
+      dockerSearch: (term: string) => Promise<Array<{ name: string; description: string; star_count: number; is_official: boolean }>>
+      dockerGetTags: (image: string) => Promise<string[]>
+      dockerTerminal: (payload: { containerId: string; cols: number; rows: number }) => Promise<{ ok: boolean; id?: string; error?: string }>
     }
   }
 }

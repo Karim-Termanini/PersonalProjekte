@@ -124,6 +124,9 @@ export const IPC = {
   dockerInstall: 'dh:docker:install',
   dockerCheckInstalled: 'dh:docker:check-installed',
   getHostDistro: 'dh:host:distro',
+  dockerSearch: 'dh:docker:search',
+  dockerGetTags: 'dh:docker:tags',
+  dockerTerminal: 'dh:docker:terminal',
 } as const
 
 export type DockerActionPayload = { id: string; action: DockerContainerAction }

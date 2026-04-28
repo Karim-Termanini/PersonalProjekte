@@ -241,3 +241,7 @@ textarea {
 .hp-table-row {
   border-top: 1px solid var(--border);
 }
+
+.hub-result-item:hover {
+  background: rgba(124, 77, 255, 0.08) !important;
+}
