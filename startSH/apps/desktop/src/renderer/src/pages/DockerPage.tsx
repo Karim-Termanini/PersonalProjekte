@@ -162,6 +162,7 @@ export function DockerPage(): ReactElement {
   const [installedFeatures, setInstalledFeatures] = useState<{ docker: boolean; compose: boolean; buildx: boolean }>({ docker: false, compose: false, buildx: false })
   const [selectedFeatures, setSelectedFeatures] = useState<string[]>(['docker', 'compose', 'buildx'])
   const [isScanning, setIsScanning] = useState(false)
+  const [hostDistro, setHostDistro] = useState<string>('unknown')
 
   const refreshAll = useCallback(async () => {
     try {
@@ -200,6 +201,12 @@ export function DockerPage(): ReactElement {
       void previewCleanup()
     }
   }, [tab])
+
+  useEffect(() => {
+    if (showInstallModal) {
+      void window.dh.getHostDistro().then(setHostDistro)
+    }
+  }, [showInstallModal])
 
   async function runScan(): Promise<void> {
     setIsScanning(true)
@@ -1105,6 +1112,13 @@ export function DockerPage(): ReactElement {
                       </label>
                     ))}
                   </div>
+
+                  {selectedDistro && hostDistro !== 'unknown' && selectedDistro !== hostDistro && (
+                    <div style={{ ...sectionBox, background: 'rgba(244, 67, 54, 0.1)', borderColor: 'var(--red)', color: 'var(--red)', fontSize: 13, padding: '12px' }}>
+                      <div style={{ fontWeight: 700, marginBottom: 4 }}>⚠️ OS Mismatch Detected</div>
+                      You selected <strong>{INSTALL_DISTROS.find(d => d.id === selectedDistro)?.title}</strong>, but we detected you are running <strong>{hostDistro.charAt(0).toUpperCase() + hostDistro.slice(1)}</strong>. Installing for the wrong distribution may break your system!
+                    </div>
+                  )}
                 </div>
               )}
 

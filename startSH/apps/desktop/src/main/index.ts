@@ -846,6 +846,23 @@ function registerIpc(): void {
     return { ok: true, log: logs }
   })
 
+  ipcMain.handle(IPC.getHostDistro, async () => {
+    try {
+      const content = await readFile('/etc/os-release', 'utf8')
+      const idMatch = content.match(/^ID=(.*)$/m)
+      const idLikeMatch = content.match(/^ID_LIKE=(.*)$/m)
+      const id = idMatch ? idMatch[1].replace(/"/g, '').toLowerCase() : ''
+      const idLike = idLikeMatch ? idLikeMatch[1].replace(/"/g, '').toLowerCase() : ''
+
+      if (id === 'fedora' || idLike.includes('fedora')) return 'fedora'
+      if (id === 'ubuntu' || id === 'debian' || idLike.includes('ubuntu') || idLike.includes('debian')) return 'ubuntu'
+      if (id === 'arch' || idLike.includes('arch')) return 'arch'
+      return id || 'unknown'
+    } catch {
+      return 'unknown'
+    }
+  })
+
   ipcMain.handle(IPC.metrics, async () => await collectMetrics())
 
   ipcMain.handle(IPC.hostExec, async (_e, raw: unknown) => {

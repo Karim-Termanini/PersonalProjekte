@@ -67,6 +67,7 @@ declare global {
       jobCancel: (payload: { id: string }) => Promise<unknown>
       dockerInstall: (payload: { distro: 'ubuntu'|'fedora'|'arch'; password?: string; components?: string[] }) => Promise<{ ok: boolean; log: string[]; error?: string }>
       dockerCheckInstalled: () => Promise<{ docker: boolean; compose: boolean; buildx: boolean }>
+      getHostDistro: () => Promise<string>
     }
   }
 }
