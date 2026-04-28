@@ -12,3 +12,6 @@ release
 !.vscode/extensions.json
 coverage
 .turbo
+pack-staging
+flatpak-build-dir
+.flatpak-builder
