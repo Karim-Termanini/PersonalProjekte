@@ -1,3 +1,80 @@
+# Html-Css-alten-projekte
+
+**Sammlung meiner alten HTML & CSS Projekte, Challenges und Übungen**
+
+---
+
+## 📋 Über dieses Repository
+
+Dieser Ordner enthält alle meine **frühen Webentwicklungs-Projekte** mit purem **HTML und CSS**. 
+
+Es handelt sich um meine ersten Schritte in der Webentwicklung. Hier habe ich verschiedene Designs, Layouts, Landing Pages und Challenges umgesetzt, um meine Fähigkeiten in HTML5 und CSS3 (Flexbox, Grid, Responsive Design, Animationen usw.) aufzubauen.
+
+---
+
+## ✨ Inhalt
+
+### 📁 Projekte
+
+- **Elzero Services** – Service-Präsentationsseite
+- **Blog** – Einfaches Blog-Layout
+- **Profile Website** – Persönliche Profilseite
+- **World's Best WebDeveloper** – Humorvolle Entwickler-Präsentation
+- **Template Website** – Mehrzweck Template
+- **CV Website** – Lebenslauf / Portfolio Seite
+- **Paragraph** – Verschiedene Text- und Layout-Übungen
+
+### 📁 Challenges
+
+Sammlung von **18 Challenges** (meist von Elzero Web School oder ähnlichen Plattformen) zur Verbesserung von HTML & CSS Fähigkeiten.
+
+### 📁 Weitere Ordner
+
+- **WebPagesTools** → Nützliche kleine Tools und Helferseiten
+- **html css help** → Notizen, Snippets und Hilfsdateien
+
+---
+
+## 🛠 Technologien
+
+- **HTML5**
+- **CSS3**
+- Flexbox
+- CSS Grid
+- Responsive Design (Mobile First)
+- CSS Animationen & Transitions
+- Google Fonts & Font Awesome
+
+---
+
+## 🚀 So schaust du dir die Projekte an
+
+1. Lade den gewünschten Projektordner herunter
+2. Öffne die `index.html` Datei direkt im Browser
+3. Fertig! (Keine Installation nötig)
+
+---
+
+## 🎯 Ziel dieses Repositories
+
+- Dokumentation meines Lernfortschritts in der Webentwicklung
+- Portfolio meiner ersten Web-Projekte
+- Referenz für zukünftige Projekte (Code-Snippets, Layout-Ideen)
+- Übung und Verbesserung von HTML & CSS Grundlagen
+
+---
+
+## 📌 Hinweis
+
+Diese Projekte sind **alte Übungsprojekte** und dienen hauptsächlich als Lernarchiv. Der Code ist nicht immer optimal oder produktionsreif, da er aus der Lernphase stammt.
+
+---
+
+**Teil von [PersonalProjekte](https://github.com/Karim-Termanini/PersonalProjekte)**  
+**Karim Termanini**
+
+---
+
 # Html-Css
  Projecte,Chalenges,Ressources
  
